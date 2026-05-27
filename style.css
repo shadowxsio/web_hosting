@@ -4,8 +4,8 @@
   --color-text: #ffffff;
   --color-text-muted: #a1a1aa;
   
-  /* Liquid Glass variables - Lighter frosted glass */
-  --glass-bg: rgba(255, 255, 255, 0.06);
+  /* Liquid Glass variables - Higher blur, slight dark tint for readability */
+  --glass-bg: rgba(0, 0, 0, 0.3);
   --glass-border: rgba(255, 255, 255, 0.12);
   --glass-highlight: rgba(255, 255, 255, 0.15);
   --glass-shadow: rgba(0, 0, 0, 0.4);
@@ -229,8 +229,8 @@ h1 {
 
 .pr-card {
   background: var(--glass-bg);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
   border: 1px solid var(--glass-border);
   border-radius: 20px;
   padding: 1.5rem;
@@ -275,7 +275,8 @@ h1 {
 
 .run-card {
   background: var(--glass-bg);
-  backdrop-filter: blur(20px);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
   border: 1px solid var(--glass-border);
   border-radius: 20px;
   padding: 1.5rem;
