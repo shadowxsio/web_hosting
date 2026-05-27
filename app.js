@@ -94,21 +94,24 @@ document.addEventListener('DOMContentLoaded', () => {
             // Populate upcoming races in the bio
             const raceMenu = document.querySelector('.race-menu');
             if (raceMenu) {
-                const now = new Date();
-                // Strip time for accurate date comparison
-                now.setHours(0,0,0,0);
+                const plannedRaces = [
+                    { name: "Gaspesia 35km", emoji: "🌲", keyword: "Gaspesia" },
+                    { name: "Borealys 14km", emoji: "🐻", keyword: "Borealys" },
+                    { name: "Whistler 25km", emoji: "🏔️", keyword: "Whistler" },
+                    { name: "UTHC 42km", emoji: "🐺", keyword: "UTHC" }
+                ];
+
+                const upcomingRaces = plannedRaces.filter(planned => {
+                    // Keep the race if it has NOT been found in the completed runs
+                    const alreadyRun = runs.some(run => 
+                        run.event_name.toLowerCase().includes(planned.keyword.toLowerCase())
+                    );
+                    return !alreadyRun;
+                });
                 
-                const upcomingRuns = runs
-                    .filter(run => {
-                        const runDate = new Date(run.date);
-                        runDate.setHours(0,0,0,0);
-                        return runDate > now;
-                    })
-                    .sort((a, b) => new Date(a.date) - new Date(b.date));
-                
-                if (upcomingRuns.length > 0) {
-                    const upcomingHtml = upcomingRuns.map(run => {
-                        return `🏁 ${run.event_name} ${run.distance}`;
+                if (upcomingRaces.length > 0) {
+                    const upcomingHtml = upcomingRaces.map(race => {
+                        return `${race.emoji} ${race.name}`;
                     }).join(' &bull; ');
                     raceMenu.innerHTML = upcomingHtml;
                 } else {

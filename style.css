@@ -4,8 +4,8 @@
   --color-text: #ffffff;
   --color-text-muted: #a1a1aa;
   
-  /* Liquid Glass variables - Higher blur, slight dark tint for readability */
-  --glass-bg: rgba(0, 0, 0, 0.3);
+  /* Liquid Glass variables - Darker tint and high blur for readability */
+  --glass-bg: rgba(0, 0, 0, 0.4);
   --glass-border: rgba(255, 255, 255, 0.12);
   --glass-highlight: rgba(255, 255, 255, 0.15);
   --glass-shadow: rgba(0, 0, 0, 0.4);
@@ -237,8 +237,8 @@ h1 {
 
 .pr-card {
   background: var(--glass-bg);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
   border: 1px solid var(--glass-border);
   border-radius: 20px;
   padding: 1.5rem;
@@ -290,8 +290,8 @@ h1 {
   padding: 1.5rem;
   border-radius: 16px;
   border: 1px solid var(--glass-border);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
 }
 
 .race-menu {
@@ -317,8 +317,8 @@ h1 {
 
 .run-card {
   background: var(--glass-bg);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
   border: 1px solid var(--glass-border);
   border-radius: 20px;
   padding: 1.5rem;
