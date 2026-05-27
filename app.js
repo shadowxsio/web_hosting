@@ -123,7 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const prs = calculatePRs(runs);
             prs.forEach(pr => {
                 const prCard = document.createElement('div');
-                prCard.className = 'pr-card';
+                prCard.className = 'pr-card glass-panel';
                 prCard.innerHTML = `
                     <div class="pr-distance">${pr.distance}</div>
                     <div class="pr-time">${pr.time}</div>
@@ -164,7 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
 
                     const runCard = document.createElement('div');
-                    runCard.className = 'run-card';
+                    runCard.className = 'run-card glass-panel';
                     runCard.style.animationDelay = `${displayIndex * 0.05}s`;
                     displayIndex++;
 
