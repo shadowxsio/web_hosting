@@ -10,7 +10,7 @@
   --glass-highlight: rgba(255, 255, 255, 0.08);
   --glass-shadow: rgba(0, 0, 0, 0.6);
   
-  --color-accent: #8b5cf6; /* Vibrant Purple */
+  --color-accent: #f97316; /* Fiery Orange */
   --color-strava: #fc4c02;
   --color-instagram: #e1306c;
 }
@@ -240,8 +240,8 @@ h1 {
 .pr-card:hover {
   transform: translateY(-5px);
   background: rgba(10, 5, 20, 0.85);
-  border-color: rgba(139, 92, 246, 0.6);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(139, 92, 246, 0.25), inset 0 1px 0 var(--glass-highlight);
+  border-color: rgba(249, 115, 22, 0.6);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(249, 115, 22, 0.25), inset 0 1px 0 var(--glass-highlight);
 }
 
 .pr-distance {
