@@ -1,31 +1,35 @@
-name: Update Running Records
+name: Daily Data Fetch
 
 on:
   schedule:
-    - cron: '0 8 * * *' # Run daily at 8 AM UTC
-  workflow_dispatch: # Allow manual trigger
+    - cron: '0 8 * * *' # Tous les jours à 8h UTC
+  workflow_dispatch: # Permet de le lancer manuellement depuis l'interface GitHub
 
 jobs:
-  update-runs:
+  fetch-and-commit:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-
+      
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Set up Python
+        
+      - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
-
+          python-version: '3.10'
+          
       - name: Run fetch script
+        env:
+          STRAVA_CLIENT_ID: ${{ secrets.STRAVA_CLIENT_ID }}
+          STRAVA_CLIENT_SECRET: ${{ secrets.STRAVA_CLIENT_SECRET }}
+          STRAVA_REFRESH_TOKEN: ${{ secrets.STRAVA_REFRESH_TOKEN }}
         run: python scripts/fetch_runs.py
-
+        
       - name: Commit and push changes
         run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
           git add data/runs.json
-          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto-update runs from Sportstats" && git push)
+          git diff --quiet && git diff --staged --quiet || (git commit -m "chore: auto-update runs data from Sportstats and Strava" && git push)

@@ -8,6 +8,11 @@ SPORTSTATS_URL = "https://sportstats.one/profile/273616"
 RUNS_JSON_PATH = "data/runs.json"
 MANUAL_RUNS_PATH = "data/manual_runs.json"
 
+# Strava configuration (from environment variables)
+STRAVA_CLIENT_ID = os.environ.get('STRAVA_CLIENT_ID')
+STRAVA_CLIENT_SECRET = os.environ.get('STRAVA_CLIENT_SECRET')
+STRAVA_REFRESH_TOKEN = os.environ.get('STRAVA_REFRESH_TOKEN')
+
 def format_time(ms):
     seconds = ms // 1000
     h = seconds // 3600
@@ -18,9 +23,7 @@ def format_time(ms):
     return f"{m:02d}:{s:02d}"
 
 def fetch_sportstats_data():
-    """
-    Scrape data from Sportstats profile.
-    """
+    """Scrape data from Sportstats profile."""
     print(f"Fetching from {SPORTSTATS_URL}...")
     req = urllib.request.Request(
         SPORTSTATS_URL, 
@@ -32,9 +35,6 @@ def fetch_sportstats_data():
             html = response.read().decode('utf-8')
             
         runs = []
-        
-        # Le contenu est échappé dans la payload Next.js.
-        # On utilise une regex pour extraire directement les informations pertinentes des courses.
         pattern = r'\\"elbl\\":\\"([^\\"]+)\\".*?\\"dts\\":(\d+).*?\\"rd\\":(\d+).*?\\"rlbl\\":\\"([^\\"]+)\\".*?\\"pt\\":(\d+)'
         matches = re.findall(pattern, html)
         
@@ -45,16 +45,9 @@ def fetch_sportstats_data():
             race_label = match[3]
             time_ms = int(match[4])
             
-            # Formater la date
             date_str = datetime.fromtimestamp(dts).strftime('%Y-%m-%d')
-            
-            # Titre final
             title = f"{event_name} - {race_label}".strip(" -")
-            
-            # Distance
             distance = f"{distance_m / 1000:.1f} km"
-            
-            # Temps
             time_str = format_time(time_ms)
             
             runs.append({
@@ -81,51 +74,99 @@ def load_manual_runs():
                 return []
     return []
 
+def fetch_strava_activities():
+    """Fetch recent activities from Strava using the API."""
+    if not all([STRAVA_CLIENT_ID, STRAVA_CLIENT_SECRET, STRAVA_REFRESH_TOKEN]):
+        print("Strava credentials not found in environment. Skipping Strava integration.")
+        return {}
+
+    print("Authenticating with Strava API...")
+    # 1. Get Access Token using Refresh Token
+    token_url = "https://www.strava.com/oauth/token"
+    data = urllib.parse.urlencode({
+        'client_id': STRAVA_CLIENT_ID,
+        'client_secret': STRAVA_CLIENT_SECRET,
+        'refresh_token': STRAVA_REFRESH_TOKEN,
+        'grant_type': 'refresh_token'
+    }).encode('utf-8')
+
+    try:
+        req = urllib.request.Request(token_url, data=data)
+        with urllib.request.urlopen(req) as response:
+            auth_data = json.loads(response.read().decode('utf-8'))
+            access_token = auth_data['access_token']
+            
+        print("Fetching recent activities from Strava...")
+        # 2. Get activities
+        activities_url = "https://www.strava.com/api/v3/athlete/activities?per_page=100"
+        req = urllib.request.Request(
+            activities_url,
+            headers={'Authorization': f'Bearer {access_token}'}
+        )
+        with urllib.request.urlopen(req) as response:
+            activities = json.loads(response.read().decode('utf-8'))
+            
+        strava_dict = {}
+        # Group Strava activities by date (local timezone)
+        for act in activities:
+            if act['type'] == 'Run':
+                # Strava date format: "2025-10-25T14:30:00Z"
+                date_str = act['start_date_local'].split('T')[0]
+                
+                # If there are multiple runs on the same day, keep the longest one (most likely the race)
+                if date_str not in strava_dict or act['distance'] > strava_dict[date_str]['distance']:
+                    strava_dict[date_str] = {
+                        'distance': act['distance'],
+                        'elevation_gain': act.get('total_elevation_gain', 0),
+                        'id': act['id']
+                    }
+        print(f"Found {len(strava_dict)} run days on Strava.")
+        return strava_dict
+
+    except Exception as e:
+        print(f"Error fetching from Strava: {e}")
+        return {}
+
 def main():
-    # 1. Fetch from Sportstats
     sportstats_runs = fetch_sportstats_data()
-    
-    # 2. Load manual runs
     manual_runs = load_manual_runs()
+    strava_activities = fetch_strava_activities()
     
-    # 3. Merge intelligently
     unique_runs = {}
     
-    # D'abord on ajoute les courses de Sportstats
+    # D'abord on ajoute les courses de Sportstats et on fusionne avec Strava
     for run in sportstats_runs:
         key = f"{run['date']}_{run['event_name']}"
         unique_runs[key] = run
         
-    # Ensuite on ajoute ou fusionne les courses manuelles
+        # Merge Strava data based on date
+        if run['date'] in strava_activities:
+            s_act = strava_activities[run['date']]
+            if s_act['elevation_gain'] > 0:
+                unique_runs[key]['elevation'] = f"{int(s_act['elevation_gain'])}m"
+            unique_runs[key]['url'] = f"https://www.strava.com/activities/{s_act['id']}"
+            unique_runs[key]['source'] = "Sportstats + Strava"
+        
+    # Ensuite on ajoute ou fusionne les courses manuelles (priorité absolue)
     for run in manual_runs:
         key = f"{run['date']}_{run['event_name']}"
         if key in unique_runs:
-            # Si la course existe déjà (ex: récupérée sur Sportstats),
-            # on met à jour les champs personnalisés (ex: elevation)
             for k, v in run.items():
                 if v is not None and v != "":
-                    # On évite d'écraser la source avec "Manuel" si c'est Sportstats, 
-                    # mais on le fait si on le veut vraiment. 
-                    # Pour l'instant on écrase tout, sauf si c'est source:Manuel qui remplacerait Sportstats
-                    if k == "source" and unique_runs[key]["source"] == "Sportstats":
+                    if k == "source" and "Sportstats" in unique_runs[key]["source"]:
                         continue
                     unique_runs[key][k] = v
         else:
             unique_runs[key] = run
             
     final_runs = list(unique_runs.values())
-    
-    # Sort by date descending
     final_runs.sort(key=lambda x: x['date'], reverse=True)
     
-    # 4. Save to runs.json
     os.makedirs(os.path.dirname(RUNS_JSON_PATH), exist_ok=True)
     with open(RUNS_JSON_PATH, 'w', encoding='utf-8') as f:
         json.dump(final_runs, f, indent=2, ensure_ascii=False)
         
     print(f"\nSuccessfully saved {len(final_runs)} runs to {RUNS_JSON_PATH}")
-    
-    # Print for the user to see
     print("\n--- Aperçu des données récupérées ---")
     for r in final_runs:
         elevation = f" [⛰️ {r['elevation']}]" if 'elevation' in r else ""
