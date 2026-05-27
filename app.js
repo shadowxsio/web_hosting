@@ -1,30 +1,40 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // --- Tab Navigation Logic ---
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            // Remove active class from all
+            tabBtns.forEach(b => b.classList.remove('active'));
+            tabContents.forEach(c => c.classList.remove('active'));
+            
+            // Add active class to clicked tab and corresponding content
+            btn.classList.add('active');
+            const targetId = btn.getAttribute('data-target');
+            document.getElementById(targetId).classList.add('active');
+        });
+    });
+
+    // --- Data Rendering Logic ---
     const runsContainer = document.getElementById('runs-container');
     const prContainer = document.getElementById('pr-container');
 
-    // Convert time string "HH:MM:SS" or "MM:SS" to total seconds
     function timeToSeconds(timeStr) {
         const parts = timeStr.split(':').map(Number);
-        if (parts.length === 3) {
-            return parts[0] * 3600 + parts[1] * 60 + parts[2];
-        } else if (parts.length === 2) {
-            return parts[0] * 60 + parts[1];
-        }
+        if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2];
+        if (parts.length === 2) return parts[0] * 60 + parts[1];
         return 0;
     }
 
-    // Format seconds to "HH:MM:SS" or "MM:SS"
     function secondsToTime(totalSeconds) {
         const h = Math.floor(totalSeconds / 3600);
         const m = Math.floor((totalSeconds % 3600) / 60);
         const s = totalSeconds % 60;
-        if (h > 0) {
-            return `${h}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-        }
+        if (h > 0) return `${h}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
         return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
     }
 
-    // Calculate pace (min/km)
     function calculatePace(timeStr, distanceStr) {
         const seconds = timeToSeconds(timeStr);
         const distance = parseFloat(distanceStr.replace(' km', ''));
@@ -35,9 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return '';
     }
 
-    // Process runs for PRs
     function calculatePRs(runs) {
-        // Define fixed distances
         const prs = {
             "5 km": { distance: "5 km", time: "--:--", pace: "--" },
             "10 km": { distance: "10 km", time: "--:--", pace: "--" },
@@ -65,16 +73,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         });
-        
         return [prs["5 km"], prs["10 km"], prs["Semi-Marathon"], prs["Marathon"]];
     }
 
-    // Fetch the runs data
     fetch('data/runs.json')
         .then(response => {
-            if (!response.ok) {
-                throw new Error('Données introuvables');
-            }
+            if (!response.ok) throw new Error('Données introuvables');
             return response.json();
         })
         .then(runs => {
@@ -87,7 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // --- Render PRs ---
+            // Render PRs
             const prs = calculatePRs(runs);
             prs.forEach(pr => {
                 const prCard = document.createElement('div');
@@ -100,24 +104,31 @@ document.addEventListener('DOMContentLoaded', () => {
                 prContainer.appendChild(prCard);
             });
 
-            // --- Render Runs ---
+            // Render Runs
             runs.forEach((run, index) => {
                 const runCard = document.createElement('div');
                 runCard.className = 'run-card';
-                // Add animation delay for stagger effect
                 runCard.style.animationDelay = `${index * 0.1}s`;
 
-                // Date formatting for Canada/French
                 const dateObj = new Date(run.date);
-                const options = { year: 'numeric', month: 'long', day: 'numeric' };
-                const formattedDate = dateObj.toLocaleDateString('fr-CA', options);
-                
-                // Calculate pace
+                const formattedDate = dateObj.toLocaleDateString('fr-CA', { year: 'numeric', month: 'long', day: 'numeric' });
                 const pace = calculatePace(run.time, run.distance);
                 
-                let sourceLink = run.source;
-                if (run.url) {
-                    sourceLink = `<a href="${run.url}" target="_blank" rel="noopener noreferrer">${run.source} ↗</a>`;
+                let sourceHtml = '';
+                if (run.url && run.url.includes("strava.com")) {
+                    // Strava button
+                    sourceHtml = `
+                    <div class="run-source">
+                        <a href="${run.url}" target="_blank" rel="noopener noreferrer">
+                            <svg viewBox="0 0 512 512" width="14" height="14" fill="currentColor">
+                                <path d="M120.35 282.84L213.92 95.73h71.07l-164.64 329.3-91.86-184.2h71.86z"/>
+                                <path d="M420.38 282.84l-45.74 91.56-45.92-91.56h-54.67l100.59 200.7 100.41-200.7z"/>
+                            </svg>
+                            Voir sur Strava
+                        </a>
+                    </div>`;
+                } else if (run.source) {
+                    sourceHtml = `<div class="run-source manual">${run.source}</div>`;
                 }
 
                 let elevationHtml = '';
@@ -136,7 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <div class="run-date">${formattedDate}</div>
                             <h3 class="run-title">${run.event_name}</h3>
                         </div>
-                        <div class="run-source">${sourceLink}</div>
+                        ${sourceHtml}
                     </div>
                     <div class="run-stats">
                         <div class="stat">
@@ -159,7 +170,6 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .catch(error => {
             console.error('Error fetching runs:', error);
-            runsContainer.innerHTML = `<p class="loading">Erreur lors du chargement des courses. Vérifiez que data/runs.json existe.</p>`;
-            prContainer.innerHTML = '';
+            runsContainer.innerHTML = '<p class="loading">Erreur lors du chargement des données.</p>';
         });
 });

@@ -23,33 +23,45 @@
     <div class="blob blob-3"></div>
 
     <div class="container">
-        <header class="glass-panel">
-            <h1>Mes courses</h1>
-            <p class="subtitle">Historique et records personnels</p>
-            
-            <div class="social-links">
-                <a href="https://www.strava.com/athletes/46325892" target="_blank" rel="noopener noreferrer" class="social-btn strava">
-                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/></svg>
-                    Strava
-                </a>
-                <a href="https://www.instagram.com/shadowxsio?igsh=MTRsdzVhdzdib3J6bA%3D%3D&utm_source=qr" target="_blank" rel="noopener noreferrer" class="social-btn instagram">
-                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
-                    Instagram
-                </a>
+        <header class="liquid-panel main-header">
+            <div class="header-content">
+                <h1>Mes courses</h1>
+                <p class="subtitle">Historique et records personnels</p>
+                
+                <div class="social-links">
+                    <a href="https://www.strava.com/athletes/46325892" target="_blank" rel="noopener noreferrer" class="social-btn strava" aria-label="Strava">
+                        <!-- Strava Official Logo SVG -->
+                        <svg viewBox="0 0 512 512" width="24" height="24" fill="currentColor">
+                            <path d="M120.35 282.84L213.92 95.73h71.07l-164.64 329.3-91.86-184.2h71.86z"/>
+                            <path d="M420.38 282.84l-45.74 91.56-45.92-91.56h-54.67l100.59 200.7 100.41-200.7z"/>
+                        </svg>
+                    </a>
+                    <a href="https://www.instagram.com/shadowxsio?igsh=MTRsdzVhdzdib3J6bA%3D%3D&utm_source=qr" target="_blank" rel="noopener noreferrer" class="social-btn instagram" aria-label="Instagram">
+                        <!-- Instagram Official Logo SVG -->
+                        <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
+                        </svg>
+                    </a>
+                </div>
             </div>
+            
+            <nav class="tabs-nav">
+                <button class="tab-btn active" data-target="prs-section">🏆 Mes Records</button>
+                <button class="tab-btn" data-target="runs-section">🏁 Historique</button>
+            </nav>
         </header>
 
-        <main>
-            <section class="prs-section glass-panel">
-                <h2>🏆 Records Personnels (PRs)</h2>
+        <main class="content-area">
+            <!-- Section PRs -->
+            <section id="prs-section" class="tab-content active liquid-panel">
                 <div class="pr-grid" id="pr-container">
                     <!-- PR cards will be injected here -->
                     <div class="loading">Calcul des records...</div>
                 </div>
             </section>
 
-            <section class="runs-section">
-                <h2>🏁 Historique des courses</h2>
+            <!-- Section Historique -->
+            <section id="runs-section" class="tab-content">
                 <div id="runs-container" class="runs-list">
                     <!-- Runs will be injected here -->
                     <div class="loading">Chargement de l'historique...</div>
@@ -57,8 +69,8 @@
             </section>
         </main>
         
-        <footer class="glass-panel">
-            <p>Données synchronisées automatiquement avec Sportstats.</p>
+        <footer class="liquid-panel">
+            <p>Propulsé par Sportstats & Strava.</p>
         </footer>
     </div>
     
