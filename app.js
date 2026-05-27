@@ -144,16 +144,25 @@ document.addEventListener('DOMContentLoaded', () => {
                     const pace = calculatePace(run.time, run.distance);
                     
                     let sourceHtml = '';
-                    if (run.url && run.url.includes("strava.com")) {
-                        sourceHtml = `
-                        <div class="run-source">
-                            <a href="${run.url}" target="_blank" rel="noopener noreferrer">
-                                <i class="fa-brands fa-strava"></i>
-                                Voir sur Strava
-                            </a>
-                        </div>`;
+                    if (run.url) {
+                        if (run.url.includes("strava.com")) {
+                            sourceHtml = `
+                            <div class="run-source">
+                                <a href="${run.url}" target="_blank" rel="noopener noreferrer">
+                                    <i class="fa-brands fa-strava"></i>
+                                    Voir sur Strava
+                                </a>
+                            </div>`;
+                        } else {
+                            sourceHtml = `
+                            <div class="run-source">
+                                <a href="${run.url}" target="_blank" rel="noopener noreferrer" class="manual">
+                                    ${run.source} ↗
+                                </a>
+                            </div>`;
+                        }
                     } else if (run.source) {
-                        sourceHtml = `<div class="run-source manual">${run.source}</div>`;
+                        sourceHtml = `<div class="run-source"><span class="manual">${run.source}</span></div>`;
                     }
 
                     let elevationHtml = '';
