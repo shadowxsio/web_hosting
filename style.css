@@ -4,11 +4,11 @@
   --color-text: #ffffff;
   --color-text-muted: #a1a1aa;
   
-  /* Liquid Glass variables */
-  --glass-bg: rgba(255, 255, 255, 0.03);
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --glass-highlight: rgba(255, 255, 255, 0.1);
-  --glass-shadow: rgba(0, 0, 0, 0.5);
+  /* Liquid Glass variables - Darkened for better contrast */
+  --glass-bg: rgba(10, 5, 20, 0.65);
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --glass-highlight: rgba(255, 255, 255, 0.08);
+  --glass-shadow: rgba(0, 0, 0, 0.6);
   
   --color-accent: #8b5cf6; /* Vibrant Purple */
   --color-strava: #fc4c02;
@@ -134,7 +134,7 @@ h1 {
   display: flex;
   gap: 1rem;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.4);
   padding: 0.5rem;
   border-radius: 16px;
   border: 1px solid var(--glass-border);
@@ -228,7 +228,7 @@ h1 {
 }
 
 .pr-card {
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--glass-bg);
   border: 1px solid var(--glass-border);
   border-radius: 20px;
   padding: 1.5rem;
@@ -239,9 +239,9 @@ h1 {
 
 .pr-card:hover {
   transform: translateY(-5px);
-  background: rgba(255, 255, 255, 0.04);
-  border-color: rgba(139, 92, 246, 0.4);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4), 0 0 20px rgba(139, 92, 246, 0.15), inset 0 1px 0 var(--glass-highlight);
+  background: rgba(10, 5, 20, 0.85);
+  border-color: rgba(139, 92, 246, 0.6);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(139, 92, 246, 0.25), inset 0 1px 0 var(--glass-highlight);
 }
 
 .pr-distance {
