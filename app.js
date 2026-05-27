@@ -104,81 +104,102 @@ document.addEventListener('DOMContentLoaded', () => {
                 prContainer.appendChild(prCard);
             });
 
-            // Render Runs
-            let currentYear = null;
-            
-            runs.forEach((run, index) => {
-                const dateObj = new Date(run.date);
-                const runYear = dateObj.getFullYear();
+            // Populate Year Filter
+            const yearFilter = document.getElementById('year-filter');
+            const years = new Set(runs.map(run => new Date(run.date).getFullYear()));
+            Array.from(years).sort((a,b) => b - a).forEach(year => {
+                const opt = document.createElement('option');
+                opt.value = year;
+                opt.textContent = year;
+                yearFilter.appendChild(opt);
+            });
+
+            // Render Runs function
+            function renderRuns(filterYear = 'all') {
+                runsContainer.innerHTML = '';
+                let currentYear = null;
+                let displayIndex = 0;
                 
-                // Add year divider if the year changed
-                if (runYear !== currentYear) {
-                    const yearDivider = document.createElement('div');
-                    yearDivider.className = 'year-divider';
-                    yearDivider.textContent = runYear;
-                    runsContainer.appendChild(yearDivider);
-                    currentYear = runYear;
-                }
+                runs.forEach(run => {
+                    const dateObj = new Date(run.date);
+                    const runYear = dateObj.getFullYear();
+                    
+                    if (filterYear !== 'all' && runYear.toString() !== filterYear) return;
+                    
+                    // Add year divider if the year changed
+                    if (runYear !== currentYear) {
+                        const yearDivider = document.createElement('div');
+                        yearDivider.className = 'year-divider';
+                        yearDivider.textContent = runYear;
+                        runsContainer.appendChild(yearDivider);
+                        currentYear = runYear;
+                    }
 
-                const runCard = document.createElement('div');
-                runCard.className = 'run-card';
-                runCard.style.animationDelay = `${index * 0.1}s`;
+                    const runCard = document.createElement('div');
+                    runCard.className = 'run-card';
+                    runCard.style.animationDelay = `${displayIndex * 0.05}s`;
+                    displayIndex++;
 
-                const formattedDate = dateObj.toLocaleDateString('fr-CA', { month: 'long', day: 'numeric' });
-                const pace = calculatePace(run.time, run.distance);
-                
-                let sourceHtml = '';
-                if (run.url && run.url.includes("strava.com")) {
-                    // Strava button
-                    sourceHtml = `
-                    <div class="run-source">
-                        <a href="${run.url}" target="_blank" rel="noopener noreferrer">
-                            <svg viewBox="0 0 512 512" width="14" height="14" fill="currentColor">
-                                <path d="M120.35 282.84L213.92 95.73h71.07l-164.64 329.3-91.86-184.2h71.86z"/>
-                                <path d="M420.38 282.84l-45.74 91.56-45.92-91.56h-54.67l100.59 200.7 100.41-200.7z"/>
-                            </svg>
-                            Voir sur Strava
-                        </a>
-                    </div>`;
-                } else if (run.source) {
-                    sourceHtml = `<div class="run-source manual">${run.source}</div>`;
-                }
+                    const formattedDate = dateObj.toLocaleDateString('fr-CA', { month: 'long', day: 'numeric' });
+                    const pace = calculatePace(run.time, run.distance);
+                    
+                    let sourceHtml = '';
+                    if (run.url && run.url.includes("strava.com")) {
+                        sourceHtml = `
+                        <div class="run-source">
+                            <a href="${run.url}" target="_blank" rel="noopener noreferrer">
+                                <i class="fa-brands fa-strava"></i>
+                                Voir sur Strava
+                            </a>
+                        </div>`;
+                    } else if (run.source) {
+                        sourceHtml = `<div class="run-source manual">${run.source}</div>`;
+                    }
 
-                let elevationHtml = '';
-                if (run.elevation) {
-                    elevationHtml = `
-                        <div class="stat">
-                            <span class="stat-label">Dénivelé</span>
-                            <span class="stat-value stat-elevation">⛰️ ${run.elevation}</span>
+                    let elevationHtml = '';
+                    if (run.elevation) {
+                        elevationHtml = `
+                            <div class="stat">
+                                <span class="stat-label">Dénivelé</span>
+                                <span class="stat-value stat-elevation">⛰️ ${run.elevation}</span>
+                            </div>
+                        `;
+                    }
+
+                    runCard.innerHTML = `
+                        <div class="run-header">
+                            <div>
+                                <div class="run-date">${formattedDate}</div>
+                                <h3 class="run-title">${run.event_name}</h3>
+                            </div>
+                            ${sourceHtml}
+                        </div>
+                        <div class="run-stats">
+                            <div class="stat">
+                                <span class="stat-label">Distance</span>
+                                <span class="stat-value">${run.distance}</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-label">Temps</span>
+                                <span class="stat-value">${run.time}</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-label">Allure</span>
+                                <span class="stat-value">${pace}</span>
+                            </div>
+                            ${elevationHtml}
                         </div>
                     `;
-                }
+                    runsContainer.appendChild(runCard);
+                });
+            }
 
-                runCard.innerHTML = `
-                    <div class="run-header">
-                        <div>
-                            <div class="run-date">${formattedDate}</div>
-                            <h3 class="run-title">${run.event_name}</h3>
-                        </div>
-                        ${sourceHtml}
-                    </div>
-                    <div class="run-stats">
-                        <div class="stat">
-                            <span class="stat-label">Distance</span>
-                            <span class="stat-value">${run.distance}</span>
-                        </div>
-                        <div class="stat">
-                            <span class="stat-label">Temps</span>
-                            <span class="stat-value">${run.time}</span>
-                        </div>
-                        <div class="stat">
-                            <span class="stat-label">Allure</span>
-                            <span class="stat-value">${pace}</span>
-                        </div>
-                        ${elevationHtml}
-                    </div>
-                `;
-                runsContainer.appendChild(runCard);
+            // Initial render
+            renderRuns();
+
+            // Filter change event
+            yearFilter.addEventListener('change', (e) => {
+                renderRuns(e.target.value);
             });
         })
         .catch(error => {

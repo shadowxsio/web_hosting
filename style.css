@@ -34,7 +34,7 @@ body {
   background-color: #020005;
   background-image: 
     radial-gradient(circle at 50% 50%, rgba(30, 10, 60, 0.5) 0%, rgba(0, 0, 0, 0.8) 100%),
-    url('https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=2000&auto=format&fit=crop');
+    url('./images/background.png');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
@@ -108,6 +108,7 @@ h1 {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   color: var(--color-text);
   box-shadow: inset 0 1px 0 var(--glass-highlight);
+  font-size: 1.5rem; /* For FontAwesome icons */
 }
 
 .social-btn:hover {
@@ -176,6 +177,47 @@ h1 {
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* Year Filter */
+.filter-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.filter-container label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+#year-filter {
+  background: var(--glass-bg);
+  color: var(--color-text);
+  border: 1px solid var(--glass-border);
+  padding: 0.5rem 1rem;
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  outline: none;
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+#year-filter:focus {
+  border-color: var(--color-accent);
+}
+
+#year-filter option {
+  background-color: #1e1030;
+  color: #fff;
 }
 
 /* PRs Section */
