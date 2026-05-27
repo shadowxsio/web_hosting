@@ -30,8 +30,13 @@ body {
   position: relative;
   overflow-x: hidden;
   
-  /* The "Black Hole" / Deep Void effect */
-  background-image: radial-gradient(circle at 50% 0%, #1e1030 0%, #050505 50%);
+  /* Cosmic / Space Background */
+  background-color: #020005;
+  background-image: 
+    radial-gradient(circle at 50% 50%, rgba(30, 10, 60, 0.5) 0%, rgba(0, 0, 0, 0.8) 100%),
+    url('https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=2000&auto=format&fit=crop');
+  background-size: cover;
+  background-position: center;
   background-attachment: fixed;
 }
 
@@ -242,6 +247,23 @@ h1 {
   transform: scale(1.01);
   background: rgba(255, 255, 255, 0.05);
   border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Year Divider */
+.year-divider {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #fff;
+  margin: 1.5rem 0 0.5rem 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.year-divider::before {
+  content: '📅';
+  font-size: 1.2rem;
 }
 
 .run-header {

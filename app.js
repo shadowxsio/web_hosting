@@ -105,13 +105,26 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             // Render Runs
+            let currentYear = null;
+            
             runs.forEach((run, index) => {
+                const dateObj = new Date(run.date);
+                const runYear = dateObj.getFullYear();
+                
+                // Add year divider if the year changed
+                if (runYear !== currentYear) {
+                    const yearDivider = document.createElement('div');
+                    yearDivider.className = 'year-divider';
+                    yearDivider.textContent = runYear;
+                    runsContainer.appendChild(yearDivider);
+                    currentYear = runYear;
+                }
+
                 const runCard = document.createElement('div');
                 runCard.className = 'run-card';
                 runCard.style.animationDelay = `${index * 0.1}s`;
 
-                const dateObj = new Date(run.date);
-                const formattedDate = dateObj.toLocaleDateString('fr-CA', { year: 'numeric', month: 'long', day: 'numeric' });
+                const formattedDate = dateObj.toLocaleDateString('fr-CA', { month: 'long', day: 'numeric' });
                 const pace = calculatePace(run.time, run.distance);
                 
                 let sourceHtml = '';
