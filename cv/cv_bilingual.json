@@ -1,0 +1,594 @@
+{
+  "profile": {
+    "name": {
+      "fr": "Mickaël Gauvrit",
+      "en": "Mickaël Gauvrit"
+    },
+    "title": {
+      "fr": "Cloud Engineer GCP | DevOps & SRE",
+      "en": "Cloud Engineer GCP | DevOps & SRE"
+    },
+    "subtitles": {
+      "fr": [
+        "Certifié Google ACE",
+        "Résident Permanent Canada"
+      ],
+      "en": [
+        "Google ACE Certified",
+        "Permanent Resident Canada"
+      ]
+    },
+    "phone": "438 788-8942",
+    "email": "mickael.gauvrit@outlook.com",
+    "location": {
+      "fr": "Montréal, QC",
+      "en": "Montreal, QC"
+    },
+    "linkedin": "linkedin.com/in/mickaël-gauvrit",
+    "github": "github.com/shadowxsio",
+    "summary": {
+      "fr": "Cloud Engineer & DevOps avec plus de 10 ans d'expérience en infrastructures IT, dont 6 ans spécialisé en Cloud (GCP, Alibaba Cloud, etc) et Kubernetes. Expertise en conception et administration de plateformes cloud à grande échelle et multi-cloud, CI/CD (GitHub Actions, Jenkins, Concourse), IaC (Terraform, Ansible) et observabilité (Prometheus, Grafana, ELK). Expérience en contextes critiques : secteur bancaire (Desjardins), santé publique (TousAntiCovid), et industrie agroalimentaire. Certifié Google ACE et CKA. Résident Permanent au Canada.",
+      "en": "Cloud Engineer & DevOps with more than 10 years of experience in IT infrastructures, including 6 years specialized in Cloud (GCP, Alibaba Cloud, etc.) and Kubernetes. Expertise in design and administration of large-scale and multi-cloud cloud platforms, CI/CD (GitHub Actions, Jenkins, Concourse), IaC (Terraform, Ansible) and observability (Prometheus, Grafana, ELK). Experience in critical contexts: banking sector (Desjardins), public health (TousAntiCovid), and agri-food industry. Google ACE and CKA certified. Permanent Resident in Canada."
+    }
+  },
+  "skills": [
+    {
+      "category": {
+        "fr": "Cloud",
+        "en": "Cloud"
+      },
+      "items": [
+        {
+          "fr": "GCP",
+          "en": "GCP"
+        },
+        {
+          "fr": "Alibaba Cloud",
+          "en": "Alibaba Cloud"
+        },
+        {
+          "fr": "Flexible Engine",
+          "en": "Flexible Engine"
+        },
+        {
+          "fr": "Outscale",
+          "en": "Outscale"
+        },
+        {
+          "fr": "Huawei Cloud",
+          "en": "Huawei Cloud"
+        }
+      ]
+    },
+    {
+      "category": {
+        "fr": "IaC",
+        "en": "IaC"
+      },
+      "items": [
+        {
+          "fr": "Terraform",
+          "en": "Terraform"
+        },
+        {
+          "fr": "Terraform Cloud",
+          "en": "Terraform Cloud"
+        },
+        {
+          "fr": "CDKTF",
+          "en": "CDKTF"
+        },
+        {
+          "fr": "Ansible",
+          "en": "Ansible"
+        }
+      ]
+    },
+    {
+      "category": {
+        "fr": "CI/CD",
+        "en": "CI/CD"
+      },
+      "items": [
+        {
+          "fr": "GitHub Actions",
+          "en": "GitHub Actions"
+        },
+        {
+          "fr": "Jenkins",
+          "en": "Jenkins"
+        },
+        {
+          "fr": "Concourse",
+          "en": "Competition"
+        },
+        {
+          "fr": "GitLab CI",
+          "en": "GitLab CI"
+        },
+        {
+          "fr": "Gitflow",
+          "en": "Gitflow"
+        }
+      ]
+    },
+    {
+      "category": {
+        "fr": "Conteneurs & Orchestration",
+        "en": "Containers & Orchestration"
+      },
+      "items": [
+        {
+          "fr": "Kubernetes/GKE",
+          "en": "Kubernetes/GKE"
+        },
+        {
+          "fr": "Docker",
+          "en": "Docker"
+        },
+        {
+          "fr": "Helm (HelmFile, Secrets)",
+          "en": "Helm (HelmFile, Secrets)"
+        },
+        {
+          "fr": "Rancher",
+          "en": "Rancher"
+        }
+      ]
+    },
+    {
+      "category": {
+        "fr": "Monitoring & Observabilité",
+        "en": "Monitoring & Observability"
+      },
+      "items": [
+        {
+          "fr": "Prometheus",
+          "en": "Prometheus"
+        },
+        {
+          "fr": "Grafana",
+          "en": "Grafana"
+        },
+        {
+          "fr": "Alertmanager",
+          "en": "Alertmanager"
+        },
+        {
+          "fr": "ELK",
+          "en": "ELK"
+        },
+        {
+          "fr": "Tempo",
+          "en": "Tempo"
+        },
+        {
+          "fr": "WIZ",
+          "en": "WIZ"
+        }
+      ]
+    },
+    {
+      "category": {
+        "fr": "Sécurité Cloud",
+        "en": "Cloud Security"
+      },
+      "items": [
+        {
+          "fr": "VPC-SC",
+          "en": "VPC-SC"
+        },
+        {
+          "fr": "IAM",
+          "en": "IAM"
+        },
+        {
+          "fr": "Org Policies",
+          "en": "Org Policies"
+        },
+        {
+          "fr": "CIS Benchmark",
+          "en": "CIS Benchmark"
+        },
+        {
+          "fr": "Shared VPC",
+          "en": "Shared VPC"
+        },
+        {
+          "fr": "Interconnect",
+          "en": "Interconnect"
+        }
+      ]
+    },
+    {
+      "category": {
+        "fr": "Scripting",
+        "en": "Scripting"
+      },
+      "items": [
+        {
+          "fr": "Bash",
+          "en": "bash"
+        },
+        {
+          "fr": "Node.js",
+          "en": "Node.js"
+        },
+        {
+          "fr": "Groovy",
+          "en": "Groovy"
+        },
+        {
+          "fr": "Python",
+          "en": "Python"
+        }
+      ]
+    },
+    {
+      "category": {
+        "fr": "Méthodologie",
+        "en": "Methodology"
+      },
+      "items": [
+        {
+          "fr": "Agile/Scrum",
+          "en": "Agile/Scrum"
+        },
+        {
+          "fr": "GitOps",
+          "en": "GitOps"
+        },
+        {
+          "fr": "FinOps",
+          "en": "FinOps"
+        },
+        {
+          "fr": "SLO/SLA",
+          "en": "SLO/SLA"
+        },
+        {
+          "fr": "Astreintes 24/7",
+          "en": "On-call 24/7"
+        }
+      ]
+    }
+  ],
+  "experiences": [
+    {
+      "role": {
+        "fr": "Spécialiste Plateforme Google Cloud",
+        "en": "Google Cloud Platform Specialist"
+      },
+      "company": "Desjardins",
+      "period": {
+        "fr": "Juin 2024 – Présent",
+        "en": "June 2024 – Present"
+      },
+      "location": {
+        "fr": "Montréal, QC (Hybride)",
+        "en": "Montreal, QC (Hybrid)"
+      },
+      "bullets": [
+        {
+          "fr": "Architecture GCP : Administration de l'organisation GCP (nombreux projets actifs, multiples équipes). Gestion centralisée des Org Policies, IAM, activation des APIs clients. Conception de Landing Zones conformes aux exigences bancaires.",
+          "en": "GCP architecture: Administration of the GCP organization (numerous active projects, multiple teams). Centralized management of Org Policies, IAM, activation of client APIs. Design of Landing Zones in compliance with banking requirements."
+        },
+        {
+          "fr": "Réseau & Sécurité : Architecture Hub & Spoke avec Interconnect (plusieurs VPCs). Mise en place VPC-SC (périmètres de sécurité), Shared VPC, Serverless VPC Access. Suivi conformité CIS Benchmark. Sécurité réseau Zero-Trust.",
+          "en": "Network & Security: Hub & Spoke Architecture with Interconnect (several VPCs). Implementation of VPC-SC (security perimeters), Shared VPC, Serverless VPC Access. CIS Benchmark compliance monitoring. Zero-Trust network security."
+        },
+        {
+          "fr": "CI/CD : Pilotage de la migration des pipelines Concourse → GitHub Actions. Standardisation des workflows de déploiement, Gitflow branching strategy, intégration des tests automatisés et validations pré-déploiement.",
+          "en": "CI/CD: Managing the migration of Concourse pipelines → GitHub Actions. Standardization of deployment workflows, Gitflow branching strategy, integration of automated tests and pre-deployment validations."
+        },
+        {
+          "fr": "IaC : Terraform (gestion de nombreuses ressources), configuration via tfvars et YAML. Modules CDKTF pour l'abstraction. Terraform Cloud pour gestion d'état, collaboration et gouvernance modulaire.",
+          "en": "IaC: Terraform (management of numerous resources), configuration via tfvars and YAML. CDKTF modules for abstraction. Terraform Cloud for state management, collaboration and modular governance."
+        },
+        {
+          "fr": "Observabilité : Dashboards Cloud Monitoring/Logging, alerting personnalisé, suivi SLO/SLA. Intégration WIZ pour la posture de sécurité cloud.",
+          "en": "Observability: Cloud Monitoring/Logging Dashboards, personalized alerting, SLO/SLA monitoring. WIZ integration for cloud security posture."
+        },
+        {
+          "fr": "Opérations : Méthodologie Agile (Sprints 2 semaines), astreintes 24/7, stabilisation et amélioration continue de la production.",
+          "en": "Operations: Agile methodology (2-week Sprints), 24/7 on-call, stabilization and continuous improvement of production."
+        }
+      ],
+      "env": "GCP (VPC-SC, Cloud Run, GKE, IAM, Interconnect, LB, GCS, Cloud Monitoring), Terraform, Terraform Cloud, CDKTF, GitHub Actions, Concourse, WIZ, Jira"
+    },
+    {
+      "role": {
+        "fr": "DevOps Engineer",
+        "en": "DevOps Engineer"
+      },
+      "company": "Klanik (client : Kimoby)",
+      "period": {
+        "fr": "Oct 2023 – Mars 2024",
+        "en": "Oct 2023 – March 2024"
+      },
+      "location": {
+        "fr": "Montréal, QC",
+        "en": "Montreal, QC"
+      },
+      "bullets": [
+        {
+          "fr": "Intercontrat : Montée en compétences sur AWS, préparation certification AWS Solutions Architect. Projets internes avec les équipes françaises.",
+          "en": "Intercontract: Skills development on AWS, AWS Solutions Architect certification preparation. Internal projects with French teams."
+        },
+        {
+          "fr": "Veille technologique : Exploration des services AWS (ECS, Lambda, CloudFormation), comparaison architecturale avec GCP. Participation à des POCs internes.",
+          "en": "Technology monitoring: Exploration of AWS services (ECS, Lambda, CloudFormation), architectural comparison with GCP. Participation in internal POCs."
+        }
+      ],
+      "env": "AWS, ECS, Lambda, CloudFormation"
+    },
+    {
+      "role": {
+        "fr": "Ingénieur DevOps",
+        "en": "DevOps Engineer"
+      },
+      "company": "Cooperl",
+      "period": {
+        "fr": "Fév 2022 – Août 2023",
+        "en": "Feb 2022 – August 2023"
+      },
+      "location": {
+        "fr": "Rennes, France",
+        "en": "Rennes, France"
+      },
+      "bullets": [
+        {
+          "fr": "Kubernetes : Administration de plusieurs clusters K8s (GCP/GKE + Alibaba/ACK). Upgrades de version en zero-downtime. Gestion des namespaces, RBAC, network policies. Maintien d'un SLA élevé.",
+          "en": "Kubernetes: Administration of several K8s clusters (GCP/GKE + Alibaba/ACK). Zero-downtime version upgrades. Management of namespaces, RBAC, network policies. Maintaining a high SLA."
+        },
+        {
+          "fr": "Cloud & IaC : Déploiement et gestion de services cloud (Cloud Functions, DNS, stockage objet) via Terraform sur GCP et Alibaba Cloud. Standardisation des modules Terraform pour réutilisabilité.",
+          "en": "Cloud & IaC: Deployment and management of cloud services (Cloud Functions, DNS, object storage) via Terraform on GCP and Alibaba Cloud. Standardization of Terraform modules for reusability."
+        },
+        {
+          "fr": "CI/CD & GitOps : Pipelines Jenkins + GitHub Actions. Migration complète GitLab → GitHub. Mise en place d'une approche GitOps pour garantir reproductibilité et traçabilité des déploiements.",
+          "en": "CI/CD & GitOps: Jenkins Pipelines + GitHub Actions. Full migration GitLab → GitHub. Implementation of a GitOps approach to guarantee reproducibility and traceability of deployments."
+        },
+        {
+          "fr": "Monitoring & Observabilité : Déploiement de stacks Prometheus/Grafana/Tempo et ELK. Création de dashboards personnalisés, alerting proactif, corrélation métriques/traces/logs.",
+          "en": "Monitoring & Observability: Deployment of Prometheus/Grafana/Tempo and ELK stacks. Creation of personalized dashboards, proactive alerting, correlation of metrics/traces/logs."
+        },
+        {
+          "fr": "FinOps : Réduction significative des coûts infra cloud par optimisation des ressources, right-sizing et reserved instances. Reporting régulier aux stakeholders. Support SLO/SLA.",
+          "en": "FinOps: Significant reduction in cloud infrastructure costs through resource optimization, right-sizing and reserved instances. Regular reporting to stakeholders. SLO/SLA support."
+        },
+        {
+          "fr": "Sécurité : Mise en place de politiques de sécurité réseau (network policies K8s), gestion des secrets (Vault), scans de vulnérabilités sur les images Docker.",
+          "en": "Security: Implementation of network security policies (network policies K8s), management of secrets (Vault), vulnerability scans on Docker images."
+        }
+      ],
+      "env": "GCP, Alibaba Cloud, K8s (GKE, ACK), Docker, Helm, Terraform, Jenkins, GitHub Actions, Prometheus, Grafana, Tempo, ELK, MongoDB, Vault"
+    },
+    {
+      "role": {
+        "fr": "Ingénieur Systèmes & Cloud",
+        "en": "Systems & Cloud Engineer"
+      },
+      "company": "Orange Business Services",
+      "period": {
+        "fr": "Juin 2020 – Jan 2022",
+        "en": "June 2020 – Jan 2022"
+      },
+      "location": {
+        "fr": "Rennes, France",
+        "en": "Rennes, France"
+      },
+      "bullets": [
+        {
+          "fr": "Contexte : Équipe internationale (France + offshore). Gestion de nombreux serveurs et services cloud pour des clients haute criticité (télécoms, santé, streaming).",
+          "en": "Context: International team (France + offshore). Management of numerous servers and cloud services for high-criticality clients (telecoms, health, streaming)."
+        },
+        {
+          "fr": "TousAntiCovid : Reprise et gestion de l'infrastructure de l'application nationale de traçage Covid. Refonte complète sous Terraform, optimisation FinOps avec réduction significative des coûts, gestion des pics de charge massifs lors des vagues épidémiques.",
+          "en": "TousAntiCovid: Resumption and management of the infrastructure of the national Covid tracing application. Complete overhaul using Terraform, FinOps optimization with significant cost reduction, management of massive load peaks during epidemic waves."
+        },
+        {
+          "fr": "OCS (Streaming) : Administration de l'infrastructure haute disponibilité pour la plateforme de streaming OCS. Maintien d'un SLA très élevé. Gestion des montées en charge lors des sorties de séries.",
+          "en": "OCS (Streaming): Administration of the high availability infrastructure for the OCS streaming platform. Maintaining a very high SLA. Management of load increases during series releases."
+        },
+        {
+          "fr": "Star Service : Gestion de la plateforme de livraison. Infrastructure conteneurisée, monitoring et alerting.",
+          "en": "Star Service: Management of the delivery platform. Containerized infrastructure, monitoring and alerting."
+        },
+        {
+          "fr": "Cloud & IaC : Terraform multi-provider (Flexible Engine, Outscale). Nombreux rôles Ansible pour le configuration management. Automatisation complète du provisioning.",
+          "en": "Cloud & IaC: Terraform multi-provider (Flexible Engine, Outscale). Numerous Ansible roles for configuration management. Complete provisioning automation."
+        },
+        {
+          "fr": "Monitoring : Stack Prometheus/Alertmanager/Grafana. Dashboards métier et techniques, alerting multi-niveaux, PagerDuty.",
+          "en": "Monitoring: Stack Prometheus/Alertmanager/Grafana. Business and technical dashboards, multi-level alerting, PagerDuty."
+        },
+        {
+          "fr": "Support : Support L3 production avec astreintes (rotation 24/7). Support L3 interne pour les autres équipes. Gestion d'incidents critiques, post-mortems.",
+          "en": "Support: L3 production support with on-call duties (24/7 rotation). Internal L3 support for other teams. Management of critical incidents, post-mortems."
+        }
+      ],
+      "env": "Flexible Engine, Outscale, Kubernetes, Docker Swarm, Helm, Rancher, Terraform, Ansible, Jenkins, GitLab CI, Prometheus, Grafana, Alertmanager, PagerDuty"
+    },
+    {
+      "role": {
+        "fr": "Ingénieur Systèmes (Consultant)",
+        "en": "Systems Engineer (Consultant)"
+      },
+      "company": "Altran (mission chez Orange Business Services)",
+      "period": {
+        "fr": "Sept 2018 – Juin 2020",
+        "en": "September 2018 – June 2020"
+      },
+      "location": {
+        "fr": "Rennes, France",
+        "en": "Rennes, France"
+      },
+      "bullets": [
+        {
+          "fr": "Mission : Consulting en infrastructure et systèmes chez OCB, mission ayant débouché sur une embauche interne. Montée en compétences rapide sur l'écosystème cloud de l'entreprise.",
+          "en": "Mission: Infrastructure and systems consulting at OCB, mission leading to internal hiring. Rapid upskilling in the company's cloud ecosystem."
+        },
+        {
+          "fr": "Systèmes : Administration Linux (RedHat, CentOS, Ubuntu) et Windows Server. Gestion des systèmes de production, patching, hardening.",
+          "en": "Systems: Linux administration (RedHat, CentOS, Ubuntu) and Windows Server. Management of production systems, patching, hardening."
+        },
+        {
+          "fr": "IaC & Automation : Premiers déploiements Terraform et Ansible. Scripting Bash/Python pour l'automatisation des tâches récurrentes.",
+          "en": "IaC & Automation: First Terraform and Ansible deployments. Bash/Python scripting for the automation of recurring tasks."
+        },
+        {
+          "fr": "Monitoring : Mise en place de Prometheus/Grafana pour le monitoring des services. Support N2/N3 production.",
+          "en": "Monitoring: Implementation of Prometheus/Grafana for monitoring services. Support L2/L3 production."
+        }
+      ],
+      "env": "Linux (RedHat, CentOS, Ubuntu), Windows Server, Terraform, Ansible, Bash, Python, Prometheus, Grafana, Jenkins"
+    },
+    {
+      "role": {
+        "fr": "Consultant Infrastructure",
+        "en": "Infrastructure Consultant"
+      },
+      "company": "Sogeti",
+      "period": {
+        "fr": "Fév 2017 – Août 2018",
+        "en": "Feb 2017 – August 2018"
+      },
+      "location": {
+        "fr": "Rennes, France",
+        "en": "Rennes, France"
+      },
+      "bullets": [
+        {
+          "fr": "Systèmes : Administration Linux (RedHat, CentOS, Ubuntu) et Windows Server. Support N2 pour les équipes métier.",
+          "en": "Systems: Linux administration (RedHat, CentOS, Ubuntu) and Windows Server. L2 support for business teams."
+        },
+        {
+          "fr": "Annuaires & Identité : Gestion Active Directory et LDAP (OpenLDAP). Connectivité Linux/AD, SSO, gestion des droits et groupes.",
+          "en": "Directories & Identity: Active Directory and LDAP (OpenLDAP) management. Linux/AD connectivity, SSO, rights and groups management."
+        },
+        {
+          "fr": "Opérations : Sauvegardes, supervision, gestion des incidents, documentation des procédures.",
+          "en": "Operations: Backups, supervision, incident management, documentation of procedures."
+        }
+      ],
+      "env": "Linux (RedHat, CentOS, Ubuntu), Windows Server, Active Directory, OpenLDAP, VMware"
+    },
+    {
+      "role": {
+        "fr": "Technicien Informatique de Proximité",
+        "en": "Local IT Technician"
+      },
+      "company": "Econocom (client Thalès)",
+      "period": {
+        "fr": "Nov 2014 – Fév 2017",
+        "en": "Nov 2014 – Feb 2017"
+      },
+      "location": {
+        "fr": "Cholet, France",
+        "en": "Cholet, France"
+      },
+      "bullets": [
+        {
+          "fr": "Support : Support utilisateurs, gestion du parc informatique, résolution d'incidents N1/N2. Migration XP → Windows 7.",
+          "en": "Support: User support, IT equipment management, L1/L2 incident resolution. Migration XP → Windows 7."
+        },
+        {
+          "fr": "Réseau & Télécom : Configuration VoIP, gestion des cartes à puce (accès sécurisé Thalès), connectivité réseau. Intégration des nouveaux arrivants.",
+          "en": "Network & Telecom: VoIP configuration, smart card management (Thalès secure access), network connectivity. Integration of newcomers."
+        },
+        {
+          "fr": "Inventaire : Gestion et suivi du parc matériel via CA IT Client Manager. Déploiement et masterisation de postes.",
+          "en": "Inventory: Management and monitoring of hardware assets via CA IT Client Manager. Deployment and control of workstations."
+        }
+      ],
+      "env": "Windows XP/7, Linux RedHat, CA IT Client Manager, McAfee, VoIP, Active Directory"
+    }
+  ],
+  "certifications": [
+    {
+      "title": {
+        "fr": "Google Associate Cloud Engineer (ACE)",
+        "en": "Google Associate Cloud Engineer (ACE)"
+      },
+      "issuer": "Google Cloud",
+      "period": {
+        "fr": "2025 – 2028",
+        "en": "2025 – 2028"
+      }
+    },
+    {
+      "title": {
+        "fr": "Certified Kubernetes Administrator (CKA)",
+        "en": "Certified Kubernetes Administrator (CKA)"
+      },
+      "issuer": "The Linux Foundation",
+      "period": {
+        "fr": "2021 – 2024",
+        "en": "2021 – 2024"
+      }
+    }
+  ],
+  "education": [
+    {
+      "degree": {
+        "fr": "BTS SIO – Option SISR",
+        "en": "BTS SIO – SISR option"
+      },
+      "school": {
+        "fr": "Lycée Aliénor d'Aquitaine",
+        "en": "Lycée Eleanor d’Aquitaine"
+      },
+      "period": {
+        "fr": "2012 – 2014",
+        "en": "2012 – 2014"
+      }
+    },
+    {
+      "degree": {
+        "fr": "Administration d'un système Linux",
+        "en": "Administration of a Linux system"
+      },
+      "school": {
+        "fr": "ENI Services",
+        "en": "ENI Services"
+      },
+      "period": {
+        "fr": "2015",
+        "en": "2015"
+      }
+    }
+  ],
+  "languages": [
+    {
+      "name": {
+        "fr": "Français",
+        "en": "French"
+      },
+      "level": {
+        "fr": "Langue maternelle",
+        "en": "Native language"
+      }
+    },
+    {
+      "name": {
+        "fr": "Anglais",
+        "en": "English"
+      },
+      "level": {
+        "fr": "Professionnel",
+        "en": "Professional"
+      }
+    },
+    {
+      "name": {
+        "fr": "Espagnol",
+        "en": "Spanish"
+      },
+      "level": {
+        "fr": "Notions",
+        "en": "Concepts"
+      }
+    }
+  ]
+}

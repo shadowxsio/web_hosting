@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mickaël Gauvrit - Cloud Engineer & DevOps</title>
+    
+    <!-- Support pour les thèmes clair et sombre -->
+    <meta name="color-scheme" content="light dark">
+    <meta name="description" content="CV Web interactif de Mickaël Gauvrit - Cloud Engineer GCP | DevOps & SRE">
+    
+    <!-- Google Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Arrière-plan animé pour le web -->
+    <div class="background-blobs no-print">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <!-- Barre d'actions web flottante (Masquée à l'impression) -->
+    <div class="action-bar no-print">
+        <a href="../" class="action-btn portfolio-btn" title="Retour au portfolio">
+            <i class="fa-solid fa-person-running"></i>
+            <span class="btn-text" data-i18n="back_to_portfolio">Courses</span>
+        </a>
+        <button id="lang-toggle" class="action-btn lang-btn" title="Changer de langue">
+            <i class="fa-solid fa-globe"></i>
+            <span class="btn-text">EN</span>
+        </button>
+        <button id="print-btn" class="action-btn download-btn" title="Télécharger le PDF">
+            <i class="fa-solid fa-file-pdf"></i>
+            <span class="btn-text" data-i18n="download_pdf">Télécharger PDF</span>
+        </button>
+    </div>
+
+    <!-- Conteneur principal du CV -->
+    <main class="cv-container glass-panel">
+        
+        <!-- En-tête : Identité & Contacts -->
+        <header class="cv-header">
+            <div class="identity-section">
+                <h1 id="cv-name" class="name">Mickaël Gauvrit</h1>
+                <p id="cv-title" class="title-role">Cloud Engineer GCP | DevOps & SRE</p>
+                <div id="cv-subtitles" class="subtitles-container">
+                    <!-- Les sous-titres seront injectés ici -->
+                </div>
+            </div>
+            
+            <div class="contact-section">
+                <a id="contact-phone" href="tel:+14387888942" class="contact-item">
+                    <i class="fa-solid fa-phone"></i>
+                    <span>438 788-8942</span>
+                </a>
+                <a id="contact-email" href="mailto:mickael.gauvrit@outlook.com" class="contact-item">
+                    <i class="fa-solid fa-envelope"></i>
+                    <span>mickael.gauvrit@outlook.com</span>
+                </a>
+                <span id="contact-location" class="contact-item">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <span>Montréal, QC</span>
+                </span>
+                <a id="contact-linkedin" href="https://linkedin.com/in/micka%C3%ABl-gauvrit" target="_blank" rel="noopener noreferrer" class="contact-item">
+                    <i class="fa-brands fa-linkedin"></i>
+                    <span>linkedin.com/in/mickaël-gauvrit</span>
+                </a>
+                <a id="contact-github" href="https://github.com/shadowxsio" target="_blank" rel="noopener noreferrer" class="contact-item">
+                    <i class="fa-brands fa-github"></i>
+                    <span>github.com/shadowxsio</span>
+                </a>
+            </div>
+        </header>
+
+        <!-- Contenu à plat sans colonnes tronquantes -->
+        <div class="cv-content">
+            
+            <!-- Profil / Résumé -->
+            <div class="cv-section" id="profile-section">
+                <h2 class="section-title"><i class="fa-solid fa-user"></i> <span data-i18n="section_profile">Profil</span></h2>
+                <p id="profile-summary" class="profile-text">
+                    <!-- Résumé injecté -->
+                </p>
+            </div>
+
+            <!-- Compétences Techniques -->
+            <div class="cv-section" id="skills-section">
+                <h2 class="section-title"><i class="fa-solid fa-gears"></i> <span data-i18n="section_skills">Compétences</span></h2>
+                <div id="skills-container" class="skills-grid">
+                    <!-- Catégories de compétences injectées -->
+                </div>
+            </div>
+            
+            <!-- Expériences Professionnelles -->
+            <div class="cv-section" id="experiences-section">
+                <h2 class="section-title"><i class="fa-solid fa-briefcase"></i> <span data-i18n="section_experiences">Expériences</span></h2>
+                <div id="experiences-container" class="timeline">
+                    <!-- Expériences injectées -->
+                </div>
+            </div>
+
+            <!-- Section de fin (Certifications, Formation, Langues) - 3 colonnes web, 1 colonne print -->
+            <div class="cv-footer-grid">
+                <!-- Certifications -->
+                <div class="cv-section" id="certifications-section">
+                    <h2 class="section-title"><i class="fa-solid fa-award"></i> <span data-i18n="section_certifications">Certifications</span></h2>
+                    <div id="certifications-container" class="certifications-list">
+                        <!-- Certifications injectées -->
+                    </div>
+                </div>
+
+                <!-- Formation -->
+                <div class="cv-section" id="education-section">
+                    <h2 class="section-title"><i class="fa-solid fa-graduation-cap"></i> <span data-i18n="section_education">Formation</span></h2>
+                    <div id="education-container" class="education-list">
+                        <!-- Formation injectée -->
+                    </div>
+                </div>
+
+                <!-- Langues -->
+                <div class="cv-section" id="languages-section">
+                    <h2 class="section-title"><i class="fa-solid fa-language"></i> <span data-i18n="section_languages">Langues</span></h2>
+                    <div id="languages-container" class="languages-list">
+                        <!-- Langues injectées -->
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </main>
+
+    <!-- Script principal -->
+    <script src="app.js"></script>
+</body>
+</html>
