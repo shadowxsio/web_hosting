@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Maquette C — Porcelaine · RunCoach</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F7F7F5;
+    --paper: #FFFFFF;
+    --ink: #21201C;
+    --muted: #8C8A82;
+    --faint: #C2C0B8;
+    --hairline: #E8E7E3;
+    --accent: #7C90DB;
+    --accent-ink: #5468B8;
+    --accent-soft: #EEF1FB;
+    --sauge: #88B49B;
+    --sauge-soft: #EAF3EE;
+    --ambre: #D9A85F;
+    --rose: #D98FA6;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { -webkit-font-smoothing: antialiased; }
+  body { font-family:'Inter', system-ui, sans-serif; background: var(--bg); color: var(--ink); min-height:100vh; }
+  .layout { display:flex; min-height:100vh; }
+
+  /* ── Sidebar : seule zone liquid glass ───────── */
+  .sidebar {
+    width: 240px; flex-shrink: 0; height: 100vh; position: sticky; top: 0;
+    background: rgba(255,255,255,0.72);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-right: 1px solid var(--hairline);
+    padding: 30px 16px 22px;
+    display:flex; flex-direction:column;
+  }
+  .brand { display:flex; align-items:center; gap: 12px; padding: 0 10px 28px; }
+  .logo {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--accent);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .brand h1 { font-family:'Outfit'; font-size: 17px; font-weight: 700; letter-spacing:-0.02em; }
+  .brand small { display:block; font-size: 10.5px; color: var(--muted); letter-spacing: 0.04em; font-weight:500; }
+  nav { display:flex; flex-direction:column; gap: 1px; flex:1; }
+  .navsec { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--faint); padding: 16px 12px 7px; font-weight: 600; }
+  nav a {
+    display:flex; align-items:center; gap: 11px;
+    padding: 9px 12px; border-radius: 10px;
+    color: var(--muted); text-decoration:none; font-size: 13.5px; font-weight: 500;
+    border-left: 2px solid transparent;
+    transition: color 0.12s, background 0.12s;
+  }
+  nav a svg { width: 17px; height: 17px; opacity: 0.75; }
+  nav a:hover { color: var(--ink); background: rgba(0,0,0,0.025); }
+  nav a.active { color: var(--accent-ink); background: var(--accent-soft); font-weight: 600; border-left-color: var(--accent); border-radius: 0 10px 10px 0; }
+  nav a.active svg { opacity: 1; }
+  .user { display:flex; align-items:center; gap: 10px; padding: 14px 10px 0; border-top: 1px solid var(--hairline); }
+  .avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--ink); color: #fff; font-family:'Outfit'; font-weight:600; font-size: 11px; display:flex; align-items:center; justify-content:center; }
+  .user b { font-size: 12.5px; display:block; }
+  .user span { font-size: 10.5px; color: var(--muted); }
+
+  /* ── Main ────────────────────────────────────── */
+  main { flex:1; min-width:0; padding: 34px 38px 50px; max-width: 1180px; margin: 0 auto; }
+  .topbar { display:flex; justify-content:space-between; align-items:flex-end; margin-bottom: 28px; flex-wrap:wrap; gap: 14px; }
+  .topbar h2 { font-family:'Outfit'; font-size: 30px; font-weight: 700; letter-spacing:-0.035em; }
+  .topbar .date { color: var(--muted); font-size: 13px; margin-top: 4px; }
+  .btn {
+    font-family:'Inter'; font-weight: 600; font-size: 13px;
+    background: var(--ink); color: #fff; border:none; cursor:pointer;
+    padding: 11px 20px; border-radius: 99px;
+    display:flex; align-items:center; gap: 8px;
+    transition: opacity 0.15s;
+  }
+  .btn:hover { opacity: 0.85; }
+
+  .card { background: var(--paper); border: 1px solid var(--hairline); border-radius: 18px; padding: 24px; box-shadow: 0 1px 2px rgba(33,32,28,0.03); }
+  .label { font-size: 10.5px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+  .num { font-family:'Outfit'; font-weight: 700; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+
+  /* Readiness — bandeau éditorial */
+  .readiness { display:flex; align-items:center; gap: 36px; margin-bottom: 18px; flex-wrap:wrap; }
+  .score { display:flex; align-items:baseline; gap: 6px; }
+  .score b { font-size: 64px; font-family:'Outfit'; font-weight: 800; letter-spacing:-0.05em; line-height: 0.95; }
+  .score span { font-size: 15px; color: var(--faint); font-weight: 600; }
+  .statusdot { display:inline-flex; align-items:center; gap: 7px; font-size: 12px; font-weight: 600; color: var(--sauge); margin-top: 8px; }
+  .statusdot i { width: 8px; height: 8px; border-radius: 50%; background: var(--sauge); }
+  .rsep { width: 1px; align-self: stretch; background: var(--hairline); }
+  .factors { flex: 1; min-width: 260px; display: grid; grid-template-columns: 1fr 1fr; gap: 14px 28px; }
+  .factor .t { font-size: 11px; color: var(--muted); margin-bottom: 5px; display:flex; justify-content:space-between; }
+  .bar { height: 4px; background: #EFEEE9; border-radius: 99px; }
+  .bar i { display:block; height: 100%; border-radius: 99px; background: var(--sauge); }
+  .reco { flex-basis: 100%; font-size: 13px; color: var(--ink); padding-top: 16px; border-top: 1px solid var(--hairline); }
+  .reco b { color: var(--sauge); }
+
+  /* Stats grid */
+  .grid { display:grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 18px; }
+  .stat .head { display:flex; align-items:center; justify-content:space-between; margin-bottom: 18px; }
+  .stat .head svg { width: 16px; height: 16px; color: var(--faint); }
+  .stat .num { font-size: 30px; }
+  .stat .sub { font-size: 12.5px; color: var(--muted); margin-top: 3px; }
+  .stat .foot { display:flex; gap: 14px; margin-top: 16px; font-size: 11.5px; color: var(--muted); }
+  .stat .foot b { color: var(--ink); font-weight: 600; }
+  .tag { font-size: 10.5px; font-weight: 600; padding: 3px 9px; border-radius: 99px; }
+
+  .row2 { display:grid; grid-template-columns: 5fr 3fr; gap: 14px; }
+  h4.cardtitle { font-family:'Outfit'; font-size: 15px; font-weight: 600; letter-spacing:-0.01em; }
+  .vol-bars { display:flex; flex-direction:column; gap: 14px; margin-top: 18px; }
+  .vol-bars .r { display:flex; justify-content:space-between; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+  .vol-bars b { color: var(--ink); }
+  .track { height: 8px; border-radius: 99px; background: #EFEEE9; }
+  .track i { display:block; height:100%; border-radius: 99px; }
+  .alert { border-radius: 18px; padding: 24px; background: var(--sauge-soft); border: 1px solid #D6E8DE; }
+  .alert h4 { font-family:'Outfit'; font-size: 14.5px; color: #4A7A60; margin-bottom: 8px; }
+  .alert p { font-size: 12.5px; color: #6B8E7B; line-height: 1.6; }
+
+  .weekly { margin: 0 0 18px; display:flex; align-items:center; justify-content:space-between; cursor:pointer; padding: 18px 24px; }
+  .weekly h4 { font-family:'Outfit'; font-size: 14px; font-weight: 600; }
+  .weekly p { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .weekly .left { display:flex; align-items:center; gap: 14px; }
+  .weekly .dot { width: 38px; height: 38px; border-radius: 12px; background: var(--accent-soft); color: var(--accent-ink); display:flex; align-items:center; justify-content:center; }
+  .weekly .dot svg { width: 17px; height: 17px; }
+
+  .mobilebar { display:none; }
+  @media (max-width: 980px) {
+    .grid { grid-template-columns: repeat(2, 1fr); }
+    .row2 { grid-template-columns: 1fr; }
+    .factors { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 760px) {
+    .sidebar { display:none; }
+    main { padding: 16px 16px 40px; }
+    .mobilebar {
+      display:flex; align-items:center; justify-content:space-between;
+      background: rgba(255,255,255,0.8); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      border: 1px solid var(--hairline); border-radius: 16px; padding: 12px 16px; margin-bottom: 18px;
+      position: sticky; top: 12px; z-index: 5;
+    }
+    .grid { grid-template-columns: 1fr; }
+    .score b { font-size: 52px; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <g id="i-run"><path d="M13 4.5a1.8 1.8 0 1 0 0-3.6 1.8 1.8 0 0 0 0 3.6Z" fill="currentColor"/><path d="M6.5 20.5 9 15.5l3-2v-4l-3.5 2-1.5 3M12 9.5l3.5 2 3-1M12 13.5l2.5 3 .5 4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></g>
+    <g id="i-home" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 9.5 12 3l8.5 6.5V20a1 1 0 0 1-1 1h-5v-6h-5v6h-5a1 1 0 0 1-1-1V9.5Z"/></g>
+    <g id="i-cal" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="3.5" y="5" width="17" height="16" rx="3"/><path d="M3.5 10h17M8 2.5V6M16 2.5V6"/></g>
+    <g id="i-moon" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"/></g>
+    <g id="i-trend" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 17.5 9 11l4 4 7-8.5"/><path d="M15 6.5h5v5"/></g>
+    <g id="i-dumb" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 8v8M17 8v8M4 10v4M20 10v4M7 12h10"/></g>
+    <g id="i-bot" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="4.5" y="7" width="15" height="12" rx="3.5"/><path d="M12 7V3.5M9 12.5h.01M15 12.5h.01"/><path d="M9.5 16h5" stroke-linejoin="round"/></g>
+    <g id="i-food" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M7 3v7a2.5 2.5 0 0 0 2.5 2.5V21M7 3v4M11.5 3v4M17.5 3c-1.7 0-3 2-3 5v4h3v9M17.5 3v9"/></g>
+    <g id="i-set" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M4.5 7l2.6 1.5M16.9 15.5l2.6 1.5M4.5 17l2.6-1.5M16.9 8.5l2.6-1.5"/></g>
+    <g id="i-heart" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2-5 3.5 9 2.5-6 1.5 2H21"/></g>
+    <g id="i-zap"><path d="M13 2.5 4.5 13.5H11l-.8 8 8.3-11h-6.5l1-8Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></g>
+    <g id="i-sync" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 0 0-14.5-3.5M4 13a8 8 0 0 0 14.5 3.5"/><path d="M20 4v4h-4M4 20v-4h4"/></g>
+  </defs>
+</svg>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo"><svg viewBox="0 0 24 24" width="21" height="21" color="#fff"><use href="#i-run"/></svg></div>
+      <div><h1>RunCoach</h1><small>OTTAWA · SUB 3H30 ✓</small></div>
+    </div>
+    <nav>
+      <div class="navsec">Entraînement</div>
+      <a class="active" href="#"><svg viewBox="0 0 24 24"><use href="#i-home"/></svg>Général</a>
+      <a href="#"><svg viewBox="0 0 24 24"><use href="#i-run"/></svg>Séances</a>
+      <a href="#"><svg viewBox="0 0 24 24"><use href="#i-cal"/></svg>Préparation</a>
+      <a href="#"><svg viewBox="0 0 24 24"><use href="#i-dumb"/></svg>Renfo</a>
+      <div class="navsec">Analyse</div>
+      <a href="#"><svg viewBox="0 0 24 24"><use href="#i-moon"/></svg>Récupération</a>
+      <a href="#"><svg viewBox="0 0 24 24"><use href="#i-trend"/></svg>Progression</a>
+      <div class="navsec">Assistant</div>
+      <a href="#"><svg viewBox="0 0 24 24"><use href="#i-bot"/></svg>Coach IA</a>
+      <a href="#"><svg viewBox="0 0 24 24"><use href="#i-food"/></svg>Nutrition</a>
+      <a href="#"><svg viewBox="0 0 24 24"><use href="#i-set"/></svg>Paramètres</a>
+    </nav>
+    <div class="user"><div class="avatar">MG</div><div><b>Mickaël G.</b><span>Marathonien · 3 h 49</span></div></div>
+  </aside>
+
+  <main>
+    <div class="mobilebar">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="logo" style="width:34px;height:34px"><svg viewBox="0 0 24 24" width="18" height="18" color="#fff"><use href="#i-run"/></svg></div>
+        <h1 style="font-family:'Outfit';font-size:16px;font-weight:700">RunCoach</h1>
+      </div>
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#21201C" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </div>
+
+    <div class="topbar">
+      <div><h2>Tableau de bord</h2><div class="date">Mercredi 10 juin 2026 · semaine 24</div></div>
+      <button class="btn"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-sync"/></svg>Synchroniser</button>
+    </div>
+
+    <!-- Readiness éditorial -->
+    <section class="card readiness">
+      <div>
+        <span class="label">Readiness</span>
+        <div class="score"><b>99</b><span>/100</span></div>
+        <div class="statusdot"><i></i>Prêt pour la qualité</div>
+      </div>
+      <div class="rsep"></div>
+      <div class="factors">
+        <div class="factor"><div class="t"><span>FC repos</span><span>48 bpm · +0,3</span></div><div class="bar"><i style="width:95%"></i></div></div>
+        <div class="factor"><div class="t"><span>Sommeil</span><span>7 h 58 · 100/100</span></div><div class="bar"><i style="width:100%"></i></div></div>
+        <div class="factor"><div class="t"><span>Charge</span><span>−51 % vs S-1</span></div><div class="bar"><i style="width:100%"></i></div></div>
+        <div class="factor"><div class="t"><span>VFC</span><span style="color:var(--faint)">en attente Coros</span></div><div class="bar"><i style="width:0%"></i></div></div>
+      </div>
+      <div class="reco"><b>Feu vert</b> — séance qualité possible aujourd'hui. Ta récupération est optimale, profites-en pour la VMA prévue.</div>
+    </section>
+
+    <!-- Bilan hebdo -->
+    <section class="card weekly">
+      <div class="left">
+        <div class="dot"><svg viewBox="0 0 24 24"><use href="#i-cal"/></svg></div>
+        <div><h4>Bilan hebdomadaire · 2026-W24</h4><p>13,6 km · 1 séance · 0 renfo — « Récupération excellente, volume à relancer »</p></div>
+      </div>
+      <span class="tag" style="background:var(--accent-soft);color:var(--accent-ink)">Lire ↗</span>
+    </section>
+
+    <!-- 4 stats -->
+    <div class="grid">
+      <section class="card stat">
+        <div class="head"><span class="label">Dernier entraînement</span><svg viewBox="0 0 24 24"><use href="#i-run"/></svg></div>
+        <div class="num">13,58 <span style="font-size:15px;color:var(--muted);font-weight:500">km</span></div>
+        <div class="sub">Montréal Trail</div>
+        <div class="foot"><span>Allure <b>6:47</b></span><span>Durée <b>1 h 32</b></span></div>
+      </section>
+      <section class="card stat">
+        <div class="head"><span class="label">Sommeil</span><svg viewBox="0 0 24 24"><use href="#i-moon"/></svg></div>
+        <div class="num">7 h 58</div>
+        <div class="sub">Qualité 100 / 100</div>
+        <div class="foot"><span>Profond <b>94 m</b></span><span>FC min <b>44</b></span></div>
+      </section>
+      <section class="card stat">
+        <div class="head"><span class="label">VFC / HRV</span><svg viewBox="0 0 24 24"><use href="#i-heart"/></svg></div>
+        <div class="num">90 <span style="font-size:15px;color:var(--muted);font-weight:500">ms</span></div>
+        <div class="sub">Baseline 78 ms</div>
+        <div class="foot"><span class="tag" style="background:var(--sauge-soft);color:#4A7A60">Équilibré</span><span>RHR <b>48</b></span></div>
+      </section>
+      <section class="card stat">
+        <div class="head"><span class="label">Fatigue EvoLab</span><svg viewBox="0 0 24 24"><use href="#i-zap"/></svg></div>
+        <div class="num">7</div>
+        <div class="sub">Charge 274 · ratio 1.07</div>
+        <div class="foot"><span class="tag" style="background:var(--sauge-soft);color:#4A7A60">Récupéré</span></div>
+      </section>
+    </div>
+
+    <!-- Volume + alerte -->
+    <div class="row2">
+      <section class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <h4 class="cardtitle">Volume hebdomadaire</h4>
+          <span style="font-size:12px;color:var(--accent-ink);font-weight:600">−51 % vs S-1</span>
+        </div>
+        <div class="vol-bars">
+          <div><div class="r"><span>Cette semaine</span><b class="num" style="font-size:13px">13,6 km</b></div><div class="track"><i style="width:23%;background:var(--accent)"></i></div></div>
+          <div><div class="r"><span>Semaine dernière</span><b class="num" style="font-size:13px">27,9 km</b></div><div class="track"><i style="width:46%;background:#D9D8D2"></i></div></div>
+        </div>
+        <svg viewBox="0 0 560 64" width="100%" height="64" preserveAspectRatio="none" style="margin-top:18px">
+          <path d="M0 50 C40 46, 70 34, 110 36 S 180 54, 230 44 S 300 18, 350 24 S 430 46, 480 31 S 540 16, 560 20" fill="none" stroke="#7C90DB" stroke-width="2" stroke-linecap="round"/>
+          <line x1="0" y1="63" x2="560" y2="63" stroke="#E8E7E3" stroke-width="1"/>
+        </svg>
+        <p style="font-size:11px;color:var(--faint);margin-top:6px">Condition (CTI) — 30 derniers jours</p>
+      </section>
+      <section class="alert">
+        <h4>Règle des 10 % — respectée ✓</h4>
+        <p>Ton volume progresse de manière sécurisée. Cette marge te protège du surentraînement et des blessures de surcharge.</p>
+        <p style="margin-top:14px;font-size:11px;color:#9CB5A6">Basé sur tes 2 dernières semaines calendaires.</p>
+      </section>
+    </div>
+  </main>
+</div>
+</body>
+</html>

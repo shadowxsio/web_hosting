@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>RunCoach — Choisis ta maquette</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Inter',system-ui,sans-serif; background:#101321; color:#EDEDF4; min-height:100vh; padding: 50px 24px; }
+  .wrap { max-width: 1040px; margin: 0 auto; }
+  h1 { font-family:'Outfit'; font-size: 34px; font-weight: 800; letter-spacing:-0.03em; text-align:center; }
+  .sub { text-align:center; color:#8D93A8; margin: 10px 0 44px; font-size: 14.5px; }
+  .cards { display:grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  a.m { display:block; text-decoration:none; color:inherit; border-radius: 22px; overflow:hidden; border:1px solid rgba(255,255,255,0.09); transition: transform 0.18s, border-color 0.18s; }
+  a.m:hover { transform: translateY(-4px); border-color: rgba(167,139,250,0.5); }
+  .preview { height: 190px; position:relative; padding: 22px; }
+  .preview .minibar { height: 9px; border-radius: 99px; margin-bottom: 9px; }
+  .preview .minicard { border-radius: 10px; height: 52px; margin-top: 12px; display:flex; gap: 8px; padding: 9px; }
+  .preview .minicard i { display:block; border-radius: 6px; flex:1; }
+  .info { padding: 20px 22px 24px; background: #161A2C; }
+  .info h2 { font-family:'Outfit'; font-size: 18px; font-weight: 700; display:flex; align-items:center; gap: 10px; }
+  .info .badge { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; padding: 3px 9px; border-radius: 99px; }
+  .info p { font-size: 12.5px; color:#8D93A8; line-height: 1.6; margin-top: 9px; }
+  .info ul { margin: 12px 0 0 2px; list-style: none; }
+  .info li { font-size: 12px; color:#B9BDCB; padding: 3px 0 3px 18px; position: relative; }
+  .info li::before { content:'·'; position:absolute; left: 4px; font-weight: 900; }
+  .cta { display:inline-block; margin-top: 16px; font-size: 12.5px; font-weight: 600; color:#A78BFA; }
+  @media (max-width: 860px) { .cards { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🎨 Refonte RunCoach — 3 directions</h1>
+  <p class="sub">Même écran « Général », mêmes données — trois identités. Ouvre chaque maquette (aussi sur mobile) et choisis.</p>
+  <div class="cards">
+
+    <a class="m" href="aurora.html">
+      <div class="preview" style="background:#FAFAF8;background-image:radial-gradient(220px 150px at 15% 0%, #E4DDFE, transparent 65%),radial-gradient(240px 160px at 100% 20%, #FFE9DC, transparent 60%),radial-gradient(260px 180px at 50% 120%, #DDF3EA, transparent 60%)">
+        <div class="minibar" style="width:46%;background:rgba(28,27,34,0.12)"></div>
+        <div class="minibar" style="width:28%;background:rgba(28,27,34,0.07)"></div>
+        <div class="minicard" style="background:rgba(255,255,255,0.6);border:1px solid rgba(255,255,255,0.8);box-shadow:0 6px 18px rgba(28,27,34,0.07)">
+          <i style="background:#EDEAFE"></i><i style="background:#FFE9DC"></i><i style="background:#DDF3EA"></i><i style="background:#FBE3EE"></i>
+        </div>
+        <div class="minicard" style="background:rgba(255,255,255,0.55);border:1px solid rgba(255,255,255,0.8)">
+          <i style="background:linear-gradient(90deg,#C9BCFB,#8B7CF6);flex:3"></i><i style="background:rgba(28,27,34,0.08);flex:2"></i>
+        </div>
+      </div>
+      <div class="info">
+        <h2>A — Aurora <span class="badge" style="background:rgba(139,124,246,0.18);color:#C9BCFB">CLAIR PASTEL</span></h2>
+        <p>Liquid glass blanc sur nappes aurora pastel. Doux, lumineux, très 2026.</p>
+        <ul>
+          <li>Fond ivoire + lavande, pêche, menthe</li>
+          <li>Cartes verre dépoli, ombres diffuses</li>
+          <li>Accent violet pastel unique</li>
+        </ul>
+        <span class="cta">Voir la maquette →</span>
+      </div>
+    </a>
+
+    <a class="m" href="nocturne.html">
+      <div class="preview" style="background:#0E1220;background-image:radial-gradient(240px 160px at 10% 0%, rgba(167,139,250,0.2), transparent 60%),radial-gradient(240px 160px at 100% 30%, rgba(240,168,196,0.13), transparent 60%)">
+        <div class="minibar" style="width:46%;background:rgba(255,255,255,0.14)"></div>
+        <div class="minibar" style="width:28%;background:rgba(255,255,255,0.07)"></div>
+        <div class="minicard" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.09)">
+          <i style="background:rgba(167,139,250,0.25)"></i><i style="background:rgba(240,168,196,0.22)"></i><i style="background:rgba(125,211,181,0.22)"></i><i style="background:rgba(167,139,250,0.15)"></i>
+        </div>
+        <div class="minicard" style="background:rgba(255,255,255,0.045);border:1px solid rgba(255,255,255,0.08)">
+          <i style="background:linear-gradient(90deg,#A78BFA,#8B6CF6);flex:3"></i><i style="background:rgba(255,255,255,0.1);flex:2"></i>
+        </div>
+      </div>
+      <div class="info">
+        <h2>B — Nocturne <span class="badge" style="background:rgba(167,139,250,0.18);color:#C9BCFB">SOMBRE ADOUCI</span></h2>
+        <p>L'esprit dark actuel, mais calme et chic : fini le néon, place aux pastels désaturés.</p>
+        <ul>
+          <li>Ardoise bleutée + halos lavande/rose</li>
+          <li>Glass léger, bordures hairline</li>
+          <li>Zéro animation de fond</li>
+        </ul>
+        <span class="cta">Voir la maquette →</span>
+      </div>
+    </a>
+
+    <a class="m" href="porcelaine.html">
+      <div class="preview" style="background:#F7F7F5">
+        <div class="minibar" style="width:46%;background:#DEDDD7"></div>
+        <div class="minibar" style="width:28%;background:#EBEAE5"></div>
+        <div class="minicard" style="background:#fff;border:1px solid #E8E7E3">
+          <i style="background:#EEF1FB"></i><i style="background:#EAF3EE"></i><i style="background:#F6F6F3"></i><i style="background:#F6F6F3"></i>
+        </div>
+        <div class="minicard" style="background:#fff;border:1px solid #E8E7E3">
+          <i style="background:#7C90DB;flex:3"></i><i style="background:#EFEEE9;flex:2"></i>
+        </div>
+      </div>
+      <div class="info">
+        <h2>C — Porcelaine <span class="badge" style="background:rgba(124,144,219,0.18);color:#A7B6E8">ÉDITORIAL</span></h2>
+        <p>Ultra-minimal, données d'abord. Le glass réservé à la navigation : le plus rapide des trois.</p>
+        <ul>
+          <li>Blanc porcelaine, hairlines, zéro bruit</li>
+          <li>Gros chiffres Outfit, hiérarchie forte</li>
+          <li>Accent pervenche + statuts sauge</li>
+        </ul>
+        <span class="cta">Voir la maquette →</span>
+      </div>
+    </a>
+
+  </div>
+</div>
+</body>
+</html>
