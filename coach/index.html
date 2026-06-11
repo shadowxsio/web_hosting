@@ -8,7 +8,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://unpkg.com/maplibre-gl@4.3.0/dist/maplibre-gl.css" rel="stylesheet" />
-    <script src="https://unpkg.com/maplibre-gl@4.3.0/dist/maplibre-gl.js"></script>
+    <!-- defer : MapLibre (~230 Ko) ne doit pas bloquer le parsing — il n'est
+         utilisé que dans l'onglet Carte & Graphes d'une séance -->
+    <script src="https://unpkg.com/maplibre-gl@4.3.0/dist/maplibre-gl.js" defer></script>
     <!-- Applique le thème avant le premier paint (évite le flash) -->
     <script>
       try {
@@ -16,8 +18,9 @@
       } catch (e) {}
     </script>
     <title>RunCoach</title>
-    <script type="module" crossorigin src="./assets/index-Bgl2-U_7.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-l7RmA4Xb.css">
+    <script type="module" crossorigin src="./assets/index-0Rt9fQrb.js"></script>
+    <link rel="modulepreload" crossorigin href="./assets/jsx-runtime-t69saJ43.js">
+    <link rel="stylesheet" crossorigin href="./assets/index-CHU-ZWJY.css">
   </head>
   <body>
     <div id="root"></div>
