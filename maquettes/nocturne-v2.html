@@ -170,61 +170,51 @@
   .dock-zone { position: fixed; left:0; right:0; bottom: 16px; z-index: 50; display:flex; justify-content:center; pointer-events:none; }
   .dock-rel { position:relative; pointer-events:auto; }
 
+  /* La réfraction réelle est rendue par liquidGL (WebGL). Le CSS ne garde
+     qu'un léger fallback + le liseré prismatique néo-rétro par-dessus. */
   .dock {
     position: relative;
     display:flex; align-items:center; gap: 2px;
     padding: 9px 10px;
     border-radius: 999px;
-    /* verre quasi pur : à peine teinté, très flouté et sur-saturé */
-    background: linear-gradient(115deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.02) 38%, rgba(255,255,255,0.07) 72%, rgba(255,255,255,0.03) 100%);
-    backdrop-filter: blur(30px) saturate(210%) brightness(1.08);
-    -webkit-backdrop-filter: blur(30px) saturate(210%) brightness(1.08);
-    box-shadow:
-      0 22px 50px rgba(0,0,0,0.38),
-      inset 0 1px 1px rgba(255,255,255,0.32),
-      inset 0 -1px 1px rgba(255,255,255,0.06);
+    z-index: 5;
+    background: rgba(255,255,255,0.04);
+    box-shadow: 0 22px 50px rgba(0,0,0,0.35);
     touch-action: none;
   }
   [data-theme="light"] .dock {
-    background: linear-gradient(115deg, rgba(255,255,255,0.38) 0%, rgba(255,255,255,0.12) 38%, rgba(255,255,255,0.30) 72%, rgba(255,255,255,0.16) 100%);
-    box-shadow:
-      0 22px 50px rgba(27,29,42,0.18),
-      inset 0 1px 1px rgba(255,255,255,0.9),
-      inset 0 -1px 1px rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.12);
+    box-shadow: 0 22px 50px rgba(27,29,42,0.16);
   }
   /* Arête lumineuse prismatique (liseré cyan→blanc→magenta) */
   .dock::before {
     content:''; position:absolute; inset:0; border-radius:999px; padding:1.2px;
+    z-index: 2;
     background: linear-gradient(115deg,
-      rgba(255,255,255,0.95) 0%, rgba(127,240,227,0.55) 18%,
-      rgba(255,255,255,0.18) 42%, rgba(255,255,255,0.10) 58%,
-      rgba(255,122,198,0.45) 82%, rgba(255,255,255,0.8) 100%);
+      rgba(255,255,255,0.95) 0%, rgba(127,240,227,0.5) 18%,
+      rgba(255,255,255,0.15) 42%, rgba(255,255,255,0.08) 58%,
+      rgba(255,122,198,0.4) 82%, rgba(255,255,255,0.75) 100%);
     -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor; mask-composite: exclude;
     pointer-events:none;
   }
-  /* Reflets spéculaires : bande diagonale + voile supérieur */
-  .dock::after {
-    content:''; position:absolute; inset:0; border-radius:999px; pointer-events:none;
-    background:
-      linear-gradient(105deg, transparent 6%, rgba(255,255,255,0.30) 11%, rgba(255,255,255,0.04) 19%, transparent 25%),
-      linear-gradient(105deg, transparent 64%, rgba(255,255,255,0.10) 70%, transparent 78%),
-      radial-gradient(130% 90% at 50% -30%, rgba(255,255,255,0.16), transparent 55%);
-  }
 
   .dock-item {
-    position: relative; z-index: 1;
+    position: relative; z-index: 3;
     display:flex; flex-direction:column; align-items:center; justify-content:center; gap: 4px;
     min-width: 66px; padding: 8px 12px 7px;
     border-radius: 999px; border:none; cursor:pointer;
     background: transparent; color: var(--dock-muted);
     font-family:'Outfit'; font-weight:600; font-size: 10.5px; letter-spacing: 0.01em;
-    transition: color 0.2s, transform 0.2s;
+    transition: color 0.2s, transform 0.2s, opacity 0.2s;
     -webkit-tap-highlight-color: transparent;
   }
-  .dock-item svg { width: 22px; height: 22px; }
+  /* Une couleur unique par entrée — icônes monochromes (l'étincelle suit) */
+  .dock-item svg, .submenu a svg { --spark: currentColor; }
+  .dock-item svg { width: 22px; height: 22px; color: var(--c, currentColor); opacity: 0.85; transition: opacity 0.2s, filter 0.2s; }
   .dock-item .lbl { white-space:nowrap; }
   .dock-item:hover { transform: translateY(-2px); color: var(--dock-ink); }
+  .dock-item:hover svg, .dock-item.active svg { opacity: 1; }
   /* Sous-capsule de verre de l'élément actif : plus brillante, plus définie */
   .dock-item.active {
     color: var(--dock-ink);
@@ -241,7 +231,15 @@
       inset 0 0 0 1px rgba(255,255,255,0.8),
       0 6px 16px rgba(27,29,42,0.16);
   }
-  .dock-item.active svg { filter: drop-shadow(0 0 6px rgba(127,240,227,0.45)); }
+  .dock-item.active svg { filter: drop-shadow(0 0 7px var(--c, rgba(127,240,227,0.5))); }
+
+  /* Palette néo-rétro : une couleur par entrée */
+  [data-theme="dark"] {
+    --c-home: #A78BFA; --c-train: #FF9E7A; --c-analyse: #6FE7DD; --c-coach: #FF7AC6; --c-set: #7DD3B5;
+  }
+  [data-theme="light"] {
+    --c-home: #7C66E8; --c-train: #E8703F; --c-analyse: #0FA89A; --c-coach: #DE4FA0; --c-set: #2E9E78;
+  }
 
   /* Sous-menus : même verre cristallin */
   .submenu {
@@ -461,33 +459,33 @@
   <div class="dock-rel">
 
     <div class="submenu" id="sub-training">
-      <a href="#" class="current"><svg viewBox="0 0 24 24"><use href="#i-run"/></svg>Séances</a>
-      <a href="#"><svg viewBox="0 0 24 24"><use href="#i-cal"/></svg>Préparation</a>
-      <a href="#"><svg viewBox="0 0 24 24"><use href="#i-dumb"/></svg>Renfo</a>
+      <a href="#" class="current"><svg viewBox="0 0 24 24" style="color:var(--c-train)"><use href="#i-run"/></svg>Séances</a>
+      <a href="#"><svg viewBox="0 0 24 24" style="color:var(--c-train)"><use href="#i-cal"/></svg>Préparation</a>
+      <a href="#"><svg viewBox="0 0 24 24" style="color:var(--c-train)"><use href="#i-dumb"/></svg>Renfo</a>
     </div>
     <div class="submenu" id="sub-analyse">
-      <a href="#" class="current"><svg viewBox="0 0 24 24"><use href="#i-moon"/></svg>Récupération</a>
-      <a href="#"><svg viewBox="0 0 24 24"><use href="#i-trend"/></svg>Progression</a>
+      <a href="#" class="current"><svg viewBox="0 0 24 24" style="color:var(--c-analyse)"><use href="#i-moon"/></svg>Récupération</a>
+      <a href="#"><svg viewBox="0 0 24 24" style="color:var(--c-analyse)"><use href="#i-trend"/></svg>Progression</a>
     </div>
     <div class="submenu" id="sub-coach">
-      <a href="#" class="current"><svg viewBox="0 0 24 24"><use href="#i-bot"/></svg>Coach IA</a>
-      <a href="#"><svg viewBox="0 0 24 24"><use href="#i-food"/></svg>Nutrition</a>
+      <a href="#" class="current"><svg viewBox="0 0 24 24" style="color:var(--c-coach)"><use href="#i-bot"/></svg>Coach IA</a>
+      <a href="#"><svg viewBox="0 0 24 24" style="color:var(--c-coach)"><use href="#i-food"/></svg>Nutrition</a>
     </div>
 
     <div class="dock" id="dock">
-      <button class="dock-item active" data-label="Accueil">
+      <button class="dock-item active" data-label="Accueil" style="--c:var(--c-home)">
         <svg viewBox="0 0 24 24"><use href="#i-home"/></svg><span class="lbl">Accueil</span>
       </button>
-      <button class="dock-item" data-label="Entraînement" data-sub="sub-training">
+      <button class="dock-item" data-label="Entraînement" data-sub="sub-training" style="--c:var(--c-train)">
         <svg viewBox="0 0 24 24"><use href="#i-run"/></svg><span class="lbl">Entraînement</span>
       </button>
-      <button class="dock-item" data-label="Analyse" data-sub="sub-analyse">
+      <button class="dock-item" data-label="Analyse" data-sub="sub-analyse" style="--c:var(--c-analyse)">
         <svg viewBox="0 0 24 24"><use href="#i-trend"/></svg><span class="lbl">Analyse</span>
       </button>
-      <button class="dock-item" data-label="Coach" data-sub="sub-coach">
+      <button class="dock-item" data-label="Coach" data-sub="sub-coach" style="--c:var(--c-coach)">
         <svg viewBox="0 0 24 24"><use href="#i-bot"/></svg><span class="lbl">Coach</span>
       </button>
-      <button class="dock-item" data-label="Réglages">
+      <button class="dock-item" data-label="Réglages" style="--c:var(--c-set)">
         <svg viewBox="0 0 24 24"><use href="#i-set"/></svg><span class="lbl">Réglages</span>
       </button>
     </div>
@@ -506,8 +504,14 @@
     document.querySelector('.ic-sun').style.display = t === 'dark' ? 'none' : '';
     document.querySelector('.topbar h2').textContent = t === 'dark' ? 'Bonjour Mickaël 🌙' : 'Bonjour Mickaël ☀️';
   }
-  document.getElementById('themeToggle').addEventListener('click', () =>
-    setTheme(root.dataset.theme === 'dark' ? 'light' : 'dark'));
+  document.getElementById('themeToggle').addEventListener('click', () => {
+    const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+    localStorage.setItem('rc-theme', next);
+    // Recharge pour que le snapshot WebGL (liquidGL) corresponde au nouveau thème
+    const url = new URL(location.href);
+    url.searchParams.delete('theme');
+    location.href = url.toString();
+  });
 
   const dock = document.getElementById('dock');
   const items = [...dock.querySelectorAll('.dock-item')];
@@ -540,6 +544,32 @@
   });
   document.addEventListener('click', e => {
     if (!e.target.closest('.dock') && !e.target.closest('.submenu')) closeSub();
+  });
+</script>
+
+<!-- ── liquidGL : réfraction WebGL réelle (https://github.com/naughtyduk/liquidGL) ── -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/naughtyduk/liquidGL@main/scripts/liquidGL.js"></script>
+<script>
+  window.addEventListener('load', () => {
+    try {
+      if (typeof liquidGL === 'function') {
+        liquidGL({
+          target: '.dock',
+          snapshot: 'body',
+          resolution: 2.0,
+          refraction: 0.012,   // courbure du contenu derrière le verre
+          bevelDepth: 0.14,    // profondeur de l'arête (lentille sur les bords)
+          bevelWidth: 0.22,
+          frost: 3,            // très léger dépoli
+          magnify: 1.05,       // effet loupe subtil
+          specular: true,      // reflets animés
+          shadow: false        // on garde notre ombre CSS
+        });
+      }
+    } catch (e) {
+      console.warn('liquidGL indisponible, fallback CSS conservé :', e);
+    }
   });
 </script>
 </body>
