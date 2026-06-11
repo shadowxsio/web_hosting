@@ -225,6 +225,7 @@
     background: rgba(255,255,255,0.05);
     box-shadow: 0 22px 50px var(--shadow);
     touch-action:none;
+    pointer-events: auto !important; /* liquidGL pose pointer-events:none sur sa cible */
   }
   [data-theme="light"] .dock { background: rgba(255,255,255,0.14); }
   .dock::before {
