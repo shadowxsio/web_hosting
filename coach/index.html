@@ -1,19 +1,30 @@
 <!doctype html>
-<html lang="en">
+<html lang="fr" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://unpkg.com/maplibre-gl@4.3.0/dist/maplibre-gl.css" rel="stylesheet" />
     <script src="https://unpkg.com/maplibre-gl@4.3.0/dist/maplibre-gl.js"></script>
-    <title>Centralized Running Hub</title>
-    <script type="module" crossorigin src="./assets/index-BWvV3TXA.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-C1ehsAz1.css">
+    <!-- Applique le thème avant le premier paint (évite le flash) -->
+    <script>
+      try {
+        document.documentElement.dataset.theme = localStorage.getItem('rc-theme') || 'dark';
+      } catch (e) {}
+    </script>
+    <title>RunCoach</title>
+    <script type="module" crossorigin src="./assets/index-CXrXo9a6.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-BYe_VEb2.css">
   </head>
   <body>
     <div id="root"></div>
+    <!-- liquidGL : réfraction WebGL réelle du dock (https://github.com/naughtyduk/liquidGL)
+         html2canvas-pro (et non html2canvas) : Tailwind 4 émet des couleurs oklch()
+         que html2canvas 1.4.1 ne sait pas parser — le fork pro les supporte -->
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas-pro@1.5.8/dist/html2canvas-pro.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/gh/naughtyduk/liquidGL@main/scripts/liquidGL.js" defer></script>
   </body>
 </html>
