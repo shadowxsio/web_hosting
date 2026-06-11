@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Maquette V3 — Prisme · RunCoach</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ════ V3 « PRISME » — verre frosté sur fond vivant (style démos liquidGL) ════ */
+  :root, [data-theme="dark"] {
+    --bg: #0B0B1E;
+    --ink: #F4F3FA;
+    --muted: rgba(244,243,250,0.62);
+    --faint: rgba(244,243,250,0.38);
+    --violet: #8B5CF6; --magenta: #FF4D9D; --coral: #FF8A5C; --cyan: #22D3EE; --gold: #F5C04E; --vert: #4ADE80;
+    --glass: rgba(255,255,255,0.07);
+    --glass-strong: rgba(255,255,255,0.10);
+    --edge: rgba(255,255,255,0.16);
+    --sheen: rgba(255,255,255,0.35);
+    --shadow: rgba(4,4,18,0.55);
+    --hairline: rgba(255,255,255,0.10);
+    --chip: rgba(255,255,255,0.09);
+    --track: rgba(255,255,255,0.10);
+    --blob1: rgba(139,92,246,0.55); --blob2: rgba(255,77,157,0.42);
+    --blob3: rgba(255,138,92,0.35); --blob4: rgba(34,211,238,0.30);
+  }
+  [data-theme="light"] {
+    --bg: #F4F1EA;
+    --ink: #1A1726;
+    --muted: rgba(26,23,38,0.62);
+    --faint: rgba(26,23,38,0.4);
+    --violet: #7C4DEB; --magenta: #E83A88; --coral: #F0703A; --cyan: #0BA5C4; --gold: #D99B22; --vert: #2BA45D;
+    --glass: rgba(255,255,255,0.40);
+    --glass-strong: rgba(255,255,255,0.55);
+    --edge: rgba(255,255,255,0.85);
+    --sheen: rgba(255,255,255,0.95);
+    --shadow: rgba(26,23,38,0.16);
+    --hairline: rgba(26,23,38,0.09);
+    --chip: rgba(26,23,38,0.06);
+    --track: rgba(26,23,38,0.08);
+    --blob1: rgba(139,92,246,0.38); --blob2: rgba(255,77,157,0.30);
+    --blob3: rgba(255,138,92,0.30); --blob4: rgba(34,211,238,0.26);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { -webkit-font-smoothing: antialiased; }
+  body { font-family:'Inter',system-ui,sans-serif; background:var(--bg); color:var(--ink); min-height:100vh; overflow-x:hidden; }
+
+  /* Fond « wallpaper » vivant : nappes vives + voile conique + grain léger */
+  .art {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background:
+      radial-gradient(640px 540px at 12% 8%, var(--blob1) 0%, transparent 62%),
+      radial-gradient(700px 560px at 92% 22%, var(--blob2) 0%, transparent 60%),
+      radial-gradient(620px 520px at 78% 92%, var(--blob3) 0%, transparent 58%),
+      radial-gradient(680px 560px at 12% 88%, var(--blob4) 0%, transparent 58%),
+      conic-gradient(from 210deg at 55% 45%, transparent 0deg, rgba(139,92,246,0.10) 80deg, transparent 160deg, rgba(255,138,92,0.08) 240deg, transparent 330deg);
+  }
+  .art::after {
+    content:''; position:absolute; inset:0; opacity:0.05; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .page { position:relative; z-index:1; max-width:1180px; margin:0 auto; padding:18px 20px 170px; }
+
+  /* ── Verre « frost » V3 : laiteux, biseau visible, voile supérieur ── */
+  .frost {
+    position:relative;
+    background: var(--glass);
+    backdrop-filter: blur(26px) saturate(170%);
+    -webkit-backdrop-filter: blur(26px) saturate(170%);
+    border: 1px solid var(--edge);
+    box-shadow:
+      inset 0 1px 0 var(--sheen),
+      inset 0 -12px 30px rgba(255,255,255,0.035),
+      0 24px 60px var(--shadow);
+  }
+  .frost::before {
+    content:''; position:absolute; inset:0; border-radius:inherit; pointer-events:none;
+    background: radial-gradient(120% 60% at 50% -12%, rgba(255,255,255,0.16), transparent 55%);
+  }
+  /* Formes : coins asymétriques alternés */
+  .shape-a { border-radius: 36px 18px 36px 18px; }
+  .shape-b { border-radius: 18px 36px 18px 36px; }
+  .shape-hero { border-radius: 44px 24px 40px 24px; }
+  .shape-pill { border-radius: 999px; }
+
+  /* Tilt 3D (démo 2) + reflet qui suit le curseur */
+  .tilt { transform-style: preserve-3d; will-change: transform; transition: transform 0.18s ease-out, box-shadow 0.25s; }
+  .tilt::after {
+    content:''; position:absolute; inset:0; border-radius:inherit; pointer-events:none; opacity:0;
+    background: radial-gradient(220px 160px at var(--gx,50%) var(--gy,50%), rgba(255,255,255,0.18), transparent 70%);
+    transition: opacity 0.25s;
+  }
+  .tilt:hover::after { opacity:1; }
+
+  /* ── Header pilule ── */
+  header {
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 11px 14px 11px 16px; border-radius: 999px;
+    position: sticky; top: 14px; z-index: 30; margin-bottom: 28px;
+  }
+  header::after {
+    content:''; position:absolute; inset:0; border-radius:999px; padding:1.3px; pointer-events:none;
+    background: linear-gradient(115deg, rgba(255,255,255,0.9), var(--cyan) 22%, rgba(255,255,255,0.1) 45%, rgba(255,255,255,0.06) 60%, var(--magenta) 84%, rgba(255,255,255,0.75));
+    opacity: 0.55;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude;
+  }
+  .brand { display:flex; align-items:center; gap:12px; }
+  .logo {
+    width:42px; height:42px; border-radius:50%;
+    background: conic-gradient(from 230deg, var(--violet), var(--magenta), var(--coral), var(--gold), var(--cyan), var(--violet));
+    display:flex; align-items:center; justify-content:center;
+    box-shadow: 0 4px 20px rgba(139,92,246,0.5), inset 0 1px 0 rgba(255,255,255,0.5);
+  }
+  .logo svg { filter: drop-shadow(0 1px 2px rgba(0,0,0,0.35)); }
+  .brand h1 { font-family:'Outfit'; font-size:17px; font-weight:800; letter-spacing:-0.02em; }
+  .brand small { display:block; font-size:10.5px; color:var(--muted); font-weight:500; }
+  .actions { display:flex; align-items:center; gap:9px; }
+  .iconbtn {
+    width:38px; height:38px; border-radius:50%; cursor:pointer;
+    background: var(--chip); border:1px solid var(--hairline);
+    color:var(--ink); display:flex; align-items:center; justify-content:center;
+    transition: transform 0.15s;
+  }
+  .iconbtn:hover { transform: translateY(-1px) rotate(12deg); }
+  .iconbtn svg { width:17px; height:17px; }
+  .btn {
+    font-family:'Outfit'; font-weight:700; font-size:13px; cursor:pointer; border:none;
+    background: linear-gradient(110deg, var(--violet), var(--magenta) 70%);
+    color:#fff; padding:11px 19px; border-radius:999px;
+    box-shadow: 0 8px 22px rgba(255,77,157,0.35), inset 0 1px 0 rgba(255,255,255,0.4);
+    display:flex; align-items:center; gap:8px;
+    transition: transform 0.15s, box-shadow 0.2s;
+  }
+  .btn:hover { transform: translateY(-1px); box-shadow: 0 10px 26px rgba(255,77,157,0.5), inset 0 1px 0 rgba(255,255,255,0.4); }
+
+  .topbar { margin: 0 6px 22px; display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:10px; }
+  .topbar h2 { font-family:'Outfit'; font-size:30px; font-weight:800; letter-spacing:-0.035em; }
+  .topbar h2 em {
+    font-style:normal;
+    background: linear-gradient(100deg, var(--violet), var(--magenta) 55%, var(--coral));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .topbar p { color:var(--muted); font-size:13px; margin-top:4px; }
+
+  .label { font-size:10.5px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); }
+  .big { font-family:'Outfit'; font-size:27px; font-weight:800; letter-spacing:-0.025em; font-variant-numeric:tabular-nums; }
+
+  /* ── Readiness hero : bulle de verre + blob morphant (démo 3) ── */
+  .hero { display:flex; align-items:center; gap:34px; padding:26px 30px; margin-bottom:18px; flex-wrap:wrap; overflow:visible; }
+  .bubble-wrap { position:relative; width:170px; height:150px; flex-shrink:0; }
+  .morph {
+    position:absolute; inset:-12px -16px;
+    background: linear-gradient(130deg, var(--blob1), var(--blob2) 50%, var(--blob4));
+    filter: blur(2px); opacity:0.75;
+    animation: morphing 14s ease-in-out infinite;
+  }
+  @keyframes morphing {
+    0%, 100% { border-radius: 58% 42% 61% 39% / 47% 55% 45% 53%; }
+    25%      { border-radius: 42% 58% 38% 62% / 58% 40% 60% 42%; }
+    50%      { border-radius: 55% 45% 52% 48% / 38% 58% 42% 62%; }
+    75%      { border-radius: 40% 60% 58% 42% / 55% 42% 58% 45%; }
+  }
+  .bubble {
+    position:absolute; inset:0;
+    border-radius:50% 46% 52% 48% / 50% 52% 48% 50%;
+    background: var(--glass-strong);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border:1px solid var(--edge);
+    box-shadow: inset 0 1px 0 var(--sheen), inset 0 -10px 26px rgba(255,255,255,0.05), 0 18px 44px var(--shadow);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+  }
+  .bubble b { font-family:'Outfit'; font-size:46px; font-weight:900; letter-spacing:-0.04em; line-height:1; }
+  .bubble span { font-size:10px; font-weight:800; letter-spacing:0.14em; color:var(--vert); margin-top:3px; }
+  .factors { flex:1 1 250px; min-width:0; display:flex; flex-direction:column; gap:11px; }
+  .factor { font-size:12px; color:var(--muted); }
+  .factor .row { display:flex; justify-content:space-between; margin-bottom:5px; }
+  .bar { height:7px; border-radius:99px; background:var(--track); overflow:hidden; }
+  .bar i { display:block; height:100%; border-radius:99px; background:linear-gradient(90deg, var(--cyan), var(--vert)); }
+  .reco {
+    margin-top:4px; padding:12px 16px; border-radius: 8px 22px 22px 22px;
+    background: linear-gradient(110deg, rgba(74,222,128,0.13), rgba(34,211,238,0.10));
+    border:1px solid rgba(74,222,128,0.25); color:var(--vert); font-size:13px; font-weight:600;
+  }
+
+  /* ── Bilan : capsule ── */
+  .weekly { display:flex; align-items:center; justify-content:space-between; cursor:pointer; margin-bottom:18px; padding:15px 22px; gap:12px; }
+  .weekly .left { display:flex; align-items:center; gap:14px; min-width:0; }
+  .weekly h4 { font-family:'Outfit'; font-size:14.5px; font-weight:700; }
+  .weekly p { font-size:12px; color:var(--muted); margin-top:2px; }
+  .chip { flex-shrink:0; font-size:11px; font-weight:700; padding:6px 14px; border-radius:99px; background:var(--chip); border:1px solid var(--hairline); color:var(--ink); }
+  .pastille { width:38px; height:38px; border-radius:14px 8px 14px 8px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .pastille svg { width:18px; height:18px; --spark:currentColor; }
+
+  /* ── Stats : coins alternés + tilt ── */
+  .grid { display:grid; grid-template-columns:repeat(4,1fr); gap:15px; margin-bottom:18px; }
+  .stat { padding:20px; }
+  .stat .head { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
+  .stat p { font-size:12.5px; color:var(--muted); margin-top:4px; }
+  .stat .foot { display:flex; justify-content:space-between; margin-top:14px; padding-top:12px; border-top:1px solid var(--hairline); font-size:11.5px; color:var(--muted); }
+
+  .row2 { display:grid; grid-template-columns:2fr 1fr; gap:15px; }
+  .panel { padding:22px; }
+  .vol-bars { display:flex; flex-direction:column; gap:14px; margin-top:16px; }
+  .vol-bars .row { display:flex; justify-content:space-between; font-size:12.5px; color:var(--muted); margin-bottom:6px; }
+  .vol-bars b { color:var(--ink); font-variant-numeric:tabular-nums; }
+  .track { height:13px; border-radius:99px; background:var(--track); overflow:hidden; }
+  .track i { display:block; height:100%; border-radius:99px; }
+  .ok { padding:22px; border-radius: 18px 36px 18px 36px; background: linear-gradient(140deg, rgba(74,222,128,0.12), rgba(34,211,238,0.07)); border:1px solid rgba(74,222,128,0.22); }
+  .ok h4 { font-family:'Outfit'; font-size:15px; margin-bottom:8px; color:var(--vert); }
+  .ok p { font-size:12.5px; color:var(--muted); line-height:1.55; }
+
+  /* ── Dock (liquidGL, réglages des démos) ── */
+  .dock-zone { position:fixed; left:0; right:0; bottom:16px; z-index:50; display:flex; justify-content:center; pointer-events:none; }
+  .dock-rel { position:relative; pointer-events:auto; }
+  .dock {
+    position:relative; display:flex; align-items:center; gap:2px;
+    padding:9px 10px; border-radius:999px; z-index:5;
+    background: rgba(255,255,255,0.05);
+    box-shadow: 0 22px 50px var(--shadow);
+    touch-action:none;
+  }
+  [data-theme="light"] .dock { background: rgba(255,255,255,0.14); }
+  .dock::before {
+    content:''; position:absolute; inset:0; border-radius:999px; padding:1.3px; z-index:2; pointer-events:none;
+    background: linear-gradient(115deg, rgba(255,255,255,0.95), var(--cyan) 20%, rgba(255,255,255,0.14) 45%, rgba(255,255,255,0.08) 58%, var(--magenta) 84%, rgba(255,255,255,0.8));
+    opacity:0.6;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude;
+  }
+  .dock-item {
+    position:relative; z-index:3;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
+    min-width:66px; padding:8px 12px 7px;
+    border-radius:999px; border:none; cursor:pointer;
+    background:transparent; color:var(--muted);
+    font-family:'Outfit'; font-weight:700; font-size:10.5px;
+    transition: color 0.2s, transform 0.2s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .dock-item svg { width:22px; height:22px; color:var(--c,currentColor); opacity:0.9; --spark:currentColor; transition:opacity 0.2s, filter 0.2s; }
+  .dock-item:hover { transform:translateY(-2px); color:var(--ink); }
+  .dock-item.active {
+    color:var(--ink);
+    background: linear-gradient(160deg, rgba(255,255,255,0.32), rgba(255,255,255,0.08) 55%, rgba(255,255,255,0.18));
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.7), inset 0 0 0 1px rgba(255,255,255,0.25), 0 6px 16px rgba(0,0,0,0.3);
+  }
+  [data-theme="light"] .dock-item.active {
+    background: linear-gradient(160deg, rgba(255,255,255,0.98), rgba(255,255,255,0.6) 55%, rgba(255,255,255,0.85));
+    box-shadow: inset 0 1px 0 #fff, inset 0 0 0 1px rgba(255,255,255,0.85), 0 6px 16px rgba(26,23,38,0.18);
+  }
+  .dock-item.active svg { opacity:1; filter: drop-shadow(0 0 8px var(--c)); }
+
+  .submenu {
+    position:absolute; bottom:92px; left:50%; transform:translateX(-50%) translateY(8px);
+    display:flex; gap:2px; padding:8px; border-radius:24px 12px 24px 12px;
+    background: var(--glass-strong);
+    backdrop-filter: blur(28px) saturate(190%);
+    -webkit-backdrop-filter: blur(28px) saturate(190%);
+    border:1px solid var(--edge);
+    box-shadow: inset 0 1px 0 var(--sheen), 0 18px 44px var(--shadow);
+    opacity:0; pointer-events:none;
+    transition: opacity 0.2s, transform 0.22s;
+  }
+  .submenu.open { opacity:1; pointer-events:auto; transform:translateX(-50%) translateY(0); }
+  .submenu a {
+    display:flex; flex-direction:column; align-items:center; gap:5px;
+    padding:10px 15px; border-radius:16px 9px 16px 9px; text-decoration:none;
+    color:var(--muted); font-size:10.5px; font-weight:700; font-family:'Outfit';
+    transition: background 0.15s, color 0.15s; white-space:nowrap;
+  }
+  .submenu a svg { width:20px; height:20px; --spark:currentColor; }
+  .submenu a:hover, .submenu a.current {
+    color:var(--ink);
+    background: linear-gradient(160deg, rgba(255,255,255,0.3), rgba(255,255,255,0.08));
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.55);
+  }
+
+  @media (max-width: 980px) { .grid { grid-template-columns:repeat(2,1fr); } .row2 { grid-template-columns:1fr; } }
+  @media (max-width: 720px) {
+    .page { padding:14px 14px 160px; }
+    .grid { grid-template-columns:1fr; }
+    .btn span { display:none; }
+    .dock-item { min-width:58px; padding:8px 8px 7px; }
+    .hero { gap:22px; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition:none !important; animation:none !important; } }
+</style>
+</head>
+<body>
+<div class="art"></div>
+
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <g id="i-run"><path d="M13.2 5a1.9 1.9 0 1 0 0-3.8 1.9 1.9 0 0 0 0 3.8Z" fill="currentColor"/><path d="M6.5 20.5 9 15.5l3-2v-4l-3.5 2-1.5 3M12 9.5l3.5 2 3-1M12 13.5l2.5 3 .5 4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><circle cx="20.4" cy="5" r="1.5" fill="var(--spark,#22D3EE)"/></g>
+    <g id="i-home"><path d="M4 10.2 12 3.5l8 6.7V19a2 2 0 0 1-2 2h-3.4v-4.6a2.6 2.6 0 0 0-5.2 0V21H6a2 2 0 0 1-2-2v-8.8Z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><circle cx="19.6" cy="4.6" r="1.5" fill="var(--spark,#22D3EE)"/></g>
+    <g id="i-cal"><rect x="3.5" y="5" width="17" height="16" rx="4.5" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M3.5 10.2h17M8 2.8V6.2M16 2.8V6.2" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><circle cx="12" cy="15.5" r="1.6" fill="var(--spark,#22D3EE)"/></g>
+    <g id="i-moon"><path d="M19.5 14.8A8.2 8.2 0 0 1 9.2 4.5a8.2 8.2 0 1 0 10.3 10.3Z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><circle cx="17.8" cy="5.4" r="1.5" fill="var(--spark,#22D3EE)"/></g>
+    <g id="i-sun"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5 5l1.8 1.8M17.2 17.2 19 19M5 19l1.8-1.8M17.2 6.8 19 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></g>
+    <g id="i-trend"><path d="M3.5 17.5 9 11.2l4 4 6.6-8" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><circle cx="20.3" cy="6" r="1.7" fill="var(--spark,#22D3EE)"/></g>
+    <g id="i-dumb"><path d="M7 7.5v9M17 7.5v9M3.8 10v4M20.2 10v4M7 12h10" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="4.4" r="1.5" fill="var(--spark,#22D3EE)"/></g>
+    <g id="i-bot"><rect x="4.5" y="7.5" width="15" height="11.5" rx="4.5" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M12 7.5V4.8M9.2 12.7h.01M14.8 12.7h.01" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="M9.8 16q2.2 1.6 4.4 0" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><circle cx="12" cy="3.4" r="1.5" fill="var(--spark,#22D3EE)"/></g>
+    <g id="i-food"><path d="M7 3.5v6.5a2.5 2.5 0 0 0 2.5 2.5V21M7 3.5v3.8M11.5 3.5v3.8M17.5 3.5c-1.7.3-3 2.2-3 5v4.2h3V21M17.5 3.5V12" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><circle cx="20.6" cy="5" r="1.5" fill="var(--spark,#22D3EE)"/></g>
+    <g id="i-set"><circle cx="12" cy="12" r="3.1" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M12 3v2.6M12 18.4V21M4.2 7.5l2.3 1.3M17.5 15.2l2.3 1.3M4.2 16.5l2.3-1.3M17.5 8.8l2.3-1.3" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><circle cx="12" cy="12" r="1.2" fill="var(--spark,#22D3EE)"/></g>
+    <g id="i-heart"><path d="M3 12h4l2-5 3.5 9 2.5-6 1.5 2H21" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><circle cx="20.5" cy="6" r="1.5" fill="var(--spark,#22D3EE)"/></g>
+    <g id="i-zap"><path d="M13 2.5 4.5 13.5H11l-.8 8 8.3-11h-6.5l1-8Z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/><circle cx="19.5" cy="4.5" r="1.5" fill="var(--spark,#22D3EE)"/></g>
+    <g id="i-sync" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 0 0-14.5-3.5M4 13a8 8 0 0 0 14.5 3.5"/><path d="M20 4v4h-4M4 20v-4h4"/></g>
+  </defs>
+</svg>
+
+<div class="page">
+  <header class="frost">
+    <div class="brand">
+      <div class="logo"><svg viewBox="0 0 24 24" width="22" height="22" color="#fff" style="--spark:#fff"><use href="#i-run"/></svg></div>
+      <div><h1>RunCoach</h1><small>Ottawa · Sub 3H30 ✓</small></div>
+    </div>
+    <div class="actions">
+      <button class="iconbtn" id="themeToggle" title="Clair / sombre">
+        <svg viewBox="0 0 24 24" class="ic-moon" style="--spark:currentColor"><use href="#i-moon"/></svg>
+        <svg viewBox="0 0 24 24" class="ic-sun" style="display:none"><use href="#i-sun"/></svg>
+      </button>
+      <button class="btn"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-sync"/></svg><span>Synchroniser</span></button>
+    </div>
+  </header>
+
+  <div class="topbar">
+    <div><h2>Salut <em>Mickaël</em> 👋</h2><p>Mercredi 10 juin — forme, récupération et progression</p></div>
+  </div>
+
+  <!-- HERO readiness : bulle + blob morphant -->
+  <section class="frost shape-hero hero tilt">
+    <div class="bubble-wrap">
+      <div class="morph"></div>
+      <div class="bubble"><b>99</b><span>PRÊT</span></div>
+    </div>
+    <div class="factors">
+      <span class="label">Readiness du jour</span>
+      <div class="factor"><div class="row"><span>FC repos</span><span>48 bpm (+0,3)</span></div><div class="bar"><i style="width:95%"></i></div></div>
+      <div class="factor"><div class="row"><span>Sommeil</span><span>7 h 58 · qualité 100</span></div><div class="bar"><i style="width:100%"></i></div></div>
+      <div class="factor"><div class="row"><span>Charge</span><span>volume −51 % vs sem. passée</span></div><div class="bar"><i style="width:100%"></i></div></div>
+      <div class="reco">🟢 Feu vert : séance qualité possible aujourd'hui.</div>
+    </div>
+  </section>
+
+  <section class="frost shape-pill weekly">
+    <div class="left">
+      <div class="pastille" style="background:rgba(139,92,246,0.18);color:var(--violet)"><svg viewBox="0 0 24 24"><use href="#i-cal"/></svg></div>
+      <div><h4>Bilan hebdo du coach · 2026-W24</h4><p>13,6 km · 1 séance · 0 renfo — « Récupération excellente, volume à relancer »</p></div>
+    </div>
+    <span class="chip">Déplier ▾</span>
+  </section>
+
+  <div class="grid">
+    <section class="frost shape-a stat tilt">
+      <div class="head"><span class="label">Dernier entraînement</span><div class="pastille" style="background:rgba(255,138,92,0.16);color:var(--coral)"><svg viewBox="0 0 24 24"><use href="#i-run"/></svg></div></div>
+      <div class="big">13,58 km</div><p>Montréal Trail</p>
+      <div class="foot"><span>Allure 6:47</span><span>1 h 32 m</span></div>
+    </section>
+    <section class="frost shape-b stat tilt">
+      <div class="head"><span class="label">Sommeil (nuit)</span><div class="pastille" style="background:rgba(139,92,246,0.16);color:var(--violet)"><svg viewBox="0 0 24 24"><use href="#i-moon"/></svg></div></div>
+      <div class="big">7 h 58</div><p>Score qualité : 100 / 100</p>
+      <div class="foot"><span>Profond 94 m</span><span>FC min 44</span></div>
+    </section>
+    <section class="frost shape-a stat tilt">
+      <div class="head"><span class="label">VFC / HRV</span><div class="pastille" style="background:rgba(255,77,157,0.16);color:var(--magenta)"><svg viewBox="0 0 24 24"><use href="#i-heart"/></svg></div></div>
+      <div class="big">90 ms</div><p>Baseline : 78 ms</p>
+      <div class="foot"><span style="color:var(--vert);font-weight:700">Équilibré</span><span>RHR 48 bpm</span></div>
+    </section>
+    <section class="frost shape-b stat tilt">
+      <div class="head"><span class="label">Fatigue EvoLab</span><div class="pastille" style="background:rgba(34,211,238,0.16);color:var(--cyan)"><svg viewBox="0 0 24 24"><use href="#i-zap"/></svg></div></div>
+      <div class="big">7</div><p>Charge : 274</p>
+      <div class="foot"><span>Récupéré</span><span>Ratio 1.07</span></div>
+    </section>
+  </div>
+
+  <div class="row2">
+    <section class="frost shape-a panel">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <h4 style="font-family:'Outfit';font-size:15.5px;font-weight:700">Volume d'entraînement hebdomadaire</h4>
+        <span style="font-size:12.5px;font-weight:700;background:linear-gradient(100deg,var(--violet),var(--magenta));-webkit-background-clip:text;background-clip:text;color:transparent">−51 % vs sem. passée</span>
+      </div>
+      <div class="vol-bars">
+        <div><div class="row"><span>Cette semaine</span><b>13,6 km</b></div><div class="track"><i style="width:23%;background:linear-gradient(90deg,var(--violet),var(--magenta),var(--coral))"></i></div></div>
+        <div><div class="row"><span>Semaine dernière</span><b>27,9 km</b></div><div class="track"><i style="width:46%;background:var(--track);box-shadow:inset 0 0 0 1px var(--hairline)"></i></div></div>
+      </div>
+      <svg viewBox="0 0 560 70" width="100%" height="70" preserveAspectRatio="none" style="margin-top:10px">
+        <path d="M0 55 C40 50, 70 38, 110 40 S 180 58, 230 48 S 300 22, 350 28 S 430 50, 480 35 S 540 20, 560 24" fill="none" stroke="url(#sk)" stroke-width="2.6" stroke-linecap="round"/>
+        <path d="M0 55 C40 50, 70 38, 110 40 S 180 58, 230 48 S 300 22, 350 28 S 430 50, 480 35 S 540 20, 560 24 L560 70 L0 70 Z" fill="url(#sp)" opacity="0.3"/>
+        <defs>
+          <linearGradient id="sk" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#8B5CF6"/><stop offset="45%" stop-color="#FF4D9D"/><stop offset="80%" stop-color="#FF8A5C"/><stop offset="100%" stop-color="#22D3EE"/></linearGradient>
+          <linearGradient id="sp" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FF4D9D" stop-opacity="0.5"/><stop offset="100%" stop-color="#FF4D9D" stop-opacity="0"/></linearGradient>
+        </defs>
+      </svg>
+      <p style="font-size:11.5px;color:var(--faint);margin-top:4px">Condition (CTI) sur 30 jours — onglet Progression pour le détail</p>
+    </section>
+    <section class="ok">
+      <h4>✓ Règle des 10 % respectée</h4>
+      <p>Ton volume hebdomadaire progresse de manière sécurisée. Cette marge te protège du surentraînement et des blessures de surcharge.</p>
+      <p style="margin-top:12px;font-size:11px;opacity:0.6">* Basé sur tes 2 dernières semaines calendaires.</p>
+    </section>
+  </div>
+</div>
+
+<!-- DOCK -->
+<div class="dock-zone">
+  <div class="dock-rel">
+    <div class="submenu" id="sub-training">
+      <a href="#" class="current" style="color:var(--coral)"><svg viewBox="0 0 24 24"><use href="#i-run"/></svg>Séances</a>
+      <a href="#" style="color:var(--coral)"><svg viewBox="0 0 24 24"><use href="#i-cal"/></svg>Préparation</a>
+      <a href="#" style="color:var(--coral)"><svg viewBox="0 0 24 24"><use href="#i-dumb"/></svg>Renfo</a>
+    </div>
+    <div class="submenu" id="sub-analyse">
+      <a href="#" class="current" style="color:var(--cyan)"><svg viewBox="0 0 24 24"><use href="#i-moon"/></svg>Récupération</a>
+      <a href="#" style="color:var(--cyan)"><svg viewBox="0 0 24 24"><use href="#i-trend"/></svg>Progression</a>
+    </div>
+    <div class="submenu" id="sub-coach">
+      <a href="#" class="current" style="color:var(--magenta)"><svg viewBox="0 0 24 24"><use href="#i-bot"/></svg>Coach IA</a>
+      <a href="#" style="color:var(--magenta)"><svg viewBox="0 0 24 24"><use href="#i-food"/></svg>Nutrition</a>
+    </div>
+
+    <div class="dock" id="dock">
+      <button class="dock-item active" style="--c:var(--violet)"><svg viewBox="0 0 24 24"><use href="#i-home"/></svg><span class="lbl">Accueil</span></button>
+      <button class="dock-item" data-sub="sub-training" style="--c:var(--coral)"><svg viewBox="0 0 24 24"><use href="#i-run"/></svg><span class="lbl">Entraînement</span></button>
+      <button class="dock-item" data-sub="sub-analyse" style="--c:var(--cyan)"><svg viewBox="0 0 24 24"><use href="#i-trend"/></svg><span class="lbl">Analyse</span></button>
+      <button class="dock-item" data-sub="sub-coach" style="--c:var(--magenta)"><svg viewBox="0 0 24 24"><use href="#i-bot"/></svg><span class="lbl">Coach</span></button>
+      <button class="dock-item" style="--c:var(--gold)"><svg viewBox="0 0 24 24"><use href="#i-set"/></svg><span class="lbl">Réglages</span></button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Thème (reload pour resnapshot liquidGL)
+  const root = document.documentElement;
+  const params = new URLSearchParams(location.search);
+  const saved = params.get('theme') || localStorage.getItem('rc-theme') || 'dark';
+  root.dataset.theme = saved;
+  document.querySelector('.ic-moon').style.display = saved === 'dark' ? '' : 'none';
+  document.querySelector('.ic-sun').style.display = saved === 'dark' ? 'none' : '';
+  document.getElementById('themeToggle').addEventListener('click', () => {
+    localStorage.setItem('rc-theme', root.dataset.theme === 'dark' ? 'light' : 'dark');
+    const url = new URL(location.href); url.searchParams.delete('theme');
+    location.href = url.toString();
+  });
+
+  // Dock : actif + sous-menus + glisser
+  const dock = document.getElementById('dock');
+  const items = [...dock.querySelectorAll('.dock-item')];
+  let openSub = null;
+  const closeSub = () => { if (openSub) { document.getElementById(openSub).classList.remove('open'); openSub = null; } };
+  function activate(btn, toggleSub = true) {
+    items.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const sub = btn.dataset.sub;
+    if (sub && toggleSub) {
+      if (openSub === sub) { closeSub(); return; }
+      closeSub(); document.getElementById(sub).classList.add('open'); openSub = sub;
+    } else if (toggleSub) closeSub();
+  }
+  items.forEach(btn => btn.addEventListener('click', () => activate(btn)));
+  let dragging = false;
+  dock.addEventListener('pointerdown', () => dragging = true);
+  window.addEventListener('pointerup', () => dragging = false);
+  dock.addEventListener('pointermove', e => {
+    if (!dragging) return;
+    const el = document.elementFromPoint(e.clientX, e.clientY)?.closest('.dock-item');
+    if (el && !el.classList.contains('active')) activate(el, false);
+  });
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.dock') && !e.target.closest('.submenu')) closeSub();
+  });
+
+  // Tilt 3D (démo 2) — léger, avec reflet suivant le curseur
+  document.querySelectorAll('.tilt').forEach(card => {
+    card.addEventListener('pointermove', e => {
+      const r = card.getBoundingClientRect();
+      const px = (e.clientX - r.left) / r.width, py = (e.clientY - r.top) / r.height;
+      card.style.transform = `perspective(900px) rotateX(${(0.5 - py) * 7}deg) rotateY(${(px - 0.5) * 9}deg) translateY(-2px)`;
+      card.style.setProperty('--gx', `${px * 100}%`);
+      card.style.setProperty('--gy', `${py * 100}%`);
+    });
+    card.addEventListener('pointerleave', () => { card.style.transform = ''; });
+  });
+</script>
+
+<!-- liquidGL : réglages calqués sur les démos (refraction 0 + bevel + frost + specular) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/naughtyduk/liquidGL@main/scripts/liquidGL.js"></script>
+<script>
+  window.addEventListener('load', () => {
+    try {
+      if (typeof liquidGL === 'function') {
+        liquidGL({
+          target: '.dock',
+          snapshot: 'body',
+          resolution: 2.0,
+          refraction: 0,        /* comme les démos : le rendu vient du biseau */
+          bevelDepth: 0.09,
+          bevelWidth: 0.18,
+          frost: 6,             /* dépoli laiteux (démo 3) */
+          magnify: 1,
+          specular: true,
+          reveal: 'fade',
+          shadow: false,
+          tilt: false
+        });
+      }
+    } catch (e) { console.warn('liquidGL indisponible :', e); }
+  });
+</script>
+</body>
+</html>
