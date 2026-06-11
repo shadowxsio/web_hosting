@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Maquette B v2 — Nocturne Light/Dark · RunCoach</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ── Thème SOMBRE (défaut) ─────────────────────────────── */
+  :root, [data-theme="dark"] {
+    --bg: #0D1120;
+    --bg-halo1: rgba(167,139,250,0.14);
+    --bg-halo2: rgba(240,168,196,0.10);
+    --bg-halo3: rgba(125,211,181,0.08);
+    --ink: #EFEFF6;
+    --muted: #8D93A8;
+    --faint: #5A6075;
+    --accent: #A78BFA;
+    --accent-2: #F0A8C4;
+    --green: #7DD3B5;
+    /* Liquid glass à la Apple : très translucide + reflet d'arête */
+    --glass-bg: rgba(255,255,255,0.055);
+    --glass-bg-strong: rgba(22,26,44,0.55);
+    --glass-edge: rgba(255,255,255,0.12);
+    --glass-highlight: rgba(255,255,255,0.18);
+    --glass-shadow: rgba(0,0,0,0.45);
+    --hairline: rgba(255,255,255,0.08);
+    --chip: rgba(255,255,255,0.07);
+    --track: rgba(255,255,255,0.08);
+    --pastille-lav: rgba(167,139,250,0.16); --pastille-lav-ink: #B9A5FB;
+    --pastille-rose: rgba(240,168,196,0.15); --pastille-rose-ink: #F0A8C4;
+    --pastille-menthe: rgba(125,211,181,0.15); --pastille-menthe-ink: #7DD3B5;
+    --ok-bg: rgba(125,211,181,0.09); --ok-edge: rgba(125,211,181,0.2); --ok-ink: #7DD3B5; --ok-sub: #8FB8A8;
+  }
+  /* ── Thème CLAIR ───────────────────────────────────────── */
+  [data-theme="light"] {
+    --bg: #F3F3F8;
+    --bg-halo1: rgba(167,139,250,0.16);
+    --bg-halo2: rgba(240,168,196,0.14);
+    --bg-halo3: rgba(125,211,181,0.13);
+    --ink: #1B1D2A;
+    --muted: #7B7E92;
+    --faint: #B4B6C6;
+    --accent: #7C66E8;
+    --accent-2: #DD7FA7;
+    --green: #3F9E78;
+    --glass-bg: rgba(255,255,255,0.42);
+    --glass-bg-strong: rgba(255,255,255,0.6);
+    --glass-edge: rgba(255,255,255,0.8);
+    --glass-highlight: rgba(255,255,255,0.95);
+    --glass-shadow: rgba(27,29,42,0.12);
+    --hairline: rgba(27,29,42,0.07);
+    --chip: rgba(27,29,42,0.05);
+    --track: rgba(27,29,42,0.07);
+    --pastille-lav: rgba(124,102,232,0.12); --pastille-lav-ink: #7C66E8;
+    --pastille-rose: rgba(221,127,167,0.13); --pastille-rose-ink: #C9628F;
+    --pastille-menthe: rgba(63,158,120,0.12); --pastille-menthe-ink: #34855F;
+    --ok-bg: rgba(63,158,120,0.09); --ok-edge: rgba(63,158,120,0.2); --ok-ink: #2E7D5C; --ok-sub: #5E8F78;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { -webkit-font-smoothing: antialiased; }
+  body {
+    font-family:'Inter',system-ui,sans-serif;
+    background: var(--bg); color: var(--ink);
+    min-height: 100vh;
+    transition: background 0.35s, color 0.35s;
+  }
+  .halo {
+    position: fixed; inset:0; z-index:0; pointer-events:none;
+    background:
+      radial-gradient(720px 500px at 8% -10%, var(--bg-halo1) 0%, transparent 60%),
+      radial-gradient(760px 520px at 102% 18%, var(--bg-halo2) 0%, transparent 58%),
+      radial-gradient(820px 600px at 50% 115%, var(--bg-halo3) 0%, transparent 55%);
+    transition: opacity 0.35s;
+  }
+
+  /* ── Liquid glass (Apple-like) ─────────────────────────── */
+  .glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(22px) saturate(180%);
+    -webkit-backdrop-filter: blur(22px) saturate(180%);
+    border: 1px solid var(--glass-edge);
+    box-shadow:
+      0 12px 36px var(--glass-shadow),
+      inset 0 1px 0 var(--glass-highlight);
+    border-radius: 26px;
+  }
+
+  .page { position:relative; z-index:1; max-width: 1180px; margin: 0 auto; padding: 18px 20px 150px; }
+
+  /* ── Header ───────────────────────────────────────────── */
+  header.glass {
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 12px 18px; border-radius: 22px;
+    position: sticky; top: 14px; z-index: 30; margin-bottom: 26px;
+  }
+  .brand { display:flex; align-items:center; gap: 12px; }
+  .logo {
+    width: 40px; height: 40px; border-radius: 13px;
+    background: linear-gradient(135deg, rgba(167,139,250,0.55), rgba(240,168,196,0.45));
+    border: 1px solid rgba(167,139,250,0.5);
+    display:flex; align-items:center; justify-content:center;
+    box-shadow: 0 4px 16px rgba(167,139,250,0.3), inset 0 1px 0 rgba(255,255,255,0.35);
+  }
+  .brand h1 { font-family:'Outfit'; font-size: 17px; font-weight: 700; letter-spacing:-0.02em; }
+  .brand small { display:block; font-size: 10.5px; color: var(--muted); font-weight: 500; }
+  .header-actions { display:flex; align-items:center; gap: 10px; }
+  .iconbtn {
+    width: 38px; height: 38px; border-radius: 12px; cursor:pointer;
+    background: var(--chip); border: 1px solid var(--hairline);
+    color: var(--ink); display:flex; align-items:center; justify-content:center;
+    transition: transform 0.15s, background 0.2s;
+  }
+  .iconbtn:hover { transform: translateY(-1px); }
+  .iconbtn svg { width: 17px; height: 17px; }
+  .btn {
+    font-family:'Outfit'; font-weight:600; font-size: 13px; cursor:pointer;
+    background: linear-gradient(135deg, var(--accent), #8B6CF6); color:#fff; border:none;
+    padding: 10px 18px; border-radius: 13px;
+    box-shadow: 0 6px 18px rgba(139,108,246,0.35), inset 0 1px 0 rgba(255,255,255,0.3);
+    display:flex; align-items:center; gap: 8px;
+  }
+
+  .topbar { margin: 0 4px 20px; }
+  .topbar h2 { font-family:'Outfit'; font-size: 26px; font-weight: 700; letter-spacing:-0.03em; }
+  .topbar p { color: var(--muted); font-size: 13px; margin-top: 3px; }
+
+  .card { padding: 22px; }
+  .label { font-size: 11px; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color: var(--muted); }
+  .big { font-family:'Outfit'; font-size: 26px; font-weight: 700; letter-spacing:-0.02em; font-variant-numeric: tabular-nums; }
+
+  /* Readiness */
+  .readiness { display:flex; align-items:center; gap:28px; margin-bottom: 18px; flex-wrap:wrap; }
+  .gauge-wrap { position:relative; width:150px; }
+  .gauge-val { position:absolute; inset:0; top:26px; text-align:center; }
+  .gauge-val b { font-family:'Outfit'; font-size:34px; font-weight:800; letter-spacing:-0.03em; }
+  .gauge-val span { display:block; font-size:10.5px; font-weight:700; letter-spacing:0.1em; color:var(--green); }
+  .factors { flex:1 1 240px; min-width:0; display:flex; flex-direction:column; gap:10px; }
+  .factor { font-size:12px; color:var(--muted); }
+  .factor .row { display:flex; justify-content:space-between; margin-bottom:4px; }
+  .bar { height:6px; border-radius:99px; background:var(--track); overflow:hidden; }
+  .bar i { display:block; height:100%; border-radius:99px; background: linear-gradient(90deg, var(--green), #4CAF8D); }
+  .reco { margin-top:4px; padding:12px 16px; border-radius:14px; background:var(--ok-bg); border:1px solid var(--ok-edge); color:var(--ok-ink); font-size:13px; font-weight:500; }
+
+  .weekly { display:flex; align-items:center; justify-content:space-between; cursor:pointer; margin-bottom: 18px; padding: 18px 22px; }
+  .weekly .left { display:flex; align-items:center; gap:14px; }
+  .weekly h4 { font-family:'Outfit'; font-size:14.5px; font-weight:600; }
+  .weekly p { font-size:12px; color:var(--muted); margin-top:2px; }
+  .chip { font-size:11px; font-weight:600; padding:5px 12px; border-radius:99px; background:var(--pastille-lav); color:var(--pastille-lav-ink); }
+  .pastille { width:36px; height:36px; border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .pastille svg { width:17px; height:17px; }
+
+  .grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:18px; }
+  .stat .head { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
+  .stat p { font-size:12.5px; color:var(--muted); margin-top:4px; }
+  .stat .foot { display:flex; justify-content:space-between; margin-top:14px; padding-top:12px; border-top:1px solid var(--hairline); font-size:11.5px; color:var(--muted); }
+
+  .row2 { display:grid; grid-template-columns:2fr 1fr; gap:14px; }
+  .vol-bars { display:flex; flex-direction:column; gap:14px; margin-top:16px; }
+  .vol-bars .row { display:flex; justify-content:space-between; font-size:12.5px; color:var(--muted); margin-bottom:6px; }
+  .vol-bars b { color:var(--ink); font-variant-numeric:tabular-nums; }
+  .track { height:12px; border-radius:99px; background:var(--track); overflow:hidden; }
+  .track i { display:block; height:100%; border-radius:99px; }
+  .alert { padding:22px; background:var(--ok-bg); border:1px solid var(--ok-edge); border-radius:26px; }
+  .alert h4 { font-family:'Outfit'; font-size:15px; margin-bottom:8px; color:var(--ok-ink); }
+  .alert p { font-size:12.5px; color:var(--ok-sub); line-height:1.55; }
+
+  /* ── DOCK flottant (à la iOS 26 / Instagram) ──────────── */
+  .dock-zone { position: fixed; left:0; right:0; bottom: 18px; z-index: 50; display:flex; justify-content:center; pointer-events:none; }
+  .dock {
+    pointer-events:auto;
+    display:flex; align-items:center; gap: 4px;
+    padding: 8px;
+    border-radius: 999px;
+    background: var(--glass-bg-strong);
+    backdrop-filter: blur(26px) saturate(190%);
+    -webkit-backdrop-filter: blur(26px) saturate(190%);
+    border: 1px solid var(--glass-edge);
+    box-shadow: 0 18px 48px var(--glass-shadow), inset 0 1px 0 var(--glass-highlight);
+    touch-action: none;
+  }
+  .dock-item {
+    display:flex; align-items:center; gap: 8px;
+    height: 48px; min-width: 48px; padding: 0 13px;
+    border-radius: 999px; border:none; cursor:pointer;
+    background: transparent; color: var(--muted);
+    font-family:'Outfit'; font-weight:600; font-size: 13px;
+    transition: background 0.22s, color 0.22s, padding 0.22s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .dock-item svg { width: 21px; height: 21px; flex-shrink:0; }
+  .dock-item .lbl { max-width: 0; overflow:hidden; white-space:nowrap; opacity:0; transition: max-width 0.25s ease, opacity 0.2s; }
+  .dock-item.active {
+    background: var(--chip);
+    color: var(--accent);
+    box-shadow: inset 0 0 0 1px var(--hairline), inset 0 1px 0 var(--glass-highlight);
+  }
+  .dock-item.active .lbl { max-width: 110px; opacity:1; }
+  .dock-item .dot { width:4px; height:4px; border-radius:50%; background: var(--faint); margin-left:2px; flex-shrink:0; }
+
+  /* Sous-menu popover */
+  .submenu {
+    position: absolute; bottom: 74px; left: 50%; transform: translateX(-50%) translateY(6px);
+    display:flex; gap: 4px; padding: 7px;
+    border-radius: 18px;
+    background: var(--glass-bg-strong);
+    backdrop-filter: blur(26px) saturate(190%);
+    -webkit-backdrop-filter: blur(26px) saturate(190%);
+    border: 1px solid var(--glass-edge);
+    box-shadow: 0 18px 48px var(--glass-shadow), inset 0 1px 0 var(--glass-highlight);
+    opacity: 0; pointer-events:none;
+    transition: opacity 0.2s, transform 0.22s;
+  }
+  .submenu.open { opacity:1; pointer-events:auto; transform: translateX(-50%) translateY(0); }
+  .submenu a {
+    display:flex; flex-direction:column; align-items:center; gap:5px;
+    padding: 10px 14px; border-radius: 13px; text-decoration:none;
+    color: var(--muted); font-size: 11px; font-weight:600; font-family:'Outfit';
+    transition: background 0.15s, color 0.15s; white-space: nowrap;
+  }
+  .submenu a:hover, .submenu a.current { background: var(--chip); color: var(--accent); }
+  .submenu a svg { width: 19px; height: 19px; }
+
+  .mobilenote { display:none; }
+  @media (max-width: 980px) { .grid { grid-template-columns:repeat(2,1fr); } .row2 { grid-template-columns:1fr; } }
+  @media (max-width: 720px) {
+    .page { padding: 14px 14px 140px; }
+    .grid { grid-template-columns:1fr; }
+    .btn span { display:none; }
+    .btn { padding: 10px 12px; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="halo"></div>
+
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <g id="i-run"><path d="M13 4.5a1.8 1.8 0 1 0 0-3.6 1.8 1.8 0 0 0 0 3.6Z" fill="currentColor"/><path d="M6.5 20.5 9 15.5l3-2v-4l-3.5 2-1.5 3M12 9.5l3.5 2 3-1M12 13.5l2.5 3 .5 4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></g>
+    <g id="i-home" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 9.5 12 3l8.5 6.5V20a1 1 0 0 1-1 1h-5v-6h-5v6h-5a1 1 0 0 1-1-1V9.5Z"/></g>
+    <g id="i-cal" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3.5" y="5" width="17" height="16" rx="3"/><path d="M3.5 10h17M8 2.5V6M16 2.5V6"/></g>
+    <g id="i-moon" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"/></g>
+    <g id="i-sun" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5 5l1.8 1.8M17.2 17.2 19 19M5 19l1.8-1.8M17.2 6.8 19 5"/></g>
+    <g id="i-trend" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 17.5 9 11l4 4 7-8.5"/><path d="M15 6.5h5v5"/></g>
+    <g id="i-dumb" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 8v8M17 8v8M4 10v4M20 10v4M7 12h10"/></g>
+    <g id="i-bot" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="4.5" y="7" width="15" height="12" rx="3.5"/><path d="M12 7V3.5M9 12.5h.01M15 12.5h.01"/><path d="M9.5 16h5" stroke-linejoin="round"/></g>
+    <g id="i-food" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M7 3v7a2.5 2.5 0 0 0 2.5 2.5V21M7 3v4M11.5 3v4M17.5 3c-1.7 0-3 2-3 5v4h3v9M17.5 3v9"/></g>
+    <g id="i-set" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M4.5 7l2.6 1.5M16.9 15.5l2.6 1.5M4.5 17l2.6-1.5M16.9 8.5l2.6-1.5"/></g>
+    <g id="i-heart" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2-5 3.5 9 2.5-6 1.5 2H21"/></g>
+    <g id="i-zap"><path d="M13 2.5 4.5 13.5H11l-.8 8 8.3-11h-6.5l1-8Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></g>
+    <g id="i-sync" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 0 0-14.5-3.5M4 13a8 8 0 0 0 14.5 3.5"/><path d="M20 4v4h-4M4 20v-4h4"/></g>
+  </defs>
+</svg>
+
+<div class="page">
+  <header class="glass">
+    <div class="brand">
+      <div class="logo"><svg viewBox="0 0 24 24" width="22" height="22" color="#fff"><use href="#i-run"/></svg></div>
+      <div><h1>RunCoach</h1><small>Ottawa · Sub 3H30 ✓</small></div>
+    </div>
+    <div class="header-actions">
+      <button class="iconbtn" id="themeToggle" title="Basculer clair/sombre">
+        <svg viewBox="0 0 24 24" class="ic-moon"><use href="#i-moon"/></svg>
+        <svg viewBox="0 0 24 24" class="ic-sun" style="display:none"><use href="#i-sun"/></svg>
+      </button>
+      <button class="btn"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-sync"/></svg><span>Synchroniser</span></button>
+    </div>
+  </header>
+
+  <div class="topbar">
+    <h2>Bonjour Mickaël 🌙</h2>
+    <p>Mercredi 10 juin — tes données de forme et de récupération</p>
+  </div>
+
+  <!-- Readiness -->
+  <section class="glass card readiness">
+    <div class="gauge-wrap">
+      <svg viewBox="0 0 150 90" width="150" height="90">
+        <path d="M 15 80 A 60 60 0 0 1 135 80" fill="none" stroke="var(--track)" stroke-width="12" stroke-linecap="round"/>
+        <path d="M 15 80 A 60 60 0 0 1 135 80" fill="none" stroke="url(#gr)" stroke-width="12" stroke-linecap="round" stroke-dasharray="186.5 188.5"/>
+        <defs><linearGradient id="gr" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#7DD3B5"/><stop offset="100%" stop-color="#4CAF8D"/></linearGradient></defs>
+      </svg>
+      <div class="gauge-val"><b>99</b><span>PRÊT</span></div>
+    </div>
+    <div class="factors">
+      <span class="label">Readiness du jour</span>
+      <div class="factor"><div class="row"><span>FC repos</span><span>48 bpm (+0,3)</span></div><div class="bar"><i style="width:95%"></i></div></div>
+      <div class="factor"><div class="row"><span>Sommeil</span><span>7 h 58 · qualité 100</span></div><div class="bar"><i style="width:100%"></i></div></div>
+      <div class="factor"><div class="row"><span>Charge</span><span>volume −51 % vs sem. passée</span></div><div class="bar"><i style="width:100%"></i></div></div>
+      <div class="reco">🟢 Feu vert : séance qualité possible aujourd'hui.</div>
+    </div>
+  </section>
+
+  <!-- Bilan hebdo -->
+  <section class="glass weekly">
+    <div class="left">
+      <div class="pastille" style="background:var(--pastille-lav);color:var(--pastille-lav-ink)"><svg viewBox="0 0 24 24"><use href="#i-cal"/></svg></div>
+      <div><h4>Bilan hebdo du coach · 2026-W24</h4><p>13,6 km · 1 séance · 0 renfo — « Récupération excellente, volume à relancer »</p></div>
+    </div>
+    <span class="chip">Déplier ▾</span>
+  </section>
+
+  <!-- Stats -->
+  <div class="grid">
+    <section class="glass card stat">
+      <div class="head"><span class="label">Dernier entraînement</span><div class="pastille" style="background:var(--pastille-rose);color:var(--pastille-rose-ink)"><svg viewBox="0 0 24 24"><use href="#i-run"/></svg></div></div>
+      <div class="big">13,58 km</div><p>Montréal Trail</p>
+      <div class="foot"><span>Allure 6:47</span><span>1 h 32 m</span></div>
+    </section>
+    <section class="glass card stat">
+      <div class="head"><span class="label">Sommeil (nuit)</span><div class="pastille" style="background:var(--pastille-lav);color:var(--pastille-lav-ink)"><svg viewBox="0 0 24 24"><use href="#i-moon"/></svg></div></div>
+      <div class="big">7 h 58</div><p>Score qualité : 100 / 100</p>
+      <div class="foot"><span>Profond 94 m</span><span>FC min 44</span></div>
+    </section>
+    <section class="glass card stat">
+      <div class="head"><span class="label">VFC / HRV</span><div class="pastille" style="background:var(--pastille-rose);color:var(--pastille-rose-ink)"><svg viewBox="0 0 24 24"><use href="#i-heart"/></svg></div></div>
+      <div class="big">90 ms</div><p>Baseline : 78 ms</p>
+      <div class="foot"><span style="color:var(--green);font-weight:600">Équilibré</span><span>RHR 48 bpm</span></div>
+    </section>
+    <section class="glass card stat">
+      <div class="head"><span class="label">Fatigue EvoLab</span><div class="pastille" style="background:var(--pastille-menthe);color:var(--pastille-menthe-ink)"><svg viewBox="0 0 24 24"><use href="#i-zap"/></svg></div></div>
+      <div class="big">7</div><p>Charge : 274</p>
+      <div class="foot"><span>Récupéré</span><span>Ratio 1.07</span></div>
+    </section>
+  </div>
+
+  <!-- Volume + alerte -->
+  <div class="row2">
+    <section class="glass card">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <h4 style="font-family:'Outfit';font-size:15.5px;font-weight:600">Volume d'entraînement hebdomadaire</h4>
+        <span style="font-size:12.5px;color:var(--accent);font-weight:600">−51 % vs sem. passée</span>
+      </div>
+      <div class="vol-bars">
+        <div><div class="row"><span>Cette semaine</span><b>13,6 km</b></div><div class="track"><i style="width:23%;background:linear-gradient(90deg,var(--accent),#8B6CF6)"></i></div></div>
+        <div><div class="row"><span>Semaine dernière</span><b>27,9 km</b></div><div class="track"><i style="width:46%;background:var(--faint);opacity:0.45"></i></div></div>
+      </div>
+      <svg viewBox="0 0 560 70" width="100%" height="70" preserveAspectRatio="none" style="margin-top:8px">
+        <path d="M0 55 C40 50, 70 38, 110 40 S 180 58, 230 48 S 300 22, 350 28 S 430 50, 480 35 S 540 20, 560 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" opacity="0.9"/>
+        <path d="M0 55 C40 50, 70 38, 110 40 S 180 58, 230 48 S 300 22, 350 28 S 430 50, 480 35 S 540 20, 560 24 L560 70 L0 70 Z" fill="url(#sp)" opacity="0.35"/>
+        <defs><linearGradient id="sp" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#A78BFA" stop-opacity="0.6"/><stop offset="100%" stop-color="#A78BFA" stop-opacity="0"/></linearGradient></defs>
+      </svg>
+      <p style="font-size:11.5px;color:var(--faint);margin-top:4px">Condition (CTI) sur 30 jours — onglet Progression pour le détail</p>
+    </section>
+    <section class="alert">
+      <h4>✓ Règle des 10 % respectée</h4>
+      <p>Ton volume hebdomadaire progresse de manière sécurisée. Cette marge te protège du surentraînement et des blessures de surcharge.</p>
+      <p style="margin-top:12px;font-size:11px;opacity:0.7">* Basé sur tes 2 dernières semaines calendaires.</p>
+    </section>
+  </div>
+</div>
+
+<!-- ── DOCK flottant avec sous-menus ──────────────────────── -->
+<div class="dock-zone">
+  <div style="position:relative">
+
+    <!-- Sous-menus -->
+    <div class="submenu" id="sub-training">
+      <a href="#" class="current"><svg viewBox="0 0 24 24"><use href="#i-run"/></svg>Séances</a>
+      <a href="#"><svg viewBox="0 0 24 24"><use href="#i-cal"/></svg>Préparation</a>
+      <a href="#"><svg viewBox="0 0 24 24"><use href="#i-dumb"/></svg>Renfo</a>
+    </div>
+    <div class="submenu" id="sub-analyse">
+      <a href="#" class="current"><svg viewBox="0 0 24 24"><use href="#i-moon"/></svg>Récupération</a>
+      <a href="#"><svg viewBox="0 0 24 24"><use href="#i-trend"/></svg>Progression</a>
+    </div>
+    <div class="submenu" id="sub-coach">
+      <a href="#" class="current"><svg viewBox="0 0 24 24"><use href="#i-bot"/></svg>Coach IA</a>
+      <a href="#"><svg viewBox="0 0 24 24"><use href="#i-food"/></svg>Nutrition</a>
+    </div>
+
+    <!-- Dock -->
+    <div class="dock" id="dock">
+      <button class="dock-item active" data-label="Accueil">
+        <svg viewBox="0 0 24 24"><use href="#i-home"/></svg><span class="lbl">Accueil</span>
+      </button>
+      <button class="dock-item" data-label="Entraînement" data-sub="sub-training">
+        <svg viewBox="0 0 24 24"><use href="#i-run"/></svg><span class="lbl">Entraînement</span><span class="dot"></span>
+      </button>
+      <button class="dock-item" data-label="Analyse" data-sub="sub-analyse">
+        <svg viewBox="0 0 24 24"><use href="#i-trend"/></svg><span class="lbl">Analyse</span><span class="dot"></span>
+      </button>
+      <button class="dock-item" data-label="Coach" data-sub="sub-coach">
+        <svg viewBox="0 0 24 24"><use href="#i-bot"/></svg><span class="lbl">Coach</span><span class="dot"></span>
+      </button>
+      <button class="dock-item" data-label="Réglages">
+        <svg viewBox="0 0 24 24"><use href="#i-set"/></svg><span class="lbl">Réglages</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── Thème clair/sombre (persistant + ?theme= pour les captures) ──
+  const root = document.documentElement;
+  const params = new URLSearchParams(location.search);
+  const saved = params.get('theme') || localStorage.getItem('rc-theme') || 'dark';
+  setTheme(saved);
+  function setTheme(t) {
+    root.dataset.theme = t;
+    localStorage.setItem('rc-theme', t);
+    document.querySelector('.ic-moon').style.display = t === 'dark' ? '' : 'none';
+    document.querySelector('.ic-sun').style.display = t === 'dark' ? 'none' : '';
+    document.querySelector('.topbar h2').textContent = t === 'dark' ? 'Bonjour Mickaël 🌙' : 'Bonjour Mickaël ☀️';
+  }
+  document.getElementById('themeToggle').addEventListener('click', () =>
+    setTheme(root.dataset.theme === 'dark' ? 'light' : 'dark'));
+
+  // ── Dock : actif + sous-menus + glisser (à la iOS) ──
+  const dock = document.getElementById('dock');
+  const items = [...dock.querySelectorAll('.dock-item')];
+  let openSub = null;
+
+  function closeSub() {
+    if (openSub) { document.getElementById(openSub).classList.remove('open'); openSub = null; }
+  }
+  function activate(btn, toggleSub = true) {
+    items.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const sub = btn.dataset.sub;
+    if (sub && toggleSub) {
+      if (openSub === sub) { closeSub(); return; }
+      closeSub();
+      document.getElementById(sub).classList.add('open');
+      openSub = sub;
+    } else if (toggleSub) {
+      closeSub();
+    }
+  }
+  items.forEach(btn => btn.addEventListener('click', () => activate(btn)));
+
+  // Glisser le doigt/la souris sur le dock pour parcourir les icônes
+  let dragging = false;
+  dock.addEventListener('pointerdown', e => { dragging = true; });
+  window.addEventListener('pointerup', () => { dragging = false; });
+  dock.addEventListener('pointermove', e => {
+    if (!dragging) return;
+    const el = document.elementFromPoint(e.clientX, e.clientY)?.closest('.dock-item');
+    if (el && !el.classList.contains('active')) activate(el, false);
+  });
+  // Fermer le sous-menu en cliquant ailleurs
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.dock') && !e.target.closest('.submenu')) closeSub();
+  });
+</script>
+</body>
+</html>
