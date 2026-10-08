@@ -47,6 +47,8 @@ jobs:
           sleep 3
           google-chrome --headless --no-sandbox --disable-gpu --no-pdf-header-footer --print-to-pdf=cv/cv_fr.pdf "http://localhost:8000/cv/index.html?lang=fr"
           google-chrome --headless --no-sandbox --disable-gpu --no-pdf-header-footer --print-to-pdf=cv/cv_en.pdf "http://localhost:8000/cv/index.html?lang=en"
+          google-chrome --headless --no-sandbox --disable-gpu --no-pdf-header-footer --print-to-pdf=cv/cv_ats_fr.pdf "http://localhost:8000/cv/ats.html?lang=fr"
+          google-chrome --headless --no-sandbox --disable-gpu --no-pdf-header-footer --print-to-pdf=cv/cv_ats_en.pdf "http://localhost:8000/cv/ats.html?lang=en"
           kill $SERVER_PID
       - name: Setup Pages
         uses: actions/configure-pages@v4
