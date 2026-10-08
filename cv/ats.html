@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CV - Mickaël Gauvrit</title>
+<meta name="description" content="CV ATS-friendly de Mickaël Gauvrit - Senior Cloud Engineer GCP, DevOps & SRE">
+<style>
+  /* ============ ATS-first : texte brut, une colonne, zéro fioriture ============ */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  :root { --accent: #1f3a5f; --ink: #1a1a1a; --muted: #3d3d3d; }
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 11pt;
+    line-height: 1.45;
+    color: var(--ink);
+    background: #fff;
+    max-width: 210mm;
+    margin: 0 auto;
+    padding: 12mm 14mm;
+  }
+  h1 { font-size: 24pt; font-weight: bold; letter-spacing: 0.5px; margin-bottom: 2mm; color: var(--accent); }
+  .headline { font-size: 12pt; font-weight: bold; margin-bottom: 2mm; color: var(--accent); }
+  .contact { font-size: 10pt; margin-bottom: 2mm; }
+  .contact a { color: var(--accent); text-decoration: none; }
+  .tags { font-size: 10pt; color: var(--muted); margin-bottom: 6mm; }
+  h2 {
+    font-size: 12.5pt;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--accent);
+    border-bottom: 1.5px solid var(--accent);
+    padding-bottom: 1.5mm;
+    margin: 6mm 0 3mm 0;
+  }
+  p.summary { margin-bottom: 2mm; text-align: justify; }
+  .skill-line { margin-bottom: 1.2mm; }
+  .skill-line strong { font-weight: bold; }
+  .job { margin-bottom: 4mm; break-inside: avoid; }
+  .job-header { font-weight: bold; font-size: 11.5pt; }
+  .job-meta { font-size: 10pt; color: #333; margin-bottom: 1.5mm; }
+  ul { margin: 0 0 1.5mm 6mm; }
+  li { margin-bottom: 1mm; }
+  .env { font-size: 10pt; color: #333; margin-top: 1mm; }
+  .item-line { margin-bottom: 1.5mm; }
+  @page { size: A4; margin: 14mm 13mm; }
+  @media print {
+    body { padding: 0; max-width: none; }
+    a { color: #111; text-decoration: none; }
+  }
+</style>
+</head>
+<body>
+<main id="cv"><!-- Rendu injecté --></main>
+<script>
+const LABELS = {
+  fr: { profile: "Profil", skills: "Compétences techniques", exp: "Expérience professionnelle",
+        cert: "Certifications", edu: "Formation", lang: "Langues" },
+  en: { profile: "Professional Summary", skills: "Technical Skills", exp: "Professional Experience",
+        cert: "Certifications", edu: "Education", lang: "Languages" }
+};
+const params = new URLSearchParams(window.location.search);
+const lang = params.get("lang") === "en" ? "en" : "fr";
+document.documentElement.lang = lang;
+const L = LABELS[lang];
+const t = (node) => (node && typeof node === "object" ? (node[lang] || node.fr || "") : (node || ""));
+const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+async function render() {
+  const res = await fetch("cv_bilingual.json");
+  const d = await res.json();
+  const p = d.profile;
+  let h = "";
+
+  h += `<h1>${esc(t(p.name) || p.name)}</h1>`;
+  h += `<p class="headline">${esc(t(p.title))}</p>`;
+  h += `<p class="contact">${esc(t(p.location))} | ${esc(p.phone)} | <a href="mailto:${esc(p.email)}">${esc(p.email)}</a> | ${esc(p.linkedin)} | ${esc(p.github)}</p>`;
+  const subs = t(p.subtitles);
+  const subArr = Array.isArray(subs) ? subs : (subs ? [subs] : []);
+  if (subArr.length) h += `<p class="tags">${subArr.map(esc).join(" &nbsp;•&nbsp; ")}</p>`;
+
+  h += `<h2>${L.profile}</h2><p class="summary">${esc(t(p.summary))}</p>`;
+
+  h += `<h2>${L.skills}</h2>`;
+  (d.skills || []).forEach((c) => {
+    const items = (c.items || []).map(t).filter(Boolean);
+    h += `<p class="skill-line"><strong>${esc(t(c.category))} :</strong> ${items.map(esc).join(", ")}</p>`;
+  });
+
+  h += `<h2>${L.exp}</h2>`;
+  (d.experiences || []).forEach((e) => {
+    h += `<div class="job"><p class="job-header">${esc(t(e.role))} — ${esc(t(e.company))}</p>`;
+    h += `<p class="job-meta">${esc(t(e.period))} | ${esc(t(e.location))}</p><ul>`;
+    (e.bullets || []).forEach((b) => { h += `<li>${esc(t(b))}</li>`; });
+    h += `</ul>`;
+    if (e.env) h += `<p class="env"><strong>${lang === "fr" ? "Env." : "Environment"} :</strong> ${esc(t(e.env))}</p>`;
+    h += `</div>`;
+  });
+
+  h += `<h2>${L.cert}</h2>`;
+  (d.certifications || []).forEach((c) => {
+    h += `<p class="item-line"><strong>${esc(t(c.title))}</strong> — ${esc(t(c.issuer))}, ${esc(t(c.period))}</p>`;
+  });
+
+  h += `<h2>${L.edu}</h2>`;
+  (d.education || []).forEach((e) => {
+    h += `<p class="item-line"><strong>${esc(t(e.degree))}</strong> — ${esc(t(e.school))}, ${esc(t(e.period))}</p>`;
+  });
+
+  h += `<h2>${L.lang}</h2>`;
+  (d.languages || []).forEach((l) => {
+    h += `<p class="item-line"><strong>${esc(t(l.name))}</strong> — ${esc(t(l.level))}</p>`;
+  });
+
+  document.getElementById("cv").innerHTML = h;
+  document.title = "CV - Mickaël Gauvrit (" + lang.toUpperCase() + ") - ATS";
+}
+render();
+</script>
+</body>
+</html>
