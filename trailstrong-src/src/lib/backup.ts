@@ -1,12 +1,34 @@
 /**
  * Backup « cloud » optionnel vers un Gist SECRET de l'utilisateur.
  *
- * Le contenu est chiffré en AES-GCM 256 avec une clé dérivée du PIN
- * (PBKDF2-SHA256, 250 000 itérations, sel aléatoire) : le Gist ne contient
+ * Le contenu est chiffré en AES-GCM 256 avec une clé dérivée de la « clé de
+ * récupération » de l'appareil (PBKDF2-SHA256, 250 000 itérations, sel
+ * aléatoire), indépendante du PIN et de Google : le Gist ne contient
  * qu'un blob illisible. Désactivé par défaut ; le token (scope « gist »
  * uniquement) reste sur l'appareil.
  */
 import { sessionPin } from './auth'
+
+const RECOVERY_KEY = 'trailstrong:recovery-key'
+const ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789' // sans 0/O/1/I
+
+/** Clé de récupération (20 caractères, ~100 bits), générée une fois par appareil. */
+export function getRecoveryKey(): string {
+  let k = localStorage.getItem(RECOVERY_KEY)
+  if (!k) {
+    const bytes = crypto.getRandomValues(new Uint8Array(20))
+    k = [...bytes].map((b) => ALPHABET[b % 32]).join('').replace(/(.{5})(?=.)/g, '$1-')
+    localStorage.setItem(RECOVERY_KEY, k)
+  }
+  return k
+}
+
+/** Remplace la clé (pour restaurer un backup créé sur un autre appareil). */
+export function setRecoveryKey(k: string) {
+  const clean = k.trim().toUpperCase()
+  if (!/^[A-Z2-9]{5}(-[A-Z2-9]{5}){3}$/.test(clean)) throw new Error('Format attendu : XXXXX-XXXXX-XXXXX-XXXXX')
+  localStorage.setItem(RECOVERY_KEY, clean)
+}
 import { exportJson, getData, importJson, updateGist, useData } from './storage'
 import { useEffect } from 'react'
 
@@ -58,10 +80,8 @@ function headers(token: string) {
 
 export async function backupNow(): Promise<void> {
   const { gist } = getData()
-  const pin = sessionPin()
   if (!gist.token) throw new Error('Token GitHub manquant.')
-  if (!pin) throw new Error('Session verrouillée : ressaisis ton PIN.')
-  const content = await encrypt(exportJson(), pin)
+  const content = await encrypt(exportJson(), getRecoveryKey())
   const body = JSON.stringify({
     description: 'TrailStrong 2026 — backup chiffré',
     public: false,
@@ -83,21 +103,24 @@ export async function backupNow(): Promise<void> {
 
 export async function restoreFromGist(): Promise<number> {
   const { gist } = getData()
-  const pin = sessionPin()
   if (!gist.token || !gist.gistId) throw new Error('Token et ID du Gist requis.')
-  if (!pin) throw new Error('Session verrouillée : ressaisis ton PIN.')
   const res = await fetch(`${API}/${gist.gistId}`, { headers: headers(gist.token) })
   if (!res.ok) throw new Error(`GitHub ${res.status} ${res.statusText}`)
   const json = (await res.json()) as { files: Record<string, { content: string; truncated?: boolean; raw_url: string }> }
   const file = json.files[FILE]
   if (!file) throw new Error(`Fichier ${FILE} absent du Gist.`)
   const content = file.truncated ? await (await fetch(file.raw_url)).text() : file.content
-  let plain: string
-  try {
-    plain = await decrypt(content, pin)
-  } catch {
-    throw new Error('Déchiffrement impossible : le backup a été créé avec un autre PIN.')
+  // Clé de récupération ; repli sur le PIN de session pour les anciens backups.
+  let plain: string | null = null
+  for (const secret of [getRecoveryKey(), sessionPin()].filter((x): x is string => !!x)) {
+    try {
+      plain = await decrypt(content, secret)
+      break
+    } catch {
+      /* essai suivant */
+    }
   }
+  if (plain === null) throw new Error('Déchiffrement impossible : saisis la clé de récupération de l’appareil d’origine.')
   return importJson(plain)
 }
 

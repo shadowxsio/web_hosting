@@ -1,9 +1,11 @@
 import { CloudUpload, Download, KeyRound, Lock, RotateCcw, Upload, X } from 'lucide-react'
 import { useRef, useState, type ComponentType, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
-import { lock, resetLocalPin, setLocalPin, usingDefaultPin } from '../lib/auth'
+import { exitAdmin, lock, resetLocalPin, setLocalPin, useAdmin, usingDefaultPin } from '../lib/auth'
+import { getGoogleSession } from '../lib/googleAuth'
+import { PinLock } from './PinLock'
 import { useTheme } from '../lib/theme'
-import { backupNow, restoreFromGist } from '../lib/backup'
+import { backupNow, getRecoveryKey, restoreFromGist, setRecoveryKey } from '../lib/backup'
 import type { FocusTag } from '../data/program'
 import { exportJson, importJson, today, updateGist, useData } from '../lib/storage'
 import type { View } from '../App'
@@ -20,6 +22,10 @@ export function SettingsSheet({
   const data = useData()
   const g = data.gist
   const [theme, setTheme] = useTheme()
+  const admin = useAdmin()
+  const [askPin, setAskPin] = useState(false)
+  const [recovery, setRecovery] = useState('')
+  const account = getGoogleSession()
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null)
   const [busy, setBusy] = useState(false)
   const [pin1, setPin1] = useState('')
@@ -95,8 +101,8 @@ export function SettingsSheet({
             }}
             className="flex min-h-[57px] w-full flex-wrap items-center gap-x-3 border-t-[2.5px] border-ink bg-sun px-4 py-2 text-left"
           >
-            <span className="text-[10px] font-extrabold uppercase tracking-[0.1em] text-ink/70">En 1 geste</span>
-            <span className="text-[19px] font-black uppercase italic leading-tight tracking-tight">Verrouiller</span>
+            <span className="text-[10px] font-extrabold uppercase tracking-[0.1em] text-ink/70">{account ? account.email : 'Session PIN'}</span>
+            <span className="text-[19px] font-black uppercase italic leading-tight tracking-tight">Se déconnecter</span>
           </button>
         </nav>
 
@@ -128,6 +134,8 @@ export function SettingsSheet({
           <p className={`mb-3 border-2 border-ink px-3 py-2 text-sm font-bold ${msg.ok ? 'bg-mint' : 'bg-rose'}`}>{msg.text}</p>
         )}
 
+        {admin ? (
+          <>
         <Block title="Sauvegarde locale" desc={`${days} jour(s) d’entraînement stockés sur cet appareil.`}>
           <div className="grid grid-cols-2 gap-2">
             <Btn onClick={download} icon={Download}>
@@ -152,7 +160,7 @@ export function SettingsSheet({
 
         <Block
           title="Backup cloud — GitHub Gist"
-          desc="Optionnel. Copie chiffrée (AES-256, clé dérivée de ton PIN) dans un Gist secret, 20 s après chaque modification."
+          desc="Optionnel. Copie chiffrée (AES-256) dans un Gist secret, 20 s après chaque modification. Note la clé de récupération : elle est nécessaire pour restaurer sur un autre appareil."
         >
           <label className="mb-2 flex h-11 items-center justify-between border-2 border-ink bg-paper px-3 text-[13px] text-ink">
             Backup automatique
@@ -187,6 +195,31 @@ export function SettingsSheet({
             {g.lastBackup ? `Dernier backup : ${new Date(g.lastBackup).toLocaleString('fr-CA')}` : 'Aucun backup cloud pour l’instant.'}
             {g.lastError && <span className="block text-danger">Dernière erreur : {g.lastError}</span>}
           </p>
+          <div className="mt-3 border-2 border-dashed border-ink p-3">
+            <p className="label">Clé de récupération</p>
+            <p className="mt-1 select-all font-black italic tracking-wide">{getRecoveryKey()}</p>
+            <div className="mt-2 flex gap-2">
+              <input
+                value={recovery}
+                onChange={(e) => setRecovery(e.target.value)}
+                placeholder="Coller une autre clé…"
+                className="b-input h-10 min-w-0 flex-1 px-2 text-[12px] uppercase"
+              />
+              <Btn
+                disabled={!recovery}
+                onClick={() =>
+                  run(async () => {
+                    setRecoveryKey(recovery)
+                    setRecovery('')
+                    return 'Clé de récupération remplacée.'
+                  })
+                }
+                icon={KeyRound}
+              >
+                Utiliser
+              </Btn>
+            </div>
+          </div>
         </Block>
 
         <Block
@@ -228,16 +261,26 @@ export function SettingsSheet({
           </div>
         </Block>
 
-        <button
-          type="button"
-          onClick={() => {
-            lock()
-            onLock()
-          }}
-          className="b-btn b-btn-ink mb-8 mt-1 flex h-12 w-full items-center justify-center gap-2 uppercase italic"
-        >
-          <Lock className="h-4 w-4" /> Verrouiller maintenant
-        </button>
+            <button
+              type="button"
+              onClick={exitAdmin}
+              className="b-btn b-btn-ink mb-8 mt-1 flex h-12 w-full items-center justify-center gap-2 uppercase italic"
+            >
+              <Lock className="h-4 w-4" /> Quitter le mode admin
+            </button>
+          </>
+        ) : (
+          <section className="b-card mb-8 p-4">
+            <h3 className="text-[16px] font-black uppercase italic tracking-tight">🔒 Mode admin</h3>
+            <p className="mb-3 mt-1 text-[13px] font-semibold leading-snug text-ink/75">
+              Sauvegardes, backup cloud et PIN sont protégés par ton code PIN (10 min d’accès).
+            </p>
+            <button type="button" onClick={() => setAskPin(true)} className="b-btn flex h-12 w-full items-center justify-center gap-2 bg-sun uppercase italic">
+              <KeyRound className="h-4 w-4" /> Saisir le PIN admin
+            </button>
+          </section>
+        )}
+        {askPin && <PinLock overlay onUnlock={() => setAskPin(false)} onCancel={() => setAskPin(false)} />}
         <p className="mb-6 text-center text-[11px] text-ink/45">TrailStrong 2026 · v{__APP_VERSION__} · données 100 % locales</p>
       </div>
     </div>,

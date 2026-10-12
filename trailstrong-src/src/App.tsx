@@ -2,7 +2,7 @@ import { BarChart3, LayoutGrid, Menu, Search } from 'lucide-react'
 import { useEffect, useRef, useState, type TouchEvent } from 'react'
 import { Catalog, type Scope } from './components/Catalog'
 import { SESSION_META } from './components/meta'
-import { PinLock } from './components/PinLock'
+import { LoginScreen } from './components/LoginScreen'
 import { SettingsSheet } from './components/SettingsSheet'
 import { StatsView } from './components/StatsView'
 import { TimerBar } from './components/TimerBar'
@@ -35,7 +35,7 @@ export default function App() {
     void hasValidSession().then((ok) => setAuth(ok ? 'open' : 'locked'))
   }, [])
   if (auth === 'checking') return null
-  if (auth === 'locked') return <PinLock onUnlock={() => setAuth('open')} />
+  if (auth === 'locked') return <LoginScreen onUnlock={() => setAuth('open')} />
   return <Shell onLock={() => setAuth('locked')} />
 }
 
