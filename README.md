@@ -58,6 +58,6 @@ Code source dans `trailstrong-src/` (Vite + React + TypeScript + Tailwind + Luci
 - **Hors-ligne** : service worker généré au build (précache de tous les fichiers) + manifest → « Ajouter à l'écran d'accueil ».
 - **Dev local** :
   ```bash
-  cd trailstrong-src && npm install && npm run dev   # http://localhost:5173 (la connexion Google ne marche que sur shadowxsio.github.io : utilise « Accès admin (PIN) » en local)
+  cd trailstrong-src && npm install && npm run dev   # http://localhost:5173 (la connexion Google ne marche que sur shadowxsio.github.io : utilise le PIN en local ; /#schemas : planche des 19 schémas)
   ```
 - **Photos de démo** : `trailstrong-src/public/demos/` — paires départ/fin issues de [free-exercise-db](https://github.com/yuhonas/free-exercise-db) (domaine public, Unlicense), converties en WebP 480 px.

@@ -22,7 +22,7 @@ export function DemoPlayer({ ex }: { ex: Exercise }) {
 
   return (
     <section>
-      <h3 className="label mb-2">Démo</h3>
+      <h3 className="label mb-2">Photo réelle</h3>
       {demo?.photos ? (
         <div className="b-card overflow-hidden !shadow-[4px_4px_0_var(--color-shadow)]">
           <button
@@ -50,7 +50,7 @@ export function DemoPlayer({ ex }: { ex: Exercise }) {
         </div>
       ) : (
         <p className="flex items-center gap-2 border-2 border-dashed border-ink/50 px-3 py-3 text-[12px] font-semibold text-ink/75">
-          <ImageOff className="h-4 w-4 shrink-0" /> Pas de photo libre de droits pour cet exercice : regarde la vidéo et suis les points d’attention.
+          <ImageOff className="h-4 w-4 shrink-0" /> Pas de photo libre de droits pour cet exercice : le schéma ci-dessus et la vidéo montrent le mouvement.
         </p>
       )}
       <a

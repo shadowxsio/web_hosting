@@ -7,6 +7,7 @@ import { touch, treadmillStats, type ExerciseLog, type Side } from '../lib/stora
 import { timer } from '../lib/timer'
 import { SIDE_LABEL, num, useExerciseLog } from '../lib/useExerciseLog'
 import { DemoPlayer } from './DemoPlayer'
+import { DIAGRAM_OF, ExerciseDiagram } from './ExerciseDiagram'
 import { DIR_META, Pill, SESSION_META, ZONE_META, categoryOf, iconOf, restLabel } from './meta'
 
 /** Tiroir de détail : bas de l'écran sur mobile, à droite sur desktop. */
@@ -72,6 +73,28 @@ export function ExerciseDrawer({ ex, sessionId, date, onClose }: { ex: Exercise;
             {ex.rest > 0 && <Pill>Repos {restLabel(ex.rest)}</Pill>}
             {ex.tempo && <Pill tone="sky">{ex.tempo}</Pill>}
           </div>
+
+          {/* Schéma d'exécution (comme la maquette) */}
+          {DIAGRAM_OF[ex.id] && (
+            <section className="hero overflow-hidden border-[2.5px] border-ink shadow-[4px_4px_0_var(--color-shadow)]">
+              <div className="mx-auto aspect-[5/4] w-full max-w-[340px]">
+                <ExerciseDiagram id={DIAGRAM_OF[ex.id]} />
+              </div>
+              <p className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 border-t-2 border-ink bg-paper px-2 py-1.5 text-[10px] font-extrabold uppercase tracking-wide">
+                <span className="flex items-center gap-1">
+                  <span className="inline-block w-4 border-t-2 border-dashed border-ink/60" /> départ
+                </span>
+                <span className="flex items-center gap-1">
+                  <span className="inline-block w-4 border-t-[3px] border-ink" /> fin
+                </span>
+                <span className="flex items-center gap-1 text-flame">➜ hanche / tronc</span>
+                <span className="flex items-center gap-1 text-ocean">➜ genou / cheville</span>
+                <span className="flex items-center gap-1">
+                  <span className="inline-block h-2 w-3 border border-ink bg-ocean" /> muscle ciblé
+                </span>
+              </p>
+            </section>
+          )}
 
           {/* Saisie */}
           <section>
