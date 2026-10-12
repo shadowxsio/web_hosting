@@ -104,10 +104,10 @@ function Shell({ onLock }: { onLock: () => void }) {
     <div className="min-h-dvh" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
       {/* ── En-tête ── */}
       <header className="pt-safe">
-        <div className="mx-auto flex max-w-6xl items-center gap-3 px-3 pb-4 pt-4 md:px-6">
-          <button type="button" onClick={() => setView('all')} className="-rotate-2 border-[2.5px] border-ink bg-paper p-1 shadow-[4px_4px_0_#1b1424]" aria-label="Accueil">
-            <span className="block border-2 border-dashed border-ink px-3 py-1.5">
-              <span className="headline block text-[22px] [text-shadow:2px_2px_0_#f0773a]">TrailStrong</span>
+        <div className="mx-auto flex max-w-6xl items-center gap-2.5 px-3 pb-4 pt-4 md:px-6">
+          <button type="button" onClick={() => setView('all')} className="-rotate-2 border-[2.5px] border-ink bg-paper p-1 shadow-[4px_4px_0_var(--color-shadow)]" aria-label="Accueil">
+            <span className="block border-2 border-dashed border-ink px-2.5 py-1.5 min-[400px]:px-3">
+              <span className="headline block text-[19px] [text-shadow:2px_2px_0_#f0773a] min-[400px]:text-[22px]">TrailStrong</span>
             </span>
           </button>
           <button
@@ -118,7 +118,7 @@ function Shell({ onLock }: { onLock: () => void }) {
           >
             <Search className="h-5 w-5" strokeWidth={2.8} />
           </button>
-          <button type="button" onClick={() => setMenu(true)} className="b-btn flex h-12 items-center gap-2 bg-sun px-4 text-[15px] uppercase italic">
+          <button type="button" onClick={() => setMenu(true)} className="b-btn flex h-12 shrink-0 items-center gap-1.5 bg-sun px-3 text-[15px] uppercase italic min-[400px]:px-4">
             <Menu className="h-5 w-5" strokeWidth={3} /> Menu
           </button>
         </div>
@@ -134,7 +134,7 @@ function Shell({ onLock }: { onLock: () => void }) {
                 onClick={() => setView(t.id)}
                 aria-current={active ? 'page' : undefined}
                 className={`-mb-[2.5px] rounded-t-xl border-[2.5px] border-ink px-4 text-[13px] font-black uppercase italic transition-all duration-150 ${
-                  active ? `h-12 border-b-sky bg-sky` : `h-10 ${t.bg} hover:h-11`
+                  active ? `h-12 border-b-hero bg-hero` : `h-10 ${t.bg} hover:h-11`
                 }`}
               >
                 {t.emoji && <span className="mr-1 not-italic">{t.emoji}</span>}
@@ -170,7 +170,7 @@ function Shell({ onLock }: { onLock: () => void }) {
                 >
                   <span
                     className={`grid h-8 w-11 place-items-center rounded-lg border-2 text-[16px] transition-all duration-150 ${
-                      active ? `${t.bg} -translate-y-0.5 border-ink shadow-[2px_2px_0_#1b1424]` : 'border-transparent'
+                      active ? `${t.bg} -translate-y-0.5 border-ink shadow-[2px_2px_0_var(--color-shadow)]` : 'border-transparent'
                     }`}
                   >
                     {t.id === 'all' ? <LayoutGrid className="h-[18px] w-[18px]" strokeWidth={2.5} /> : t.id === 'stats' ? <BarChart3 className="h-[18px] w-[18px]" strokeWidth={2.5} /> : t.emoji}

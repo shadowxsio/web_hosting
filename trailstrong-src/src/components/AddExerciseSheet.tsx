@@ -158,7 +158,7 @@ function Field({ label, hint, error, children }: { label: string; hint?: string;
         {hint && <span className="normal-case tracking-normal text-ocean">{hint}</span>}
       </p>
       {children}
-      {error && <p className="mt-1 text-[11px] text-[#b91c1c]">{error}</p>}
+      {error && <p className="mt-1 text-[11px] text-danger">{error}</p>}
     </div>
   )
 }

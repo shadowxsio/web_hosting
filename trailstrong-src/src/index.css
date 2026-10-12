@@ -2,24 +2,43 @@
 
 /* ── Style « quelleia » : néo-brutalisme papier, contours encre, ombres dures ── */
 @theme {
-  --color-ink: #1b1424;
-  --color-paper: #fdf6e8;
-  --color-paper-2: #f3ead9;
+  /* Valeurs du thème sombre (défaut) ; le thème clair les redéfinit plus bas. */
+  --color-ink: #f1e8d8; /* texte, contours */
+  --color-paper: #231f2c; /* surfaces (cartes, boutons) */
+  --color-paper-2: #16131c; /* fond de page */
+  --color-shadow: #000000; /* ombres dures */
+  --color-hero: #1d3150; /* bandeau « ciel » de nuit */
   --color-sky: #86c5f7;
   --color-sun: #f8d95b;
   --color-mint: #9fe7a4;
   --color-peach: #f4b183;
   --color-lilac: #d4a6f7;
+  --color-rose: #ffb4a8;
   --color-flame: #f0773a;
-  --color-ocean: #0e7490;
-  --color-leaf: #047857;
+  --color-ocean: #67d4f0;
+  --color-leaf: #5fe08a;
+  --color-danger: #ff8a7a;
+  --color-on: #15121b; /* texte sur les aplats colorés */
   --font-sans: "Montserrat", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-display: "Montserrat", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "Montserrat", ui-sans-serif, system-ui, sans-serif;
 }
 
-:root {
+/* Thème clair « papier » (identique à quelleia), activable depuis le Menu. */
+:root[data-theme="light"] {
+  --color-ink: #1b1424;
+  --color-paper: #fdf6e8;
+  --color-paper-2: #f3ead9;
+  --color-shadow: #1b1424;
+  --color-hero: #86c5f7;
+  --color-ocean: #0e7490;
+  --color-leaf: #047857;
+  --color-danger: #b91c1c;
   color-scheme: light;
+}
+
+:root {
+  color-scheme: dark;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -31,17 +50,18 @@ body {
 
 body {
   min-height: 100dvh;
+  overflow-x: clip;
   font-weight: 500;
   font-feature-settings: "tnum" 1;
   background-color: var(--color-paper-2);
-  background-image: radial-gradient(rgba(27, 20, 36, 0.09) 1.2px, transparent 1.4px);
+  background-image: radial-gradient(color-mix(in srgb, var(--color-ink) 9%, transparent) 1.2px, transparent 1.4px);
   background-size: 14px 14px;
 }
 
 /* Bandeau bleu ciel à pois. */
 .hero {
-  background-color: var(--color-sky);
-  background-image: radial-gradient(rgba(27, 20, 36, 0.14) 1.3px, transparent 1.5px);
+  background-color: var(--color-hero);
+  background-image: radial-gradient(color-mix(in srgb, var(--color-ink) 16%, transparent) 1.3px, transparent 1.5px);
   background-size: 12px 12px;
   border-top: 2.5px solid var(--color-ink);
   border-bottom: 2.5px solid var(--color-ink);
@@ -72,7 +92,7 @@ body {
   .b-card {
     background: var(--color-paper);
     border: 2.5px solid var(--color-ink);
-    box-shadow: 5px 5px 0 var(--color-ink);
+    box-shadow: 5px 5px 0 var(--color-shadow);
   }
   .b-box {
     background: var(--color-paper);
@@ -81,13 +101,13 @@ body {
   .b-btn {
     background: var(--color-paper);
     border: 2.5px solid var(--color-ink);
-    box-shadow: 3px 3px 0 var(--color-ink);
+    box-shadow: 3px 3px 0 var(--color-shadow);
     font-weight: 800;
     transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease;
   }
   .b-btn:active {
     transform: translate(2px, 2px);
-    box-shadow: 1px 1px 0 var(--color-ink);
+    box-shadow: 1px 1px 0 var(--color-shadow);
   }
   .b-btn-ink {
     background: var(--color-ink);
@@ -96,7 +116,7 @@ body {
   .b-input {
     background: var(--color-paper);
     border: 2.5px solid var(--color-ink);
-    box-shadow: 4px 4px 0 var(--color-ink);
+    box-shadow: 4px 4px 0 var(--color-shadow);
     font-weight: 600;
   }
   .b-input:focus {
@@ -117,8 +137,14 @@ body {
     font-weight: 800;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: rgba(27, 20, 36, 0.6);
+    color: color-mix(in srgb, var(--color-ink) 62%, transparent);
   }
+}
+
+/* Aplats colorés : texte toujours foncé (lisible dans les deux thèmes). */
+:is(.bg-sun, .bg-mint, .bg-peach, .bg-lilac, .bg-sky, .bg-flame, .bg-rose),
+:is(.bg-sun, .bg-mint, .bg-peach, .bg-lilac, .bg-sky, .bg-flame, .bg-rose) * {
+  color: var(--color-on);
 }
 
 .no-scrollbar {

@@ -23,7 +23,7 @@ export function TimerBar() {
         data-noswipe
       >
         <div
-          className={`pointer-events-auto relative mx-auto flex h-[52px] max-w-xl items-center gap-1.5 overflow-hidden border-[2.5px] border-ink pl-3 pr-1.5 shadow-[4px_4px_0_#1b1424] transition-colors duration-200 ${
+          className={`pointer-events-auto relative mx-auto flex h-[52px] max-w-xl items-center gap-1.5 overflow-hidden border-[2.5px] border-ink pl-3 pr-1.5 shadow-[4px_4px_0_var(--color-shadow)] transition-colors duration-200 ${
             finished ? 'bg-mint' : 'bg-paper'
           }`}
         >

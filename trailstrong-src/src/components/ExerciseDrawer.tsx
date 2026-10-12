@@ -42,7 +42,7 @@ export function ExerciseDrawer({ ex, sessionId, date, onClose }: { ex: Exercise;
         {/* Poignée + en-tête */}
         <div className="mx-auto mt-2 h-1.5 w-12 rounded-full bg-ink/30 md:hidden" />
         <header className="hero flex items-start gap-3 !border-t-0 px-4 pb-4 pt-3">
-          <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full border-[2.5px] border-ink bg-paper shadow-[2px_2px_0_#1b1424]">
+          <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full border-[2.5px] border-ink bg-paper shadow-[2px_2px_0_var(--color-shadow)]">
             <Icon className="h-5 w-5" strokeWidth={2.4} />
           </span>
           <div className="min-w-0 flex-1">
@@ -207,7 +207,7 @@ export function ExerciseDrawer({ ex, sessionId, date, onClose }: { ex: Exercise;
                         touch()
                         onClose()
                       }}
-                      className="h-9 border-2 border-ink bg-[#ffb4a8] px-3 font-black text-ink"
+                      className="h-9 border-2 border-ink bg-rose px-3 font-black text-ink"
                     >
                       Oui
                     </button>
@@ -219,7 +219,7 @@ export function ExerciseDrawer({ ex, sessionId, date, onClose }: { ex: Exercise;
               ) : (
                 <>
                   <span>Exercice ajouté à la main</span>
-                  <button type="button" onClick={() => setConfirmDelete(true)} className="flex h-9 items-center gap-1.5 px-2 text-ink/70 hover:text-[#b91c1c]">
+                  <button type="button" onClick={() => setConfirmDelete(true)} className="flex h-9 items-center gap-1.5 px-2 text-ink/70 hover:text-danger">
                     <Trash2 className="h-4 w-4" /> Supprimer
                   </button>
                 </>

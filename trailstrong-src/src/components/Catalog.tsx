@@ -74,10 +74,10 @@ export function Catalog({
       {/* ── Bandeau bleu ── */}
       <section className="hero -mx-3 px-4 pb-6 pt-5 md:-mx-6 md:px-8">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="b-box inline-flex h-8 items-center px-3 text-[13px] font-bold shadow-[3px_3px_0_#1b1424]">
+          <span className="b-box inline-flex h-8 items-center px-3 text-[13px] font-bold shadow-[3px_3px_0_var(--color-shadow)]">
             {longDate(date)} · {doneCount}/{visible.length} validés · <span className="ml-1 font-black italic text-flame">{pct} %</span>
           </span>
-          <label className="b-box relative inline-flex h-8 items-center gap-1 px-2 text-[12px] font-bold shadow-[3px_3px_0_#1b1424]" title="Changer la date">
+          <label className="b-box relative inline-flex h-8 items-center gap-1 px-2 text-[12px] font-bold shadow-[3px_3px_0_var(--color-shadow)]" title="Changer la date">
             <CalendarDays className="h-4 w-4" />
             <span className="hidden sm:inline">{date === today() ? 'Aujourd’hui' : date}</span>
             <input

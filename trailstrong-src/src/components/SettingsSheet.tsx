@@ -2,6 +2,7 @@ import { CloudUpload, Download, KeyRound, Lock, RotateCcw, Upload, X } from 'luc
 import { useRef, useState, type ComponentType, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { lock, resetLocalPin, setLocalPin, usingDefaultPin } from '../lib/auth'
+import { useTheme } from '../lib/theme'
 import { backupNow, restoreFromGist } from '../lib/backup'
 import type { FocusTag } from '../data/program'
 import { exportJson, importJson, today, updateGist, useData } from '../lib/storage'
@@ -18,6 +19,7 @@ export function SettingsSheet({
 }) {
   const data = useData()
   const g = data.gist
+  const [theme, setTheme] = useTheme()
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null)
   const [busy, setBusy] = useState(false)
   const [pin1, setPin1] = useState('')
@@ -65,7 +67,7 @@ export function SettingsSheet({
         </div>
 
         {/* Liste façon quelleia : feuille lignée, surtitre + titre italique */}
-        <nav className="lined mb-6 border-[2.5px] border-ink shadow-[6px_6px_0_#1b1424]">
+        <nav className="lined mb-6 border-[2.5px] border-ink shadow-[6px_6px_0_var(--color-shadow)]">
           {(
             [
               ['all', undefined, '4 séances, 20 exercices', 'Tout le programme'],
@@ -100,8 +102,30 @@ export function SettingsSheet({
 
         <h3 className="headline headline-sun mb-3 text-[22px]">Réglages</h3>
 
+        <Block title="Apparence" desc="Sombre pour le sous-sol du gym, clair façon papier.">
+          <div className="grid grid-cols-2 gap-2" role="radiogroup" aria-label="Thème">
+            {(
+              [
+                ['dark', '🌙 Sombre'],
+                ['light', '☀️ Clair'],
+              ] as const
+            ).map(([t, label]) => (
+              <button
+                key={t}
+                type="button"
+                role="radio"
+                aria-checked={theme === t}
+                onClick={() => setTheme(t)}
+                className={`b-btn h-11 text-[14px] uppercase italic ${theme === t ? 'b-btn-ink' : ''}`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </Block>
+
         {msg && (
-          <p className={`mb-3 border-2 border-ink px-3 py-2 text-sm font-bold ${msg.ok ? 'bg-mint' : 'bg-[#ffb4a8]'}`}>{msg.text}</p>
+          <p className={`mb-3 border-2 border-ink px-3 py-2 text-sm font-bold ${msg.ok ? 'bg-mint' : 'bg-rose'}`}>{msg.text}</p>
         )}
 
         <Block title="Sauvegarde locale" desc={`${days} jour(s) d’entraînement stockés sur cet appareil.`}>
@@ -161,7 +185,7 @@ export function SettingsSheet({
           </div>
           <p className="mt-2 text-xs text-ink/60">
             {g.lastBackup ? `Dernier backup : ${new Date(g.lastBackup).toLocaleString('fr-CA')}` : 'Aucun backup cloud pour l’instant.'}
-            {g.lastError && <span className="block text-[#b91c1c]">Dernière erreur : {g.lastError}</span>}
+            {g.lastError && <span className="block text-danger">Dernière erreur : {g.lastError}</span>}
           </p>
         </Block>
 

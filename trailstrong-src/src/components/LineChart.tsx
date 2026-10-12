@@ -39,7 +39,7 @@ export function LineChart({ points, unit, kind = 'line' }: { points: Point[]; un
     <div className="relative">
       <svg
         viewBox={`0 0 ${W} ${H}`}
-        className="w-full touch-none select-none"
+        className="w-full touch-none select-none text-ink"
         onPointerLeave={() => setHover(null)}
         onPointerMove={(e) => {
           const r = e.currentTarget.getBoundingClientRect()
@@ -55,15 +55,15 @@ export function LineChart({ points, unit, kind = 'line' }: { points: Point[]; un
       >
         {ticks.map((t, i) => (
           <g key={i}>
-            <line x1={pad.l} x2={W - pad.r} y1={y(t)} y2={y(t)} stroke="rgba(27,20,36,0.15)" strokeWidth={1} />
-            <text x={pad.l - 6} y={y(t) + 3} textAnchor="end" fontSize={9} fill="#1b1424" fillOpacity={0.6} fontWeight={700}>
+            <line x1={pad.l} x2={W - pad.r} y1={y(t)} y2={y(t)} stroke="currentColor" strokeOpacity={0.15} strokeWidth={1} />
+            <text x={pad.l - 6} y={y(t) + 3} textAnchor="end" fontSize={9} fill="currentColor" fillOpacity={0.65} fontWeight={700}>
               {t >= 10000 ? `${Math.round(t / 1000)}k` : Math.round(t * 10) / 10}
             </text>
           </g>
         ))}
         {points.map((p, i) =>
           i % every === 0 || i === points.length - 1 ? (
-            <text key={i} x={x(i)} y={H - 6} textAnchor="middle" fontSize={9} fill="#1b1424" fillOpacity={0.6} fontWeight={700}>
+            <text key={i} x={x(i)} y={H - 6} textAnchor="middle" fontSize={9} fill="currentColor" fillOpacity={0.65} fontWeight={700}>
               {p.label}
             </text>
           ) : null,
@@ -88,17 +88,17 @@ export function LineChart({ points, unit, kind = 'line' }: { points: Point[]; un
             </defs>
             <path d={path} fill="none" stroke="#f97316" strokeWidth={2} strokeLinejoin="round" />
             {points.map((p, i) => (
-              <circle key={i} cx={x(i)} cy={y(p.value)} r={4} fill="#f97316" stroke="#1b1424" strokeWidth={2} />
+              <circle key={i} cx={x(i)} cy={y(p.value)} r={4} fill="#f97316" stroke="currentColor" strokeWidth={2} />
             ))}
           </>
         )}
         {h && hover != null && (
-          <line x1={x(hover)} x2={x(hover)} y1={pad.t} y2={pad.t + ih} stroke="#1b1424" strokeWidth={1} strokeDasharray="3 3" />
+          <line x1={x(hover)} x2={x(hover)} y1={pad.t} y2={pad.t + ih} stroke="currentColor" strokeWidth={1} strokeDasharray="3 3" />
         )}
       </svg>
       {h && hover != null && (
         <div
-          className="pointer-events-none absolute top-0 -translate-x-1/2 border-2 border-ink bg-paper px-2.5 py-1.5 text-xs shadow-[3px_3px_0_#1b1424]"
+          className="pointer-events-none absolute top-0 -translate-x-1/2 border-2 border-ink bg-paper px-2.5 py-1.5 text-xs shadow-[3px_3px_0_var(--color-shadow)]"
           style={{ left: `${Math.min(85, Math.max(15, (x(hover) / W) * 100))}%` }}
         >
           <p className="text-ink/70">{h.label}</p>

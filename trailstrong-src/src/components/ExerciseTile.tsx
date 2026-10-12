@@ -42,7 +42,7 @@ export function ExerciseTile({
       <div className={`b-card relative ${TILT[index % 4]} transition-transform duration-150`}>
         <button type="button" onClick={onOpen} className="block w-full px-4 pb-3 pt-4 text-left" aria-label={`Ouvrir ${ex.name}`}>
           <div className="flex items-center gap-3.5">
-            <span className={`grid h-12 w-12 shrink-0 place-items-center rounded-full border-[2.5px] border-ink bg-sky shadow-[2px_2px_0_#1b1424]`}>
+            <span className={`grid h-12 w-12 shrink-0 place-items-center rounded-full border-[2.5px] border-ink bg-sky shadow-[2px_2px_0_var(--color-shadow)]`}>
               <Icon className="h-5 w-5 text-ink" strokeWidth={2.4} />
             </span>
             <div className="min-w-0 flex-1">

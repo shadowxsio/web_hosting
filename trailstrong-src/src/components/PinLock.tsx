@@ -61,7 +61,7 @@ export function PinLock({ onUnlock }: { onUnlock: () => void }) {
 
   return (
     <div className="hero pt-safe pb-safe flex min-h-dvh flex-col items-center justify-center !border-0 px-5">
-      <div className="mb-7 -rotate-2 border-[2.5px] border-ink bg-paper p-1 shadow-[5px_5px_0_#1b1424]">
+      <div className="mb-7 -rotate-2 border-[2.5px] border-ink bg-paper p-1 shadow-[5px_5px_0_var(--color-shadow)]">
         <span className="block border-2 border-dashed border-ink px-4 py-2">
           <span className="headline block text-[30px]">TrailStrong</span>
         </span>

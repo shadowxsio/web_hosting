@@ -95,7 +95,7 @@ export function StatsView() {
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
         {kpis.map((k, i) => (
           <div key={k.label} className={`b-card p-3.5 ${['bg-sun', 'bg-peach', 'bg-mint', 'bg-lilac'][i]}`}>
-            <p className="flex items-center gap-1.5 label !text-ink/70">
+            <p className="flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-[0.08em]">
               <k.icon className={`h-3.5 w-3.5 ${k.color}`} />
               {k.label}
             </p>
@@ -147,7 +147,7 @@ export function StatsView() {
         {hist.length > 1 && (
           <p className="mt-2 text-xs text-ink/70">
             {current.name} : {hist[0].maxW} → <b className="font-mono text-ink">{hist.at(-1)!.maxW} lbs</b>{' '}
-            <span className={hist.at(-1)!.maxW >= hist[0].maxW ? 'text-leaf' : 'text-[#b91c1c]'}>
+            <span className={hist.at(-1)!.maxW >= hist[0].maxW ? 'text-leaf' : 'text-danger'}>
               ({hist.at(-1)!.maxW >= hist[0].maxW ? '+' : ''}
               {Math.round(((hist.at(-1)!.maxW - hist[0].maxW) / (hist[0].maxW || 1)) * 100)} %)
             </span>
