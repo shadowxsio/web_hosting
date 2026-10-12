@@ -7,14 +7,8 @@
     <meta name="description" content="Programme de renforcement trail de Mickael — ÉconoFitness Beaubien." />
     <meta name="robots" content="noindex, nofollow" />
     <meta name="theme-color" content="#16131c" />
-    <!-- Thème appliqué avant le premier rendu (sombre par défaut) -->
-    <script>
-      try {
-        var t = localStorage.getItem('trailstrong:theme') === 'light' ? 'light' : 'dark'
-        document.documentElement.dataset.theme = t
-        if (t === 'light') document.querySelector('meta[name=theme-color]').setAttribute('content', '#86c5f7')
-      } catch (e) {}
-    </script>
+    <!-- Thème appliqué avant le premier rendu (fichier externe : compatible CSP) -->
+    <script src="./theme.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <!-- Polices en ligne uniquement : hors-ligne, repli sur la police système. -->

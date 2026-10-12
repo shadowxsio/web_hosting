@@ -86,13 +86,42 @@ self.addEventListener('fetch', (event) => {
   }
 }
 
+/**
+ * Content-Security-Policy injectée au build uniquement (le serveur de dev de
+ * Vite a besoin de scripts inline). N'autorise que : le site lui-même, Google
+ * Identity Services, le backend d'auth (run-agent), l'API GitHub (backup Gist)
+ * et Google Fonts.
+ */
+function csp(): Plugin {
+  const auth = new URL(process.env.VITE_AUTH_API_URL || 'https://run-agent-jwcn6ptbgq-uc.a.run.app').origin
+  const policy = [
+    "default-src 'self'",
+    "script-src 'self' https://accounts.google.com/gsi/client",
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://accounts.google.com/gsi/style",
+    "font-src 'self' https://fonts.gstatic.com",
+    "img-src 'self' data: https://*.googleusercontent.com",
+    `connect-src 'self' ${auth} https://accounts.google.com/gsi/ https://api.github.com https://gist.githubusercontent.com`,
+    'frame-src https://accounts.google.com/gsi/',
+    "object-src 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+  ].join('; ')
+  return {
+    name: 'trailstrong-csp',
+    apply: 'build',
+    transformIndexHtml(html) {
+      return html.replace('<meta charset="UTF-8" />', `<meta charset="UTF-8" />\n    <meta http-equiv="Content-Security-Policy" content="${policy}" />`)
+    },
+  }
+}
+
 export default defineConfig({
   // Chemins relatifs : l'app fonctionne sous /web_hosting/trailstrong/ comme sous un domaine perso.
   base: './',
   define: {
     __APP_VERSION__: JSON.stringify(`${process.env.npm_package_version ?? '1.0.0'}${process.env.GITHUB_SHA ? `-${process.env.GITHUB_SHA.slice(0, 7)}` : ''}`),
   },
-  plugins: [react(), tailwindcss(), serviceWorker()],
+  plugins: [react(), tailwindcss(), serviceWorker(), csp()],
   build: {
     outDir: '../trailstrong',
     emptyOutDir: true,

@@ -1,0 +1,29 @@
+name: TrailStrong security audit
+
+on:
+  pull_request:
+    paths: ["trailstrong-src/**"]
+  schedule:
+    - cron: "17 6 * * 1" # lundi 6h17 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: trailstrong-src
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: trailstrong-src/package-lock.json
+      - run: npm ci
+      # Échoue sur toute vulnérabilité « high » ou « critical » des dépendances de prod.
+      - run: npm audit --omit=dev --audit-level=high
+      - run: npm run typecheck

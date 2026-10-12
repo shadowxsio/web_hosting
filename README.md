@@ -39,20 +39,22 @@ Un workflow GitHub Actions tourne tous les jours à 8h00 UTC pour aller chercher
 
 ## 🏔️ TrailStrong 2026 (PWA de renforcement trail)
 
-Application privée (PIN) pour les séances à l'ÉconoFitness Beaubien : Activation, Séance A, Séance B, Tapis D+ et Stats.
+Application privée (connexion Google + PIN admin) pour les séances à l'ÉconoFitness Beaubien : Activation, Séance A, Séance B, Tapis D+ et Stats.
 Code source dans `trailstrong-src/` (Vite + React + TypeScript + Tailwind + Lucide), publiée sous **`/trailstrong/`**.
 
 - **Déploiement** : le workflow `Deploy to GitHub Pages` installe Node, build l'app dans `trailstrong/` puis publie tout le site (aucun build à committer).
-- **PIN** : créer le secret de dépôt `APP_PASSWORD_HASH` = SHA-256 hex du PIN (4 ou 6 chiffres) :
+- **Accès** : connexion **Google** via le backend `run-agent` (Cloud Run, dépôt `ai-agent`) — `GET /api/auth/config` puis `POST /api/verify-pin` avec le jeton Google ; seul l'email de `ALLOWED_GOOGLE_EMAIL` est accepté. L'appareil reste autorisé 30 jours (utilisable hors-ligne). URL du backend surchargeable au build avec `VITE_AUTH_API_URL`.
+- **PIN = mode admin** : déverrouille les Réglages (sauvegardes, Gist, PIN) pendant 10 min et sert d'accès de secours si Google est indisponible. Blocage après 5 PIN faux (30 s → 2 min → 10 min). Définir le secret de dépôt `APP_PASSWORD_HASH` = SHA-256 hex du PIN :
   ```bash
   printf '123456' | sha256sum | cut -d' ' -f1
   ```
-  Sans secret, le PIN par défaut est `2026`. Un PIN local peut aussi être défini dans *Réglages*.
-  ⚠️ C'est un verrou anti-curieux : le bundle JS reste public sur GitHub Pages.
-- **Données** : 100 % `localStorage` sur l'appareil. Export/Import JSON, et backup optionnel chiffré (AES-256, clé dérivée du PIN) vers un Gist secret — token GitHub avec le seul scope `gist`.
+  Sans secret, le PIN par défaut est `2026`.
+  ⚠️ Le site est statique : le contrôle d'accès protège l'interface, pas le code (public sur GitHub Pages). Les données restent sur l'appareil.
+- **Sécurité** : Content-Security-Policy stricte injectée au build, Dependabot (npm + actions), audit `npm audit` hebdomadaire (`security.yml`).
+- **Données** : 100 % `localStorage` sur l'appareil. Export/Import JSON, et backup optionnel chiffré (AES-256, clé de récupération propre à l'appareil, à noter) vers un Gist secret — token GitHub avec le seul scope `gist`.
 - **Hors-ligne** : service worker généré au build (précache de tous les fichiers) + manifest → « Ajouter à l'écran d'accueil ».
 - **Dev local** :
   ```bash
-  cd trailstrong-src && npm install && npm run dev   # http://localhost:5173 (/#figures : planche des illustrations)
+  cd trailstrong-src && npm install && npm run dev   # http://localhost:5173 (la connexion Google ne marche que sur shadowxsio.github.io : utilise « Accès admin (PIN) » en local)
   ```
 - **Photos de démo** : `trailstrong-src/public/demos/` — paires départ/fin issues de [free-exercise-db](https://github.com/yuhonas/free-exercise-db) (domaine public, Unlicense), converties en WebP 480 px.
