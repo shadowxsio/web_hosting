@@ -15,7 +15,7 @@ export function LineChart({ points, unit, kind = 'line' }: { points: Point[]; un
   const W = 340
   const H = 170
   const pad = { l: 40, r: 22, t: 14, b: 24 }
-  if (!points.length) return <p className="py-8 text-center text-sm text-zinc-500">Pas encore de données — valide quelques séries !</p>
+  if (!points.length) return <p className="py-8 text-center text-sm text-ink/60">Pas encore de données — valide quelques séries !</p>
 
   const max = Math.max(...points.map((p) => p.value))
   const min = kind === 'bar' ? 0 : Math.min(...points.map((p) => p.value))
@@ -55,15 +55,15 @@ export function LineChart({ points, unit, kind = 'line' }: { points: Point[]; un
       >
         {ticks.map((t, i) => (
           <g key={i}>
-            <line x1={pad.l} x2={W - pad.r} y1={y(t)} y2={y(t)} stroke="rgba(255,255,255,0.06)" strokeWidth={1} />
-            <text x={pad.l - 6} y={y(t) + 3} textAnchor="end" fontSize={9} fill="#64748b">
+            <line x1={pad.l} x2={W - pad.r} y1={y(t)} y2={y(t)} stroke="rgba(27,20,36,0.15)" strokeWidth={1} />
+            <text x={pad.l - 6} y={y(t) + 3} textAnchor="end" fontSize={9} fill="#1b1424" fillOpacity={0.6} fontWeight={700}>
               {t >= 10000 ? `${Math.round(t / 1000)}k` : Math.round(t * 10) / 10}
             </text>
           </g>
         ))}
         {points.map((p, i) =>
           i % every === 0 || i === points.length - 1 ? (
-            <text key={i} x={x(i)} y={H - 6} textAnchor="middle" fontSize={9} fill="#64748b">
+            <text key={i} x={x(i)} y={H - 6} textAnchor="middle" fontSize={9} fill="#1b1424" fillOpacity={0.6} fontWeight={700}>
               {p.label}
             </text>
           ) : null,
@@ -88,24 +88,24 @@ export function LineChart({ points, unit, kind = 'line' }: { points: Point[]; un
             </defs>
             <path d={path} fill="none" stroke="#f97316" strokeWidth={2} strokeLinejoin="round" />
             {points.map((p, i) => (
-              <circle key={i} cx={x(i)} cy={y(p.value)} r={4} fill="#f97316" stroke="#101626" strokeWidth={2} />
+              <circle key={i} cx={x(i)} cy={y(p.value)} r={4} fill="#f97316" stroke="#1b1424" strokeWidth={2} />
             ))}
           </>
         )}
         {h && hover != null && (
-          <line x1={x(hover)} x2={x(hover)} y1={pad.t} y2={pad.t + ih} stroke="#71717a" strokeWidth={1} strokeDasharray="3 3" />
+          <line x1={x(hover)} x2={x(hover)} y1={pad.t} y2={pad.t + ih} stroke="#1b1424" strokeWidth={1} strokeDasharray="3 3" />
         )}
       </svg>
       {h && hover != null && (
         <div
-          className="pointer-events-none absolute top-0 -translate-x-1/2 border border-zinc-800 bg-zinc-900/90 backdrop-blur-md rounded-lg px-2.5 py-1.5 text-xs shadow-xl"
+          className="pointer-events-none absolute top-0 -translate-x-1/2 border-2 border-ink bg-paper px-2.5 py-1.5 text-xs shadow-[3px_3px_0_#1b1424]"
           style={{ left: `${Math.min(85, Math.max(15, (x(hover) / W) * 100))}%` }}
         >
-          <p className="text-zinc-400">{h.label}</p>
-          <p className="font-mono font-semibold text-zinc-50">
+          <p className="text-ink/70">{h.label}</p>
+          <p className="font-mono font-bold text-ink">
             {h.value.toLocaleString('fr-CA')} {unit}
           </p>
-          {h.detail && <p className="text-zinc-400">{h.detail}</p>}
+          {h.detail && <p className="text-ink/70">{h.detail}</p>}
         </div>
       )}
     </div>

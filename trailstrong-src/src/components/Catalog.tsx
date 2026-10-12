@@ -1,56 +1,42 @@
 import { CalendarDays, Plus, Search, X } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import type { Exercise, FocusTag, Session, SessionId } from '../data/program'
 import { today, useData } from '../lib/storage'
 import { AddExerciseSheet } from './AddExerciseSheet'
 import { ExerciseDrawer } from './ExerciseDrawer'
 import { ExerciseTile } from './ExerciseTile'
-import { SESSION_META, TAG_META } from './meta'
+import { TAG_META } from './meta'
 
-export type FilterId = 'all' | SessionId | FocusTag
+export type Scope = 'all' | SessionId
 
-export const FILTERS: { id: FilterId; label: string; emoji: string }[] = [
-  { id: 'all', label: 'Tous', emoji: '' },
-  { id: 'activation', label: 'Activation', emoji: '🔥' },
-  { id: 'seanceA', label: 'Séance A', emoji: '🦵' },
-  { id: 'seanceB', label: 'Séance B', emoji: '⚖️' },
-  { id: 'tapis', label: 'Tapis D+', emoji: '⛰️' },
-  { id: 'knee', label: 'Genou', emoji: '🩹' },
-  { id: 'ankle', label: 'Cheville', emoji: '⚓' },
-  { id: 'glutes', label: 'Fessiers', emoji: '🍑' },
-]
+const FOCUS: (FocusTag | null)[] = [null, 'knee', 'ankle', 'glutes']
 
-const isSession = (f: FilterId): f is SessionId => f in SESSION_META
-
-/** Normalise pour une recherche tolérante aux accents et à la casse. */
+/** Recherche tolérante aux accents et à la casse. */
 const norm = (s: string) =>
   s
     .toLowerCase()
     .normalize('NFD')
     .replace(/[̀-ͯ]/g, '')
 
-function haystack(ex: Exercise, s: Session) {
-  return norm(
-    [ex.name, ex.target, ex.equipment, ex.badge ?? '', s.short, s.title, ...ex.tags.map((t) => TAG_META[t].label)].join(
-      ' ',
-    ),
-  )
-}
+const haystack = (ex: Exercise, s: Session) =>
+  norm([ex.name, ex.target, ex.equipment, ex.badge ?? '', s.short, s.title, ...ex.tags.map((t) => TAG_META[t].label)].join(' '))
 
 const longDate = (d: string) => new Date(`${d}T12:00:00`).toLocaleDateString('fr-CA', { day: 'numeric', month: 'long', year: 'numeric' })
 
 export function Catalog({
   program,
-  filter,
-  setFilter,
+  scope,
+  focus,
+  setFocus,
   query,
   setQuery,
   date,
   setDate,
 }: {
   program: Session[]
-  filter: FilterId
-  setFilter: (f: FilterId) => void
+  scope: Scope
+  focus: FocusTag | null
+  setFocus: (f: FocusTag | null) => void
   query: string
   setQuery: (q: string) => void
   date: string
@@ -61,131 +47,147 @@ export function Catalog({
   const [openEx, setOpenEx] = useState<{ ex: Exercise; sessionId: SessionId } | null>(null)
   const [adding, setAdding] = useState<Session | null>(null)
 
-  const matchFilter = (f: FilterId, ex: Exercise, s: Session) => f === 'all' || (isSession(f) ? s.id === f : ex.tags.includes(f))
-
-  const counts = useMemo(
-    () => Object.fromEntries(FILTERS.map((f) => [f.id, program.reduce((n, s) => n + s.exercises.filter((e) => matchFilter(f.id, e, s)).length, 0)])),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [program],
-  ) as Record<FilterId, number>
+  const inScope = program.filter((s) => scope === 'all' || s.id === scope)
+  const count = (f: FocusTag | null) => inScope.reduce((n, s) => n + s.exercises.filter((e) => !f || e.tags.includes(f)).length, 0)
 
   const q = norm(query.trim())
-  const groups = program
-    .map((s) => ({ session: s, items: s.exercises.map((ex, i) => ({ ex, i })).filter(({ ex }) => matchFilter(filter, ex, s) && (!q || haystack(ex, s).includes(q))) }))
-    .filter((g) => g.items.length || (isSession(filter) && g.session.id === filter && !q))
+  const groups = inScope
+    .map((s) => ({
+      session: s,
+      items: s.exercises.map((ex, i) => ({ ex, i })).filter(({ ex }) => (!focus || ex.tags.includes(focus)) && (!q || haystack(ex, s).includes(q))),
+    }))
+    .filter((g) => g.items.length || (scope !== 'all' && !q && !focus))
 
   const visible = groups.flatMap((g) => g.items.map((x) => x.ex))
   const doneCount = visible.filter((e) => day[e.id]?.done).length
   const pct = visible.length ? Math.round((doneCount / visible.length) * 100) : 0
-  const current = isSession(filter) ? program.find((s) => s.id === filter)! : null
-  const headline = current ? current.title.split('—')[1]?.trim() || current.short : q ? `${visible.length} résultat${visible.length > 1 ? 's' : ''}` : filter === 'all' ? `${visible.length} exercices` : `Focus ${FILTERS.find((f) => f.id === filter)!.label}`
+  const current = scope !== 'all' ? program.find((s) => s.id === scope)! : null
+  const headline = q
+    ? `${visible.length} résultat${visible.length > 1 ? 's' : ''}`
+    : current
+      ? current.title.split('—')[1]?.trim() || current.short
+      : `${visible.length} exercices`
+  const canAdd = !q && !focus
 
   return (
     <>
-      {/* ── Bandeau d'exploration ── */}
-      <section className="dots -mx-3 border-b border-zinc-800 px-3 pb-4 pt-4">
+      {/* ── Bandeau bleu ── */}
+      <section className="hero -mx-3 px-4 pb-6 pt-5 md:-mx-6 md:px-8">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="inline-flex h-7 items-center rounded-md border border-zinc-800 bg-zinc-900 px-2.5 text-[12px] font-medium text-zinc-300">
-            {longDate(date)} · {current ? current.short : 'Programme'} · <span className="ml-1 font-mono text-orange-400">{pct} %</span>
+          <span className="b-box inline-flex h-8 items-center px-3 text-[13px] font-bold shadow-[3px_3px_0_#1b1424]">
+            {longDate(date)} · {doneCount}/{visible.length} validés · <span className="ml-1 font-black italic text-flame">{pct} %</span>
           </span>
-          <label className="inline-flex h-7 items-center gap-1 rounded-md border border-zinc-800 bg-zinc-900 px-2 text-[11px] text-zinc-400">
-            <CalendarDays className="hidden h-3.5 w-3.5 sm:block" />
+          <label className="b-box relative inline-flex h-8 items-center gap-1 px-2 text-[12px] font-bold shadow-[3px_3px_0_#1b1424]" title="Changer la date">
+            <CalendarDays className="h-4 w-4" />
+            <span className="hidden sm:inline">{date === today() ? 'Aujourd’hui' : date}</span>
             <input
               type="date"
               value={date}
               max={today()}
               onChange={(e) => e.target.value && setDate(e.target.value)}
               aria-label="Date de la séance"
-              className="w-[22px] bg-transparent text-transparent [color-scheme:dark] focus:outline-none sm:w-auto sm:text-zinc-300"
+              className="absolute inset-0 cursor-pointer opacity-0"
             />
           </label>
           {date !== today() && (
-            <button type="button" onClick={() => setDate(today())} className="text-[11px] font-medium text-cyan-400">
-              Aujourd’hui →
+            <button type="button" onClick={() => setDate(today())} className="text-[12px] font-extrabold underline decoration-2 underline-offset-2">
+              Revenir à aujourd’hui →
             </button>
           )}
         </div>
 
-        <h1 className="headline mt-3 text-[34px] text-zinc-50 sm:text-[44px]">{headline}</h1>
-        {current && <p className="mt-2 max-w-prose text-[13px] leading-snug text-zinc-400">{current.goal}</p>}
+        {current && <p className="tag mt-5 h-7 bg-paper px-2.5 text-[12px]">{current.subtitle}</p>}
+        <h1 className={`headline ${current ? 'mt-3' : 'mt-5'} text-[42px] sm:text-[56px]`}>{headline}</h1>
+        {current && <p className="mt-3 max-w-prose text-[15px] font-bold leading-snug text-ink">{current.goal}</p>}
 
-        <div className="mt-3 h-[3px] overflow-hidden rounded-full bg-zinc-800" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100}>
-          <div className={`h-full rounded-full transition-all duration-500 ${pct === 100 ? 'bg-emerald-500' : 'bg-orange-500'}`} style={{ width: `${pct}%` }} />
-        </div>
-
-        {/* Recherche instantanée */}
-        <div className="relative mt-4">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
-          <input
-            id="search"
-            type="search"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Rechercher un exercice, un muscle, un équipement…"
-            className="h-11 w-full rounded-xl border border-zinc-800 bg-zinc-950 pl-9 pr-10 text-[14px] text-zinc-100 placeholder:text-zinc-500 focus:border-zinc-600 focus:outline-none"
-          />
-          {query && (
-            <button type="button" onClick={() => setQuery('')} aria-label="Effacer la recherche" className="absolute right-1 top-1/2 grid h-9 w-9 -translate-y-1/2 place-items-center text-zinc-500">
-              <X className="h-4 w-4" />
-            </button>
-          )}
-        </div>
-
-        {/* Filtres pills avec compteurs */}
-        <div className="no-scrollbar -mx-3 mt-3 flex gap-1.5 overflow-x-auto px-3" role="toolbar" aria-label="Filtres">
-          {FILTERS.map((f) => {
-            const active = f.id === filter
+        {/* Filtres-boîtes avec compteurs */}
+        <div className="mt-5 flex flex-wrap gap-2.5" role="toolbar" aria-label="Filtres">
+          {FOCUS.map((f) => {
+            const active = f === focus
             return (
               <button
-                key={f.id}
+                key={f ?? 'all'}
                 type="button"
                 aria-pressed={active}
-                onClick={() => setFilter(f.id)}
-                className={`flex h-9 shrink-0 items-center gap-1.5 rounded-lg border px-3 text-[13px] font-medium transition duration-150 active:scale-95 ${
-                  active ? 'border-zinc-500 bg-zinc-100 text-zinc-950' : 'border-zinc-800 bg-zinc-900 text-zinc-400 hover:text-zinc-200'
-                }`}
+                onClick={() => setFocus(f)}
+                className={`b-btn flex h-11 items-center gap-1.5 px-3.5 text-[14px] ${active ? 'b-btn-ink' : ''}`}
               >
-                {f.emoji && <span className="text-[13px] leading-none">{f.emoji}</span>}
-                {f.label}
-                <span className={`font-mono text-[11px] italic ${active ? 'text-orange-600' : 'text-zinc-600'}`}>{counts[f.id]}</span>
+                {f ? (
+                  <>
+                    <span>{TAG_META[f].emoji}</span> {TAG_META[f].label}
+                  </>
+                ) : (
+                  'Tous'
+                )}
+                <span className="font-black italic">{count(f)}</span>
               </button>
             )
           })}
         </div>
+
+        {/* Progression du jour */}
+        <div className="mt-5 h-4 border-[2.5px] border-ink bg-paper" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100}>
+          <div className={`h-full transition-all duration-500 ${pct === 100 ? 'bg-mint' : 'bg-flame'}`} style={{ width: `${pct}%` }} />
+        </div>
       </section>
 
-      {/* ── Grille directory ── */}
-      <div className="space-y-6 pt-5">
-        {visible.length === 0 && q && (
-          <p className="py-10 text-center text-[14px] text-zinc-500">
-            Aucun exercice pour « {query} ».{' '}
-            <button type="button" className="text-cyan-400" onClick={() => setQuery('')}>
-              Effacer
+      {/* ── Recherche ── */}
+      <div className="relative mt-6">
+        <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2" strokeWidth={2.5} />
+        <input
+          id="search"
+          type="search"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Exercice, muscle ou équipement"
+          className="b-input h-14 w-full pl-12 pr-12 text-[16px] placeholder:text-ink/45"
+        />
+        {query && (
+          <button type="button" onClick={() => setQuery('')} aria-label="Effacer la recherche" className="absolute right-2 top-1/2 grid h-10 w-10 -translate-y-1/2 place-items-center">
+            <X className="h-5 w-5" strokeWidth={2.5} />
+          </button>
+        )}
+      </div>
+
+      {/* ── Grille ── */}
+      <div className="space-y-8 pt-6">
+        {visible.length === 0 && (q || focus) && (
+          <p className="b-box p-4 text-center text-[14px] font-bold">
+            Aucun exercice ne correspond.{' '}
+            <button
+              type="button"
+              className="underline decoration-2"
+              onClick={() => {
+                setQuery('')
+                setFocus(null)
+              }}
+            >
+              Tout afficher
             </button>
           </p>
         )}
         {groups.map((g) => (
           <section key={g.session.id}>
-            {(filter === 'all' || !isSession(filter)) && (
-              <h2 className="mb-1 flex items-baseline gap-2 px-0.5">
-                <span className="font-display text-[15px] font-black uppercase italic tracking-tight text-zinc-200">{g.session.short}</span>
-                <span className="text-[11px] text-zinc-500">{g.session.duration}</span>
-                <span className="ml-auto font-mono text-[11px] text-zinc-500">
+            {scope === 'all' && (
+              <h2 className="mb-1 flex items-baseline gap-2">
+                <span className="headline headline-sun text-[24px]">{g.session.short}</span>
+                <span className="text-[12px] font-bold text-ink/60">{g.session.duration}</span>
+                <span className="ml-auto text-[13px] font-black italic">
                   {g.items.filter(({ ex }) => day[ex.id]?.done).length}/{g.items.length}
                 </span>
               </h2>
             )}
-            <div className="grid grid-cols-1 gap-x-3 gap-y-2 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 gap-x-6 gap-y-5 md:grid-cols-2 xl:grid-cols-3">
               {g.items.map(({ ex, i }) => (
                 <ExerciseTile key={`${date}-${ex.id}`} ex={ex} sessionId={g.session.id} index={i} date={date} onOpen={() => setOpenEx({ ex, sessionId: g.session.id })} />
               ))}
-              {!q && (filter === 'all' || isSession(filter)) && (
+              {canAdd && (
                 <button
                   type="button"
                   onClick={() => setAdding(g.session)}
-                  className="mt-3 flex min-h-[64px] items-center justify-center gap-1.5 rounded-xl border border-dashed border-zinc-700 bg-transparent text-[13px] font-medium text-zinc-400 transition duration-200 hover:border-orange-500 hover:text-white active:border-orange-500"
+                  className="mt-[26px] flex min-h-[72px] items-center justify-center gap-2 border-[2.5px] border-dashed border-ink/50 bg-paper/50 px-3 text-[14px] font-extrabold uppercase italic text-ink/60 transition duration-150 hover:border-flame hover:text-ink active:border-flame"
                 >
-                  <Plus className="h-4 w-4" /> Ajouter un exercice à cette séance
+                  <Plus className="h-5 w-5" strokeWidth={3} /> Ajouter un exercice à cette séance
                 </button>
               )}
             </div>

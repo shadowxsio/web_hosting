@@ -1,69 +1,123 @@
 @import "tailwindcss";
 
-/* ── Zinc Dark 2026 — structure « annuaire » inspirée de quelleia.com ── */
+/* ── Style « quelleia » : néo-brutalisme papier, contours encre, ombres dures ── */
 @theme {
-  --color-ink: #09090b; /* zinc-950 */
-  --color-ink-2: #0f0f12;
-  --color-panel: #18181b; /* zinc-900 */
-  --color-chip: #18181b;
-  --color-line: #27272a; /* zinc-800 */
-  --color-fg: #fafafa;
-  --color-muted: #a1a1aa; /* zinc-400 */
-  --color-ember: #f97316;
-  --color-glacier: #06b6d4;
-  --color-moss: #10b981;
-  --color-amber: #f59e0b;
-  --font-sans: "Inter", "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --font-display: "Montserrat", "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "Geist Mono", "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --color-ink: #1b1424;
+  --color-paper: #fdf6e8;
+  --color-paper-2: #f3ead9;
+  --color-sky: #86c5f7;
+  --color-sun: #f8d95b;
+  --color-mint: #9fe7a4;
+  --color-peach: #f4b183;
+  --color-lilac: #d4a6f7;
+  --color-flame: #f0773a;
+  --color-ocean: #0e7490;
+  --color-leaf: #047857;
+  --font-sans: "Montserrat", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Montserrat", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Montserrat", ui-sans-serif, system-ui, sans-serif;
 }
 
 :root {
-  color-scheme: dark;
+  color-scheme: light;
   -webkit-tap-highlight-color: transparent;
 }
 
 html,
 body {
-  background: var(--color-ink);
-  color: var(--color-fg);
+  color: var(--color-ink);
   overscroll-behavior-y: none;
 }
 
 body {
   min-height: 100dvh;
-  font-feature-settings: "tnum" 1, "cv11" 1;
+  font-weight: 500;
+  font-feature-settings: "tnum" 1;
+  background-color: var(--color-paper-2);
+  background-image: radial-gradient(rgba(27, 20, 36, 0.09) 1.2px, transparent 1.4px);
+  background-size: 14px 14px;
 }
 
-/* Trame de points (clin d'œil quelleia), très discrète. */
-.dots {
-  background-image: radial-gradient(rgba(161, 161, 170, 0.09) 1px, transparent 1.2px);
+/* Bandeau bleu ciel à pois. */
+.hero {
+  background-color: var(--color-sky);
+  background-image: radial-gradient(rgba(27, 20, 36, 0.14) 1.3px, transparent 1.5px);
   background-size: 12px 12px;
+  border-top: 2.5px solid var(--color-ink);
+  border-bottom: 2.5px solid var(--color-ink);
 }
 
-/* Titre « affiche » : italique très gras, ombre décalée orange plate (pas de flou). */
+/* Titre affiche : italique 900 + ombre décalée orange. */
 .headline {
   font-family: var(--font-display);
   font-style: italic;
   font-weight: 900;
   text-transform: uppercase;
   letter-spacing: -0.02em;
-  line-height: 0.92;
-  text-shadow: 3px 3px 0 rgba(249, 115, 22, 0.55);
+  line-height: 0.95;
+  color: var(--color-ink);
+  text-shadow: 3px 3px 0 var(--color-flame);
+}
+.headline-sun {
+  text-shadow: 2px 2px 0 var(--color-sun);
+}
+
+/* Lignes de cahier (menu). */
+.lined {
+  background-color: var(--color-paper);
+  background-image: repeating-linear-gradient(to bottom, transparent 0 55px, rgba(134, 197, 247, 0.55) 55px 57px);
 }
 
 @layer components {
-  .card {
-    border-radius: var(--radius-xl);
-    border: 1px solid var(--color-line);
-    background: rgba(24, 24, 27, 0.6);
+  .b-card {
+    background: var(--color-paper);
+    border: 2.5px solid var(--color-ink);
+    box-shadow: 5px 5px 0 var(--color-ink);
+  }
+  .b-box {
+    background: var(--color-paper);
+    border: 2px solid var(--color-ink);
+  }
+  .b-btn {
+    background: var(--color-paper);
+    border: 2.5px solid var(--color-ink);
+    box-shadow: 3px 3px 0 var(--color-ink);
+    font-weight: 800;
+    transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease;
+  }
+  .b-btn:active {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0 var(--color-ink);
+  }
+  .b-btn-ink {
+    background: var(--color-ink);
+    color: var(--color-paper);
+  }
+  .b-input {
+    background: var(--color-paper);
+    border: 2.5px solid var(--color-ink);
+    box-shadow: 4px 4px 0 var(--color-ink);
+    font-weight: 600;
+  }
+  .b-input:focus {
+    outline: none;
+    box-shadow: 4px 4px 0 var(--color-flame);
+  }
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    border: 2px solid var(--color-ink);
+    font-style: italic;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.01em;
   }
   .label {
     font-size: 10px;
-    font-weight: 600;
+    font-weight: 800;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: #71717a; /* zinc-500 */
+    color: rgba(27, 20, 36, 0.6);
   }
 }
 
@@ -90,16 +144,16 @@ body {
 
 @keyframes pop {
   0% { transform: scale(0.85); }
-  60% { transform: scale(1.08); }
+  60% { transform: scale(1.1); }
   100% { transform: scale(1); }
 }
 .pop { animation: pop 0.18s ease-out; }
 
 @keyframes fade-up {
-  from { opacity: 0; transform: translateY(4px); }
+  from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: none; }
 }
-.fade-up { animation: fade-up 0.18s ease-out both; }
+.fade-up { animation: fade-up 0.2s ease-out both; }
 
 @keyframes fade-in {
   from { opacity: 0; }
@@ -107,7 +161,6 @@ body {
 }
 .fade-in { animation: fade-in 0.18s ease-out both; }
 
-/* Tiroir : depuis le bas sur mobile, depuis la droite sur desktop. */
 @keyframes sheet-up {
   from { transform: translateY(100%); }
   to { transform: none; }

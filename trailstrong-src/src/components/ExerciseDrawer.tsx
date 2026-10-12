@@ -33,36 +33,36 @@ export function ExerciseDrawer({ ex, sessionId, date, onClose }: { ex: Exercise;
 
   return createPortal(
     <div className="fixed inset-0 z-50 flex items-end justify-center md:items-stretch md:justify-end" data-noswipe>
-      <button type="button" aria-label="Fermer" onClick={onClose} className="fade-in absolute inset-0 bg-black/60 backdrop-blur-sm" />
+      <button type="button" aria-label="Fermer" onClick={onClose} className="fade-in absolute inset-0 bg-ink/40" />
       <aside
         role="dialog"
         aria-label={ex.name}
-        className="sheet pb-safe relative flex max-h-[92dvh] w-full max-w-xl flex-col rounded-t-2xl border border-zinc-800 bg-zinc-950 md:max-h-none md:w-[440px] md:rounded-none md:rounded-l-2xl"
+        className="sheet pb-safe relative flex max-h-[92dvh] w-full max-w-xl flex-col border-[2.5px] border-b-0 border-ink bg-paper-2 md:max-h-none md:w-[460px] md:border-b-[2.5px] md:border-r-0"
       >
         {/* Poignée + en-tête */}
-        <div className="mx-auto mt-2 h-1 w-10 rounded-full bg-zinc-800 md:hidden" />
-        <header className="flex items-start gap-3 border-b border-zinc-800 px-4 pb-3 pt-3">
-          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-zinc-800 bg-zinc-900 text-zinc-200">
-            <Icon className="h-5 w-5" strokeWidth={1.8} />
+        <div className="mx-auto mt-2 h-1.5 w-12 rounded-full bg-ink/30 md:hidden" />
+        <header className="hero flex items-start gap-3 !border-t-0 px-4 pb-4 pt-3">
+          <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full border-[2.5px] border-ink bg-paper shadow-[2px_2px_0_#1b1424]">
+            <Icon className="h-5 w-5" strokeWidth={2.4} />
           </span>
           <div className="min-w-0 flex-1">
-            <p className="flex items-center gap-1.5 text-[11px] font-medium text-zinc-500">
-              <span className={`h-1.5 w-1.5 rounded-full ${s.dot}`} /> {s.label} · {categoryOf(ex)}
+            <p className={`tag h-6 px-2 text-[10px] ${s.bg}`}>
+              {s.label} · {categoryOf(ex)}
             </p>
-            <h2 className="text-[18px] font-semibold leading-tight tracking-tight text-zinc-50">{ex.name}</h2>
-            {ex.equipment && <p className="mt-0.5 text-[12px] text-zinc-400">Matériel ÉconoFitness : {ex.equipment}</p>}
+            <h2 className="headline mt-2 text-[24px] [text-shadow:2px_2px_0_#f0773a]">{ex.name}</h2>
+            {ex.equipment && <p className="mt-1.5 text-[13px] font-bold text-ink">Matériel ÉconoFitness : {ex.equipment}</p>}
           </div>
-          <button type="button" onClick={onClose} aria-label="Fermer" className="grid h-10 w-10 shrink-0 place-items-center rounded-lg text-zinc-400 hover:bg-zinc-900">
-            <X className="h-5 w-5" />
+          <button type="button" onClick={onClose} aria-label="Fermer" className="b-btn grid h-10 w-10 shrink-0 place-items-center rounded-full">
+            <X className="h-5 w-5" strokeWidth={3} />
           </button>
         </header>
 
         <div className="flex-1 space-y-4 overflow-y-auto px-4 py-4">
           <div className="flex flex-wrap gap-1.5">
-            <Pill tone="orange">{ex.sets > 1 ? `${ex.sets} séries` : '1 bloc'}</Pill>
+            <Pill tone="sun">{ex.sets > 1 ? `${ex.sets} séries` : '1 bloc'}</Pill>
             <Pill>{ex.reps}</Pill>
             {ex.rest > 0 && <Pill>Repos {restLabel(ex.rest)}</Pill>}
-            {ex.tempo && <Pill tone="cyan">{ex.tempo}</Pill>}
+            {ex.tempo && <Pill tone="sky">{ex.tempo}</Pill>}
           </div>
 
           {/* Saisie */}
@@ -78,17 +78,17 @@ export function ExerciseDrawer({ ex, sessionId, date, onClose }: { ex: Exercise;
                       key={i}
                       type="button"
                       onClick={() => setSel(i)}
-                      className={`flex h-9 shrink-0 items-center gap-1 rounded-lg border px-2.5 font-mono text-[11px] transition duration-150 ${
+                      className={`flex h-9 shrink-0 items-center gap-1 border-2 px-2.5 font-mono text-[11px] transition duration-150 ${
                         i === cur
-                          ? 'border-orange-500/50 bg-orange-500/10 text-orange-200'
+                          ? 'border-ink bg-sun text-ink'
                           : x.done
-                            ? 'border-emerald-500/25 bg-emerald-500/10 text-emerald-300'
-                            : 'border-zinc-800 bg-zinc-900 text-zinc-500'
+                            ? 'border-ink bg-mint text-ink'
+                            : 'border-ink bg-paper text-ink/60'
                       }`}
                     >
                       {x.done && <Check className="h-3 w-3" strokeWidth={3} />}S{i + 1}
                       {x.done && (x.w || x.r) && (
-                        <span className="text-zinc-400">
+                        <span className="text-ink/70">
                           {x.w ? `${x.w}×` : ''}
                           {x.r}
                         </span>
@@ -102,7 +102,7 @@ export function ExerciseDrawer({ ex, sessionId, date, onClose }: { ex: Exercise;
                       setSel(L.sets.length)
                     }}
                     aria-label="Ajouter une série"
-                    className="grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-dashed border-zinc-700 text-zinc-500"
+                    className="grid h-9 w-9 shrink-0 place-items-center border-2 border-dashed border-ink/50 text-ink/60"
                   >
                     <Plus className="h-3.5 w-3.5" />
                   </button>
@@ -136,7 +136,7 @@ export function ExerciseDrawer({ ex, sessionId, date, onClose }: { ex: Exercise;
               onChange={(e) => L.write((l) => ({ ...l, sets: l.sets.length ? l.sets : L.sets, note: e.target.value }))}
               placeholder="Notes · sensations genou / cheville, réglage machine…"
               rows={2}
-              className="mt-2 w-full resize-none rounded-lg border border-zinc-800 bg-zinc-900/60 px-3 py-2 text-[13px] text-zinc-200 placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none"
+              className="mt-2 w-full resize-none border-2 border-ink bg-paper px-3 py-2 text-[13px] text-ink placeholder:text-ink/40 focus:shadow-[3px_3px_0_#f0773a] focus:outline-none"
             />
           </section>
 
@@ -144,17 +144,17 @@ export function ExerciseDrawer({ ex, sessionId, date, onClose }: { ex: Exercise;
           {ex.points && ex.points.length > 0 && (
             <section>
               <h3 className="label mb-2">Points d’attention</h3>
-              <ol className="divide-y divide-zinc-800/80 overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900/50">
+              <ol className="divide-y divide-ink/25 overflow-hidden border-2 border-ink bg-paper">
                 {ex.points.map((p, i) => {
                   const D = DIR_META[p.dir]
                   return (
                     <li key={i} className="flex items-center gap-3 px-3 py-2.5">
-                      <span className="w-4 font-mono text-[11px] text-zinc-600">{i + 1}</span>
-                      <span className={`inline-flex h-6 w-[74px] shrink-0 items-center justify-center gap-1 rounded-md border text-[11px] font-medium ${ZONE_META[p.zone].cls}`}>
+                      <span className="w-4 font-mono text-[11px] text-ink/45">{i + 1}</span>
+                      <span className={`inline-flex h-6 w-[74px] shrink-0 items-center justify-center gap-1 border-2 text-[11px] font-medium ${ZONE_META[p.zone].cls}`}>
                         <D.icon className="h-3 w-3" aria-label={D.label} />
                         {ZONE_META[p.zone].label}
                       </span>
-                      <span className="text-[13px] leading-snug text-zinc-300">{p.text}</span>
+                      <span className="text-[13px] leading-snug text-ink/85">{p.text}</span>
                     </li>
                   )
                 })}
@@ -167,8 +167,8 @@ export function ExerciseDrawer({ ex, sessionId, date, onClose }: { ex: Exercise;
               <h3 className="label mb-2">Exécution</h3>
               <ol className="space-y-2">
                 {ex.steps.map((step, i) => (
-                  <li key={i} className="flex gap-2.5 text-[13px] leading-snug text-zinc-300">
-                    <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full border border-zinc-800 font-mono text-[10px] text-zinc-500">{i + 1}</span>
+                  <li key={i} className="flex gap-2.5 text-[13px] leading-snug text-ink/85">
+                    <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full border-2 border-ink font-mono text-[10px] text-ink/60">{i + 1}</span>
                     {step}
                   </li>
                 ))}
@@ -188,14 +188,14 @@ export function ExerciseDrawer({ ex, sessionId, date, onClose }: { ex: Exercise;
           )}
 
           {(L.pr > 0 || L.newPr) && (
-            <p className="flex items-center gap-1.5 text-[12px] text-zinc-400">
-              <Trophy className="h-3.5 w-3.5 text-amber-400" /> Record : <span className="font-mono text-zinc-200">{L.pr} lbs</span>
-              {L.newPr && <span className="font-semibold text-emerald-400">· nouveau record</span>}
+            <p className="flex items-center gap-1.5 text-[12px] text-ink/70">
+              <Trophy className="h-3.5 w-3.5 text-flame" /> Record : <span className="font-mono text-ink">{L.pr} lbs</span>
+              {L.newPr && <span className="font-bold text-leaf">· nouveau record</span>}
             </p>
           )}
 
           {ex.custom && (
-            <div className="flex items-center justify-between rounded-xl border border-zinc-800 px-3 py-2 text-[12px] text-zinc-500">
+            <div className="flex items-center justify-between border-2 border-ink px-3 py-2 text-[12px] text-ink/60">
               {confirmDelete ? (
                 <>
                   <span>Supprimer cet exercice personnalisé ?</span>
@@ -207,11 +207,11 @@ export function ExerciseDrawer({ ex, sessionId, date, onClose }: { ex: Exercise;
                         touch()
                         onClose()
                       }}
-                      className="h-9 rounded-lg bg-red-500/15 px-3 font-semibold text-red-300"
+                      className="h-9 border-2 border-ink bg-[#ffb4a8] px-3 font-black text-ink"
                     >
                       Oui
                     </button>
-                    <button type="button" onClick={() => setConfirmDelete(false)} className="h-9 rounded-lg bg-zinc-900 px-3 text-zinc-300">
+                    <button type="button" onClick={() => setConfirmDelete(false)} className="h-9 bg-paper px-3 text-ink/85">
                       Non
                     </button>
                   </span>
@@ -219,7 +219,7 @@ export function ExerciseDrawer({ ex, sessionId, date, onClose }: { ex: Exercise;
               ) : (
                 <>
                   <span>Exercice ajouté à la main</span>
-                  <button type="button" onClick={() => setConfirmDelete(true)} className="flex h-9 items-center gap-1.5 rounded-lg px-2 text-zinc-400 hover:text-red-300">
+                  <button type="button" onClick={() => setConfirmDelete(true)} className="flex h-9 items-center gap-1.5 px-2 text-ink/70 hover:text-[#b91c1c]">
                     <Trash2 className="h-4 w-4" /> Supprimer
                   </button>
                 </>
@@ -230,13 +230,13 @@ export function ExerciseDrawer({ ex, sessionId, date, onClose }: { ex: Exercise;
 
         {/* Action principale */}
         {ex.mode !== 'treadmill' && (
-          <footer className="flex gap-2 border-t border-zinc-800 p-3">
+          <footer className="flex gap-2 border-t-[2.5px] border-ink p-3">
             {ex.mode === 'timed' && (
               <button
                 type="button"
                 onClick={() => timer.start(num(curSet.r || L.hintR(cur)) || 45)}
                 aria-label="Lancer le chrono de travail"
-                className="grid h-12 w-12 shrink-0 place-items-center rounded-xl border border-zinc-800 bg-zinc-900 text-zinc-200 active:scale-95"
+                className="grid h-12 w-12 shrink-0 place-items-center border-2 border-ink bg-paper text-ink active:scale-95"
               >
                 <Play className="h-4 w-4" fill="currentColor" />
               </button>
@@ -247,8 +247,8 @@ export function ExerciseDrawer({ ex, sessionId, date, onClose }: { ex: Exercise;
                 L.validate(cur)
                 setSel(null)
               }}
-              className={`flex h-12 flex-1 items-center justify-center gap-2 rounded-xl text-[14px] font-semibold transition duration-150 active:scale-[0.98] ${
-                curSet.done ? 'border border-zinc-800 bg-zinc-900 text-zinc-300' : 'bg-orange-500 text-white hover:bg-orange-400'
+              className={`flex h-12 flex-1 items-center justify-center gap-2 text-[14px] font-bold transition duration-150 active:scale-[0.98] ${
+                curSet.done ? 'b-btn' : 'b-btn bg-flame'
               }`}
             >
               <Check className="h-5 w-5" strokeWidth={3} />
@@ -263,14 +263,14 @@ export function ExerciseDrawer({ ex, sessionId, date, onClose }: { ex: Exercise;
 }
 
 function Callout({ tone, title, children }: { tone: 'orange' | 'cyan'; title: string; children: ReactNode }) {
-  const c = tone === 'orange' ? 'border-l-orange-500 text-orange-300' : 'border-l-cyan-500 text-cyan-300'
+  const c = tone === 'orange' ? 'border-l-flame text-flame' : 'border-l-sky text-ocean'
   return (
-    <div className={`rounded-lg border border-zinc-800 border-l-2 ${c.split(' ')[0]} bg-zinc-900/50 px-3 py-2.5`}>
-      <p className={`mb-1 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider ${c.split(' ')[1]}`}>
+    <div className={` border-2 border-ink border-l-[6px] ${c.split(' ')[0]} bg-paper px-3 py-2.5`}>
+      <p className={`mb-1 flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider ${c.split(' ')[1]}`}>
         {tone === 'cyan' && <ShieldCheck className="h-3.5 w-3.5" />}
         {title}
       </p>
-      <p className="text-[13px] leading-snug text-zinc-300">{children}</p>
+      <p className="text-[13px] leading-snug text-ink/85">{children}</p>
     </div>
   )
 }
@@ -302,13 +302,13 @@ function Stepper({
     navigator.vibrate?.(5)
     onChange(String(Math.max(0, Math.round((base + d) * 10) / 10)))
   }
-  const btn = `grid h-full ${compact ? 'w-8' : 'w-11'} shrink-0 place-items-center text-lg text-zinc-400 active:text-orange-400`
+  const btn = `grid h-full ${compact ? 'w-8' : 'w-11'} shrink-0 place-items-center text-lg text-ink/70 active:text-flame`
   return (
     <div>
       <p className="label mb-1">{label}</p>
       <div
-        className={`flex h-12 items-center rounded-xl border transition-colors duration-150 ${
-          done ? 'border-emerald-500/30 bg-emerald-500/[0.06]' : 'border-zinc-800 bg-zinc-900 focus-within:border-zinc-600'
+        className={`flex h-12 items-center border-2 transition-colors duration-150 ${
+          done ? 'border-ink bg-mint/60' : 'border-ink bg-paper focus-within:shadow-[3px_3px_0_#f0773a]'
         }`}
       >
         <button type="button" onClick={() => bump(-step)} aria-label={`${label} moins ${step}`} className={btn}>
@@ -321,7 +321,7 @@ function Stepper({
           placeholder={placeholder}
           onChange={(e) => onChange(e.target.value.replace(decimal ? /[^\d.,]/g : /[^\d]/g, ''))}
           aria-label={label}
-          className={`h-full w-full min-w-0 bg-transparent text-center font-mono ${compact ? 'text-base' : 'text-lg'} font-semibold text-zinc-50 placeholder:text-zinc-600 focus:outline-none`}
+          className={`h-full w-full min-w-0 bg-transparent text-center font-mono ${compact ? 'text-base' : 'text-lg'} font-bold text-ink placeholder:text-ink/40 focus:outline-none`}
         />
         <button type="button" onClick={() => bump(step)} aria-label={`${label} plus ${step}`} className={btn}>
           +
@@ -344,17 +344,17 @@ function TreadmillTracker({ log, write, done }: { log: ExerciseLog; write: (fn: 
         <Stepper label="km/h" value={t.speed} placeholder="5" step={0.1} decimal onChange={(v) => set('speed', v)} compact done={done} />
       </div>
       <div className="mt-2 grid grid-cols-2 gap-2">
-        <div className="rounded-xl border border-zinc-800 bg-zinc-900/60 px-3 py-2">
+        <div className="border-2 border-ink bg-paper px-3 py-2">
           <p className="label flex items-center gap-1">
-            <Mountain className="h-3 w-3 text-orange-400" /> D+ {filled ? '' : 'prévu'}
+            <Mountain className="h-3 w-3 text-flame" /> D+ {filled ? '' : 'prévu'}
           </p>
-          <p className="font-mono text-xl font-semibold text-zinc-50">{stats ? `${stats.dplus} m` : '—'}</p>
+          <p className="font-mono text-xl font-bold text-ink">{stats ? `${stats.dplus} m` : '—'}</p>
         </div>
-        <div className="rounded-xl border border-zinc-800 bg-zinc-900/60 px-3 py-2">
+        <div className="border-2 border-ink bg-paper px-3 py-2">
           <p className="label flex items-center gap-1">
-            <Footprints className="h-3 w-3 text-cyan-400" /> Distance
+            <Footprints className="h-3 w-3 text-ocean" /> Distance
           </p>
-          <p className="font-mono text-xl font-semibold text-zinc-50">{stats ? `${stats.km.toFixed(2)} km` : '—'}</p>
+          <p className="font-mono text-xl font-bold text-ink">{stats ? `${stats.km.toFixed(2)} km` : '—'}</p>
         </div>
       </div>
       <div className="mt-2 flex gap-2">
@@ -363,7 +363,7 @@ function TreadmillTracker({ log, write, done }: { log: ExerciseLog; write: (fn: 
             key={m}
             type="button"
             onClick={() => timer.start(m * 60)}
-            className="flex h-12 flex-1 items-center justify-center gap-1.5 rounded-xl border border-zinc-800 bg-zinc-900 font-mono text-[13px] font-semibold text-zinc-200 active:scale-95"
+            className="flex h-12 flex-1 items-center justify-center gap-1.5 border-2 border-ink bg-paper font-mono text-[13px] font-bold text-ink active:scale-95"
           >
             <Play className="h-3.5 w-3.5" fill="currentColor" /> {m}′
           </button>
@@ -374,8 +374,8 @@ function TreadmillTracker({ log, write, done }: { log: ExerciseLog; write: (fn: 
             navigator.vibrate?.(done ? 10 : [20, 30, 40])
             write((l) => ({ ...l, done: !done }))
           }}
-          className={`flex h-12 flex-[1.4] items-center justify-center gap-1.5 rounded-xl text-sm font-semibold transition duration-150 active:scale-95 ${
-            done ? 'border border-emerald-500/30 bg-emerald-500/15 text-emerald-300' : 'bg-orange-500 text-white'
+          className={`flex h-12 flex-[1.4] items-center justify-center gap-1.5 text-sm font-bold transition duration-150 active:scale-95 ${
+            done ? 'border-2 border-ink bg-mint text-ink' : 'bg-flame text-ink'
           }`}
         >
           <Check className="h-4 w-4" strokeWidth={3} /> {done ? 'Fait' : 'Terminer'}

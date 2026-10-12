@@ -72,45 +72,46 @@ export function StatsView() {
   const current = weighted.find((e) => e.id === exId) ?? weighted[0]
 
   const kpis = [
-    { icon: CalendarCheck, label: 'Séances', value: s.days.length, sub: `${s.last4w} sur 4 sem.`, color: 'text-moss' },
-    { icon: Mountain, label: 'D+ tapis', value: `${s.dplus.toLocaleString('fr-CA')} m`, sub: `${s.km.toFixed(1)} km`, color: 'text-ember' },
-    { icon: TrendingUp, label: 'Records battus', value: s.prs, sub: 'charges max', color: 'text-amber-300' },
+    { icon: CalendarCheck, label: 'Séances', value: s.days.length, sub: `${s.last4w} sur 4 sem.`, color: 'text-ink' },
+    { icon: Mountain, label: 'D+ tapis', value: `${s.dplus.toLocaleString('fr-CA')} m`, sub: `${s.km.toFixed(1)} km`, color: 'text-ink' },
+    { icon: TrendingUp, label: 'Records battus', value: s.prs, sub: 'charges max', color: 'text-ink' },
     {
       icon: Dumbbell,
       label: 'Volume',
       value: compact(s.weeks.at(-1)?.[1] ?? 0),
       sub: 'lbs × reps, cette semaine',
-      color: 'text-zinc-400',
+      color: 'text-ink/70',
     },
   ]
 
   return (
-    <section className="space-y-3">
-      <header className="px-1">
-        <h2 className="text-[17px] font-semibold tracking-tight text-zinc-50">Progression</h2>
-        <p className="text-[12px] text-zinc-400">L’évolution de tes charges, semaine après semaine.</p>
+    <section className="space-y-5">
+      <header className="hero -mx-3 mb-6 px-4 pb-6 pt-5 md:-mx-6 md:px-8">
+        <span className="tag h-7 bg-paper px-2.5 text-[12px]">Charges · volume · D+</span>
+        <h2 className="headline mt-3 text-[42px] sm:text-[56px]">Progression</h2>
+        <p className="mt-2 text-[15px] font-bold">L’évolution de tes charges, semaine après semaine.</p>
       </header>
 
-      <div className="grid grid-cols-2 gap-2.5">
-        {kpis.map((k) => (
-          <div key={k.label} className="card p-3.5">
-            <p className="flex items-center gap-1.5 label !text-zinc-400">
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+        {kpis.map((k, i) => (
+          <div key={k.label} className={`b-card p-3.5 ${['bg-sun', 'bg-peach', 'bg-mint', 'bg-lilac'][i]}`}>
+            <p className="flex items-center gap-1.5 label !text-ink/70">
               <k.icon className={`h-3.5 w-3.5 ${k.color}`} />
               {k.label}
             </p>
-            <p className="mt-1 font-mono text-2xl font-semibold tabular-nums text-zinc-50">{k.value}</p>
-            <p className="text-xs text-zinc-500">{k.sub}</p>
+            <p className="mt-1 text-[30px] font-black italic leading-none tabular-nums">{k.value}</p>
+            <p className="text-xs text-ink/60">{k.sub}</p>
           </div>
         ))}
       </div>
 
-      <div className="card p-4">
+      <div className="b-card p-4">
         <div className="mb-2 flex items-center justify-between gap-2">
-          <h3 className="text-[14px] font-semibold tracking-tight text-zinc-50">Charge max par séance</h3>
+          <h3 className="text-[14px] font-bold tracking-tight text-ink">Charge max par séance</h3>
           <button
             type="button"
             onClick={() => setTable((t) => !t)}
-            className={`rounded-lg p-1.5 ${table ? 'bg-glacier/15 text-glacier' : 'text-zinc-500'}`}
+            className={` p-1.5 ${table ? 'bg-sky border-2 border-ink' : 'text-ink/60'}`}
             aria-label="Afficher en tableau"
             aria-pressed={table}
           >
@@ -120,7 +121,7 @@ export function StatsView() {
         <select
           value={exId}
           onChange={(e) => setExId(e.target.value)}
-          className="mb-3 w-full h-11 rounded-xl border border-zinc-800 bg-zinc-900 px-3 text-[13px] text-zinc-200"
+          className="mb-3 w-full h-11 border-2 border-ink bg-paper px-3 text-[13px] text-ink"
         >
           {PROGRAM.map((sess) => {
             const exs = weighted.filter((e) => e.sessionId === sess.id)
@@ -144,9 +145,9 @@ export function StatsView() {
           />
         )}
         {hist.length > 1 && (
-          <p className="mt-2 text-xs text-zinc-400">
-            {current.name} : {hist[0].maxW} → <b className="font-mono text-zinc-50">{hist.at(-1)!.maxW} lbs</b>{' '}
-            <span className={hist.at(-1)!.maxW >= hist[0].maxW ? 'text-moss' : 'text-red-400'}>
+          <p className="mt-2 text-xs text-ink/70">
+            {current.name} : {hist[0].maxW} → <b className="font-mono text-ink">{hist.at(-1)!.maxW} lbs</b>{' '}
+            <span className={hist.at(-1)!.maxW >= hist[0].maxW ? 'text-leaf' : 'text-[#b91c1c]'}>
               ({hist.at(-1)!.maxW >= hist[0].maxW ? '+' : ''}
               {Math.round(((hist.at(-1)!.maxW - hist[0].maxW) / (hist[0].maxW || 1)) * 100)} %)
             </span>
@@ -154,8 +155,8 @@ export function StatsView() {
         )}
       </div>
 
-      <div className="card p-4">
-        <h3 className="mb-2 text-[14px] font-semibold tracking-tight text-zinc-50">Volume hebdomadaire</h3>
+      <div className="b-card p-4">
+        <h3 className="mb-2 text-[14px] font-bold tracking-tight text-ink">Volume hebdomadaire</h3>
         <LineChart
           kind="bar"
           unit="lbs × reps"
@@ -163,21 +164,21 @@ export function StatsView() {
         />
       </div>
 
-      <div className="card p-4">
-        <h3 className="mb-2 flex items-center gap-1.5 text-[14px] font-semibold tracking-tight text-zinc-50">
-          <Mountain className="h-4 w-4 text-ember" /> D+ sur tapis
+      <div className="b-card p-4">
+        <h3 className="mb-2 flex items-center gap-1.5 text-[14px] font-bold tracking-tight text-ink">
+          <Mountain className="h-4 w-4 text-flame" /> D+ sur tapis
         </h3>
         <LineChart kind="bar" unit="m D+" points={s.hikes.slice(-12).map((h) => ({ label: shortDate(h.date), value: h.dplus, detail: `${h.km.toFixed(2)} km` }))} />
       </div>
 
-      <div className="card p-4">
-        <h3 className="mb-2 flex items-center gap-1.5 text-[14px] font-semibold tracking-tight text-zinc-50">
-          <Activity className="h-4 w-4 text-zinc-400" /> Historique
+      <div className="b-card p-4">
+        <h3 className="mb-2 flex items-center gap-1.5 text-[14px] font-bold tracking-tight text-ink">
+          <Activity className="h-4 w-4 text-ink/70" /> Historique
         </h3>
         {s.days.length === 0 ? (
-          <p className="py-4 text-center text-sm text-zinc-500">Aucune séance enregistrée pour l’instant.</p>
+          <p className="py-4 text-center text-sm text-ink/60">Aucune séance enregistrée pour l’instant.</p>
         ) : (
-          <ul className="divide-y divide-white/[0.06]">
+          <ul className="divide-y divide-ink/20">
             {[...s.days]
               .reverse()
               .slice(0, 12)
@@ -187,16 +188,16 @@ export function StatsView() {
                 const sets = Object.values(day).reduce((n, l) => n + l.sets.filter((x) => x.done).length, 0)
                 return (
                   <li key={d} className="flex items-center justify-between py-2 text-sm">
-                    <span className="text-zinc-300">
+                    <span className="text-ink/85">
                       {new Date(`${d}T12:00:00`).toLocaleDateString('fr-CA', { weekday: 'short', day: 'numeric', month: 'short' })}
                     </span>
                     <span className="flex flex-wrap justify-end gap-1">
                       {sessions.map((p) => (
-                        <span key={p.id} className="rounded-md bg-ember/10 px-1.5 py-0.5 text-[10px] font-medium text-orange-300">
+                        <span key={p.id} className="border-2 border-ink bg-sun px-1.5 py-0.5 text-[10px] font-black uppercase italic">
                           {p.short}
                         </span>
                       ))}
-                      {sets > 0 && <span className="rounded-md bg-zinc-900 px-1.5 py-0.5 font-mono text-[10px] text-zinc-400">{sets} séries</span>}
+                      {sets > 0 && <span className="bg-paper px-1.5 py-0.5 font-mono text-[10px] text-ink/70">{sets} séries</span>}
                     </span>
                   </li>
                 )
@@ -209,20 +210,20 @@ export function StatsView() {
 }
 
 function HistTable({ head, rows }: { head: string[]; rows: string[][] }) {
-  if (!rows.length) return <p className="py-6 text-center text-sm text-zinc-500">Pas encore de données.</p>
+  if (!rows.length) return <p className="py-6 text-center text-sm text-ink/60">Pas encore de données.</p>
   return (
     <div className="max-h-64 overflow-auto">
       <table className="w-full text-left text-sm tabular-nums">
-        <thead className="text-[11px] uppercase tracking-wider text-zinc-500">
+        <thead className="text-[11px] uppercase tracking-wider text-ink/60">
           <tr>
             {head.map((h) => (
-              <th key={h} className="pb-1.5 font-semibold">
+              <th key={h} className="pb-1.5 font-bold">
                 {h}
               </th>
             ))}
           </tr>
         </thead>
-        <tbody className="divide-y divide-white/[0.06] text-zinc-300">
+        <tbody className="divide-y divide-ink/20 text-ink/85">
           {[...rows].reverse().map((r, i) => (
             <tr key={i}>
               {r.map((c, j) => (

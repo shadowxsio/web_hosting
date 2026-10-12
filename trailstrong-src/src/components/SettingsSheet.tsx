@@ -3,7 +3,9 @@ import { useRef, useState, type ComponentType, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { lock, resetLocalPin, setLocalPin, usingDefaultPin } from '../lib/auth'
 import { backupNow, restoreFromGist } from '../lib/backup'
+import type { FocusTag } from '../data/program'
 import { exportJson, importJson, today, updateGist, useData } from '../lib/storage'
+import type { View } from '../App'
 
 export function SettingsSheet({
   onClose,
@@ -12,7 +14,7 @@ export function SettingsSheet({
 }: {
   onClose: () => void
   onLock: () => void
-  onNavigate: (tab: 'catalogue' | 'progression') => void
+  onNavigate: (view: View, focus?: FocusTag) => void
 }) {
   const data = useData()
   const g = data.gist
@@ -47,43 +49,59 @@ export function SettingsSheet({
   const days = Object.keys(data.logs).length
 
   return createPortal(
-    <div className="fade-in fixed inset-0 z-50 flex items-end justify-center bg-black/60 backdrop-blur-sm md:items-stretch md:justify-end" onClick={onClose}>
+    <div className="fade-in fixed inset-0 z-50 flex items-end justify-center bg-ink/40 md:items-stretch md:justify-end" onClick={onClose}>
       <div
-        className="sheet pb-safe max-h-[92dvh] w-full max-w-xl overflow-y-auto rounded-t-2xl border border-zinc-800 bg-zinc-950 px-4 pt-4 md:max-h-none md:w-[440px] md:rounded-none md:rounded-l-2xl"
+        className="sheet pb-safe max-h-[92dvh] w-full max-w-xl overflow-y-auto border-[2.5px] border-b-0 border-ink bg-paper-2 px-4 pt-4 md:max-h-none md:w-[460px] md:border-b-[2.5px] md:border-r-0"
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-label="Réglages"
         data-noswipe
       >
         <div className="mb-3 flex items-center justify-between">
-          <h2 className="headline text-[22px] text-zinc-50">Menu</h2>
-          <button type="button" onClick={onClose} className="rounded-full p-2 text-zinc-400 active:bg-zinc-900" aria-label="Fermer">
-            <X className="h-5 w-5" />
+          <h2 className="headline text-[30px]">Menu</h2>
+          <button type="button" onClick={onClose} className="b-btn grid h-11 w-11 place-items-center rounded-full" aria-label="Fermer">
+            <X className="h-5 w-5" strokeWidth={3} />
           </button>
         </div>
 
-        {/* Liste de navigation façon quelleia : surtitre + titre italique gras */}
-        <nav className="mb-4 overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900/60">
+        {/* Liste façon quelleia : feuille lignée, surtitre + titre italique */}
+        <nav className="lined mb-6 border-[2.5px] border-ink shadow-[6px_6px_0_#1b1424]">
           {(
             [
-              ['catalogue', 'Vos 4 séances, filtres & recherche', 'Catalogue'],
-              ['progression', 'Charges, volume & D+', 'Progression'],
+              ['all', undefined, '4 séances, 20 exercices', 'Tout le programme'],
+              ['all', 'knee', 'Rotule, freinage, valgus', 'Focus genou'],
+              ['all', 'ankle', 'Proprioception & propulsion', 'Focus cheville'],
+              ['all', 'glutes', 'Grand & moyen fessier', 'Fessiers'],
+              ['stats', undefined, 'Charges, volume & D+', 'Progression'],
             ] as const
-          ).map(([id, over, title]) => (
+          ).map(([view, focus, over, title]) => (
             <button
-              key={id}
+              key={title}
               type="button"
-              onClick={() => onNavigate(id)}
-              className="flex w-full items-baseline gap-3 border-b border-zinc-800 px-4 py-3.5 text-left last:border-b-0 hover:bg-zinc-900"
+              onClick={() => onNavigate(view, focus)}
+              className="flex min-h-[57px] w-full flex-wrap items-center gap-x-3 px-4 py-2 text-left transition-colors hover:bg-sun/60"
             >
-              <span className="text-[10px] font-semibold uppercase tracking-[0.1em] text-zinc-500">{over}</span>
-              <span className="ml-auto font-display text-[17px] font-black uppercase italic tracking-tight text-zinc-50">{title}</span>
+              <span className="text-[10px] font-extrabold uppercase tracking-[0.1em] text-ink/70">{over}</span>
+              <span className="text-[19px] font-black uppercase italic leading-tight tracking-tight text-ink">{title}</span>
             </button>
           ))}
+          <button
+            type="button"
+            onClick={() => {
+              lock()
+              onLock()
+            }}
+            className="flex min-h-[57px] w-full flex-wrap items-center gap-x-3 border-t-[2.5px] border-ink bg-sun px-4 py-2 text-left"
+          >
+            <span className="text-[10px] font-extrabold uppercase tracking-[0.1em] text-ink/70">En 1 geste</span>
+            <span className="text-[19px] font-black uppercase italic leading-tight tracking-tight">Verrouiller</span>
+          </button>
         </nav>
 
+        <h3 className="headline headline-sun mb-3 text-[22px]">Réglages</h3>
+
         {msg && (
-          <p className={`mb-3 rounded-xl px-3 py-2 text-sm ${msg.ok ? 'bg-moss/15 text-emerald-200' : 'bg-red-500/15 text-red-200'}`}>{msg.text}</p>
+          <p className={`mb-3 border-2 border-ink px-3 py-2 text-sm font-bold ${msg.ok ? 'bg-mint' : 'bg-[#ffb4a8]'}`}>{msg.text}</p>
         )}
 
         <Block title="Sauvegarde locale" desc={`${days} jour(s) d’entraînement stockés sur cet appareil.`}>
@@ -112,13 +130,13 @@ export function SettingsSheet({
           title="Backup cloud — GitHub Gist"
           desc="Optionnel. Copie chiffrée (AES-256, clé dérivée de ton PIN) dans un Gist secret, 20 s après chaque modification."
         >
-          <label className="mb-2 flex h-11 items-center justify-between rounded-xl border border-zinc-800 bg-zinc-950 px-3 text-[13px] text-zinc-200">
+          <label className="mb-2 flex h-11 items-center justify-between border-2 border-ink bg-paper px-3 text-[13px] text-ink">
             Backup automatique
             <input
               type="checkbox"
               checked={g.enabled}
               onChange={(e) => updateGist({ enabled: e.target.checked })}
-              className="h-5 w-5 accent-orange-500"
+              className="h-5 w-5 accent-[#f0773a]"
             />
           </label>
           <Field
@@ -141,9 +159,9 @@ export function SettingsSheet({
               Restaurer
             </Btn>
           </div>
-          <p className="mt-2 text-xs text-zinc-500">
+          <p className="mt-2 text-xs text-ink/60">
             {g.lastBackup ? `Dernier backup : ${new Date(g.lastBackup).toLocaleString('fr-CA')}` : 'Aucun backup cloud pour l’instant.'}
-            {g.lastError && <span className="block text-red-300">Dernière erreur : {g.lastError}</span>}
+            {g.lastError && <span className="block text-[#b91c1c]">Dernière erreur : {g.lastError}</span>}
           </p>
         </Block>
 
@@ -192,11 +210,11 @@ export function SettingsSheet({
             lock()
             onLock()
           }}
-          className="mb-6 mt-1 flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-zinc-800 bg-zinc-900 font-medium text-zinc-200 active:scale-[0.98]"
+          className="b-btn b-btn-ink mb-8 mt-1 flex h-12 w-full items-center justify-center gap-2 uppercase italic"
         >
           <Lock className="h-4 w-4" /> Verrouiller maintenant
         </button>
-        <p className="mb-6 text-center text-[11px] text-zinc-600">TrailStrong 2026 · v{__APP_VERSION__} · données 100 % locales</p>
+        <p className="mb-6 text-center text-[11px] text-ink/45">TrailStrong 2026 · v{__APP_VERSION__} · données 100 % locales</p>
       </div>
     </div>,
     document.body,
@@ -205,9 +223,9 @@ export function SettingsSheet({
 
 function Block({ title, desc, children }: { title: string; desc: string; children: ReactNode }) {
   return (
-    <section className="card mb-3 p-3.5">
-      <h3 className="text-[14px] font-semibold tracking-tight text-zinc-50">{title}</h3>
-      <p className="mb-3 mt-0.5 text-[12px] leading-snug text-zinc-400">{desc}</p>
+    <section className="b-card mb-5 p-4">
+      <h3 className="text-[16px] font-black uppercase italic tracking-tight">{title}</h3>
+      <p className="mb-3 mt-1 text-[13px] font-semibold leading-snug text-ink/75">{desc}</p>
       {children}
     </section>
   )
@@ -229,9 +247,9 @@ function Btn({
       type="button"
       disabled={disabled}
       onClick={onClick}
-      className="flex h-11 items-center justify-center gap-1.5 rounded-xl border border-zinc-800 bg-zinc-900 px-3 text-[13px] font-medium text-zinc-200 transition active:scale-95 disabled:opacity-40"
+      className="b-btn flex h-11 items-center justify-center gap-1.5 px-3 text-[13px] disabled:opacity-40"
     >
-      <Icon className="h-4 w-4 text-ember" />
+      <Icon className="h-4 w-4" />
       {children}
     </button>
   )
@@ -262,7 +280,7 @@ function Field({
         placeholder={placeholder}
         autoComplete="off"
         onChange={(e) => onChange(e.target.value)}
-        className="mt-1 h-11 w-full rounded-xl border border-zinc-800 bg-zinc-950 px-3 text-[13px] normal-case tracking-normal text-zinc-100 placeholder:text-zinc-600 focus:border-glacier/50 focus:outline-none"
+        className="mt-1 h-11 w-full border-2 border-ink bg-paper px-3 text-[13px] normal-case tracking-normal text-ink placeholder:text-ink/40 focus:outline-none focus:shadow-[3px_3px_0_#f0773a]"
       />
     </label>
   )

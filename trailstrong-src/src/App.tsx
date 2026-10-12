@@ -1,18 +1,33 @@
-import { Menu, Search } from 'lucide-react'
+import { BarChart3, LayoutGrid, Menu, Search } from 'lucide-react'
 import { useEffect, useRef, useState, type TouchEvent } from 'react'
-import { Catalog, FILTERS, type FilterId } from './components/Catalog'
+import { Catalog, type Scope } from './components/Catalog'
+import { SESSION_META } from './components/meta'
 import { PinLock } from './components/PinLock'
 import { SettingsSheet } from './components/SettingsSheet'
 import { StatsView } from './components/StatsView'
 import { TimerBar } from './components/TimerBar'
+import type { FocusTag } from './data/program'
 import { hasValidSession } from './lib/auth'
 import { useAutoBackup } from './lib/backup'
 import { useProgram } from './lib/custom'
 import { today } from './lib/storage'
 
-type Tab = 'catalogue' | 'progression'
+export type View = Scope | 'stats'
 
-const FILTER_KEY = 'trailstrong:filter'
+/** Onglets : dossiers colorés en haut (desktop) / dock en bas (mobile). */
+export const TABS: { id: View; label: string; short: string; emoji?: string; bg: string }[] = [
+  { id: 'all', label: 'Tout', short: 'Tout', bg: 'bg-paper' },
+  ...(Object.entries(SESSION_META) as [View, (typeof SESSION_META)[keyof typeof SESSION_META]][]).map(([id, m]) => ({
+    id,
+    label: m.label,
+    short: m.short,
+    emoji: m.emoji,
+    bg: m.bg,
+  })),
+  { id: 'stats', label: 'Progression', short: 'Stats', bg: 'bg-sky' },
+]
+
+const VIEW_KEY = 'trailstrong:view'
 
 export default function App() {
   const [auth, setAuth] = useState<'checking' | 'locked' | 'open'>('checking')
@@ -24,50 +39,39 @@ export default function App() {
   return <Shell onLock={() => setAuth('locked')} />
 }
 
-function useOnline() {
-  const [online, setOnline] = useState(navigator.onLine)
-  useEffect(() => {
-    const up = () => setOnline(true)
-    const down = () => setOnline(false)
-    window.addEventListener('online', up)
-    window.addEventListener('offline', down)
-    return () => {
-      window.removeEventListener('online', up)
-      window.removeEventListener('offline', down)
-    }
-  }, [])
-  return online
-}
-
 function Shell({ onLock }: { onLock: () => void }) {
   useAutoBackup()
-  const online = useOnline()
   const program = useProgram()
-  const [tab, setTab] = useState<Tab>('catalogue')
-  const [filter, setFilterState] = useState<FilterId>(() => {
-    const saved = localStorage.getItem(FILTER_KEY) as FilterId | null
-    return saved && FILTERS.some((f) => f.id === saved) ? saved : 'activation'
+  const [view, setViewState] = useState<View>(() => {
+    const saved = localStorage.getItem(VIEW_KEY) as View | null
+    return saved && TABS.some((t) => t.id === saved) ? saved : 'activation'
   })
+  const [focus, setFocus] = useState<FocusTag | null>(null)
   const [query, setQuery] = useState('')
   const [date, setDate] = useState(today())
   const [menu, setMenu] = useState(false)
   const touch = useRef<{ x: number; y: number; ok: boolean } | null>(null)
 
-  const setFilter = (f: FilterId) => {
-    setFilterState(f)
-    localStorage.setItem(FILTER_KEY, f)
+  const setView = (v: View) => {
+    setViewState(v)
+    setFocus(null)
+    localStorage.setItem(VIEW_KEY, v)
+    window.scrollTo({ top: 0 })
   }
 
   const focusSearch = () => {
-    setTab('catalogue')
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-    window.setTimeout(() => document.getElementById('search')?.focus(), 80)
+    if (view === 'stats') setView('all')
+    window.setTimeout(() => {
+      const el = document.getElementById('search')
+      el?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      el?.focus({ preventScroll: true })
+    }, 60)
   }
 
-  // Balayage horizontal entre filtres (hors champs, graphiques et tiroirs).
+  // Balayage horizontal entre onglets.
   const onTouchStart = (e: TouchEvent) => {
     const el = e.target as HTMLElement
-    touch.current = { x: e.touches[0].clientX, y: e.touches[0].clientY, ok: tab === 'catalogue' && !el.closest('input, textarea, select, svg, [data-noswipe], [role=toolbar]') }
+    touch.current = { x: e.touches[0].clientX, y: e.touches[0].clientY, ok: !el.closest('input, textarea, select, svg, [data-noswipe], [role=toolbar]') }
   }
   const onTouchEnd = (e: TouchEvent) => {
     const t0 = touch.current
@@ -76,11 +80,11 @@ function Shell({ onLock }: { onLock: () => void }) {
     const dx = e.changedTouches[0].clientX - t0.x
     const dy = e.changedTouches[0].clientY - t0.y
     if (Math.abs(dx) < 70 || Math.abs(dx) < Math.abs(dy) * 1.8) return
-    const i = FILTERS.findIndex((f) => f.id === filter)
+    const i = TABS.findIndex((t) => t.id === view)
     const j = i + (dx < 0 ? 1 : -1)
-    if (j >= 0 && j < FILTERS.length) {
+    if (j >= 0 && j < TABS.length) {
       navigator.vibrate?.(8)
-      setFilter(FILTERS[j].id)
+      setView(TABS[j].id)
     }
   }
 
@@ -99,76 +103,94 @@ function Shell({ onLock }: { onLock: () => void }) {
   return (
     <div className="min-h-dvh" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
       {/* ── En-tête ── */}
-      <header className="pt-safe dots border-b border-zinc-800">
-        <div className="mx-auto flex max-w-6xl items-center gap-2 px-3 pb-3 pt-3">
-          <span className="relative -rotate-1 border border-dashed border-zinc-600 bg-zinc-900 px-2.5 py-1.5">
-            <span className="headline block text-[19px] text-zinc-50 [text-shadow:2px_2px_0_rgba(249,115,22,0.6)]">TrailStrong</span>
-            <span className="mt-0.5 block font-mono text-[9px] tracking-[0.14em] text-zinc-500">2026 // ÉCONOFITNESS</span>
-          </span>
-          <span className="ml-auto mr-1 hidden items-center gap-1.5 text-[11px] text-zinc-500 min-[400px]:flex" title={online ? 'Session privée, en ligne' : 'Hors-ligne'}>
-            <span className={`h-1.5 w-1.5 rounded-full ${online ? 'bg-emerald-500' : 'bg-amber-400'}`} />
-            {online ? 'Privé' : 'Hors-ligne'}
-          </span>
+      <header className="pt-safe">
+        <div className="mx-auto flex max-w-6xl items-center gap-3 px-3 pb-4 pt-4 md:px-6">
+          <button type="button" onClick={() => setView('all')} className="-rotate-2 border-[2.5px] border-ink bg-paper p-1 shadow-[4px_4px_0_#1b1424]" aria-label="Accueil">
+            <span className="block border-2 border-dashed border-ink px-3 py-1.5">
+              <span className="headline block text-[22px] [text-shadow:2px_2px_0_#f0773a]">TrailStrong</span>
+            </span>
+          </button>
           <button
             type="button"
             onClick={focusSearch}
             aria-label="Rechercher"
-            className="ml-auto grid h-11 w-11 place-items-center rounded-full border border-zinc-700 bg-zinc-900 text-zinc-200 min-[400px]:ml-0"
+            className="b-btn ml-auto grid h-12 w-12 shrink-0 place-items-center rounded-full"
           >
-            <Search className="h-[18px] w-[18px]" />
+            <Search className="h-5 w-5" strokeWidth={2.8} />
           </button>
-          <button
-            type="button"
-            onClick={() => setMenu(true)}
-            className="flex h-11 items-center gap-2 rounded-lg border border-zinc-700 bg-zinc-100 px-3.5 font-display text-[14px] font-black uppercase italic text-zinc-950"
-          >
-            <Menu className="h-4 w-4" strokeWidth={2.5} /> Menu
+          <button type="button" onClick={() => setMenu(true)} className="b-btn flex h-12 items-center gap-2 bg-sun px-4 text-[15px] uppercase italic">
+            <Menu className="h-5 w-5" strokeWidth={3} /> Menu
           </button>
         </div>
 
-        {/* Onglets « dossiers » */}
-        <nav className="mx-auto flex max-w-6xl items-end gap-1 px-3" aria-label="Sections">
-          {(
-            [
-              ['catalogue', 'Catalogue'],
-              ['progression', 'Progression'],
-            ] as const
-          ).map(([id, label]) => (
-            <button
-              key={id}
-              type="button"
-              onClick={() => setTab(id)}
-              aria-current={tab === id ? 'page' : undefined}
-              className={`-mb-px rounded-t-lg border border-b-0 px-3.5 font-display text-[12px] font-black uppercase italic tracking-tight transition-all duration-150 ${
-                tab === id ? 'h-10 border-zinc-700 bg-zinc-950 text-zinc-50' : 'h-8 border-zinc-800 bg-zinc-900 text-zinc-500 hover:text-zinc-300'
-              }`}
-            >
-              {label}
-            </button>
-          ))}
+        {/* Onglets-dossiers (desktop) */}
+        <nav className="mx-auto hidden max-w-6xl items-end gap-1.5 px-6 md:flex" aria-label="Onglets">
+          {TABS.map((t) => {
+            const active = t.id === view
+            return (
+              <button
+                key={t.id}
+                type="button"
+                onClick={() => setView(t.id)}
+                aria-current={active ? 'page' : undefined}
+                className={`-mb-[2.5px] rounded-t-xl border-[2.5px] border-ink px-4 text-[13px] font-black uppercase italic transition-all duration-150 ${
+                  active ? `h-12 border-b-sky bg-sky` : `h-10 ${t.bg} hover:h-11`
+                }`}
+              >
+                {t.emoji && <span className="mr-1 not-italic">{t.emoji}</span>}
+                {t.label}
+              </button>
+            )
+          })}
         </nav>
       </header>
 
-      <main className="mx-auto max-w-6xl px-3 pb-28">
-        {tab === 'catalogue' ? (
-          <Catalog program={program} filter={filter} setFilter={setFilter} query={query} setQuery={setQuery} date={date} setDate={setDate} />
+      <main className="mx-auto max-w-6xl px-3 pb-44 md:px-6 md:pb-28">
+        {view === 'stats' ? (
+          <StatsView />
         ) : (
-          <div className="pt-4">
-            <StatsView />
-          </div>
+          <Catalog program={program} scope={view} focus={focus} setFocus={setFocus} query={query} setQuery={setQuery} date={date} setDate={setDate} />
         )}
       </main>
 
       <TimerBar />
 
+      {/* ── Dock mobile ── */}
+      <nav className="pb-safe fixed inset-x-0 bottom-0 z-40 border-t-[2.5px] border-ink bg-paper md:hidden" aria-label="Onglets" data-noswipe>
+        <ul className="grid grid-cols-6">
+          {TABS.map((t) => {
+            const active = t.id === view
+            return (
+              <li key={t.id}>
+                <button
+                  type="button"
+                  onClick={() => setView(t.id)}
+                  aria-current={active ? 'page' : undefined}
+                  className="flex h-[60px] w-full flex-col items-center justify-center gap-0.5 px-0.5"
+                >
+                  <span
+                    className={`grid h-8 w-11 place-items-center rounded-lg border-2 text-[16px] transition-all duration-150 ${
+                      active ? `${t.bg} -translate-y-0.5 border-ink shadow-[2px_2px_0_#1b1424]` : 'border-transparent'
+                    }`}
+                  >
+                    {t.id === 'all' ? <LayoutGrid className="h-[18px] w-[18px]" strokeWidth={2.5} /> : t.id === 'stats' ? <BarChart3 className="h-[18px] w-[18px]" strokeWidth={2.5} /> : t.emoji}
+                  </span>
+                  <span className={`truncate text-[10px] uppercase italic ${active ? 'font-black text-ink' : 'font-extrabold text-ink/55'}`}>{t.short}</span>
+                </button>
+              </li>
+            )
+          })}
+        </ul>
+      </nav>
+
       {menu && (
         <SettingsSheet
           onClose={() => setMenu(false)}
           onLock={onLock}
-          onNavigate={(t) => {
-            setTab(t)
+          onNavigate={(v, f) => {
+            setView(v)
+            if (f) setFocus(f)
             setMenu(false)
-            window.scrollTo({ top: 0 })
           }}
         />
       )}

@@ -47,9 +47,9 @@ export function AddExerciseSheet({ session, onClose, onAdded }: { session: Sessi
 
   // Portail sur <body> : échappe au contexte d'empilement de <main> (animation), au-dessus du chrono.
   return createPortal(
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-ink/60 backdrop-blur-md" onClick={onClose}>
+    <div className="fade-in fixed inset-0 z-50 flex items-end justify-center bg-ink/40" onClick={onClose}>
       <form
-        className="fade-up border border-zinc-800 bg-zinc-900/90 backdrop-blur-md pb-safe max-h-[92dvh] w-full max-w-xl overflow-y-auto rounded-t-2xl px-4 pt-4"
+        className="sheet pb-safe max-h-[92dvh] w-full max-w-xl overflow-y-auto border-[2.5px] border-b-0 border-ink bg-paper-2 px-4 pt-4"
         onClick={(e) => e.stopPropagation()}
         onSubmit={(e) => {
           e.preventDefault()
@@ -61,14 +61,14 @@ export function AddExerciseSheet({ session, onClose, onAdded }: { session: Sessi
       >
         <div className="mb-1 flex items-center justify-between">
           <div>
-            <p className="label !text-ember">Nouvel exercice · {session.short}</p>
-            <h2 className="text-[17px] font-semibold tracking-tight text-zinc-50">Ajouter un exercice à la main</h2>
+            <p className="tag h-6 -rotate-1 bg-sun px-2 text-[10px]">Nouvel exercice · {session.short}</p>
+            <h2 className="headline mt-2 text-[26px] [text-shadow:2px_2px_0_#f0773a]">Ajouter un exercice</h2>
           </div>
-          <button type="button" onClick={onClose} className="grid h-11 w-11 place-items-center rounded-full text-zinc-400 active:bg-white/10" aria-label="Fermer">
-            <X className="h-5 w-5" />
+          <button type="button" onClick={onClose} className="b-btn grid h-11 w-11 place-items-center rounded-full" aria-label="Fermer">
+            <X className="h-5 w-5" strokeWidth={3} />
           </button>
         </div>
-        <p className="mb-4 text-[12px] text-zinc-400">Il s’ajoute à la suite de la séance, avec suivi poids / reps, chrono et validation.</p>
+        <p className="mb-5 mt-2 text-[13px] font-semibold text-ink/75">Il s’ajoute à la suite de la séance, avec suivi poids / reps, chrono et validation.</p>
 
         <Field label="Nom de l’exercice *" error={touched && !valid ? 'Le nom est obligatoire.' : undefined}>
           <input
@@ -83,15 +83,13 @@ export function AddExerciseSheet({ session, onClose, onAdded }: { session: Sessi
         </Field>
 
         <Field label="Groupe cible / badge">
-          <div className="no-scrollbar mb-2 flex gap-1.5 overflow-x-auto">
+          <div className="no-scrollbar -mx-1 mb-3 flex gap-2 overflow-x-auto px-1 pb-1">
             {PRESETS.map((t) => (
               <button
                 key={t}
                 type="button"
                 onClick={() => setTarget((cur) => (cur === t ? '' : t))}
-                className={`h-9 shrink-0 rounded-full border px-3 text-[12px] font-medium transition duration-150 ${
-                  target === t ? 'border-ember/50 bg-ember/15 text-orange-100' : 'border-transparent bg-zinc-900 text-zinc-400'
-                }`}
+                className={`b-btn h-10 shrink-0 px-3 text-[13px] ${target === t ? 'b-btn-ink' : ''}`}
               >
                 {t}
               </button>
@@ -132,13 +130,13 @@ export function AddExerciseSheet({ session, onClose, onAdded }: { session: Sessi
           />
         </Field>
 
-        <div className="mb-6 mt-2 grid grid-cols-[1fr_1.6fr] gap-2">
-          <button type="button" onClick={onClose} className="h-12 rounded-xl border border-zinc-800 bg-zinc-900 text-[13px] font-medium text-zinc-300 active:scale-[0.98]">
+        <div className="mb-8 mt-4 grid grid-cols-[1fr_1.6fr] gap-3">
+          <button type="button" onClick={onClose} className="b-btn h-12 text-[14px] uppercase italic">
             Annuler
           </button>
           <button
             type="submit"
-            className="flex h-12 items-center justify-center gap-1.5 rounded-xl bg-[#f97316] text-[13px] font-semibold text-white transition duration-150 active:scale-[0.98] disabled:opacity-50"
+            className="b-btn flex h-12 items-center justify-center gap-1.5 bg-flame text-[14px] uppercase italic"
           >
             <Plus className="h-4 w-4" strokeWidth={2.5} /> Ajouter l’exercice
           </button>
@@ -150,17 +148,17 @@ export function AddExerciseSheet({ session, onClose, onAdded }: { session: Sessi
 }
 
 const input =
-  'h-11 w-full rounded-xl border border-zinc-800 bg-zinc-950 px-3 text-[13px] text-zinc-100 placeholder:text-zinc-600 focus:border-ember/50 focus:outline-none'
+  'b-input h-12 w-full px-3 text-[14px] placeholder:text-ink/40'
 
 function Field({ label, hint, error, children }: { label: string; hint?: string; error?: string; children: ReactNode }) {
   return (
     <div className="mb-3">
       <p className="label mb-1 flex justify-between">
         <span>{label}</span>
-        {hint && <span className="normal-case tracking-normal text-glacier">{hint}</span>}
+        {hint && <span className="normal-case tracking-normal text-ocean">{hint}</span>}
       </p>
       {children}
-      {error && <p className="mt-1 text-[11px] text-red-300">{error}</p>}
+      {error && <p className="mt-1 text-[11px] text-[#b91c1c]">{error}</p>}
     </div>
   )
 }
