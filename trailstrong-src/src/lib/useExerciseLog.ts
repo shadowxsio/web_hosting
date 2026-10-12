@@ -4,6 +4,7 @@
  */
 import type { Exercise } from '../data/program'
 import { asymmetry, previousBest, updateExercise, useData, type ExerciseLog, type SetLog, type Side, type SideLog } from './storage'
+import { loadSuggestion } from './insights'
 import { timer } from './timer'
 
 export const num = (s: string) => {
@@ -23,13 +24,15 @@ export function useExerciseLog(ex: Exercise, date: string) {
   const log: ExerciseLog = data.logs[date]?.[ex.id] ?? { sets: [] }
   const sets = log.sets.length >= ex.sets ? log.sets : [...log.sets, ...emptySets(ex.sets - log.sets.length)]
   const best = previousBest(data, ex.id, date)
+  const suggestion = loadSuggestion(data, ex, date)
+  const sugW = suggestion?.kind === 'up' ? String(suggestion.weight) : ''
   const done = !!log.done
   const unit = ex.mode === 'timed' ? 's' : 'reps'
 
   const write = (fn: (l: ExerciseLog) => ExerciseLog) => updateExercise(date, ex.id, fn)
 
   // Valeur suggérée : série précédente du jour, sinon même série la dernière fois, sinon poids de départ.
-  const hintW = (i: number) => (i > 0 && sets[i - 1].w) || best.lastLog?.sets[i]?.w || ex.startWeight || ''
+  const hintW = (i: number) => (i > 0 && sets[i - 1].w) || sugW || best.lastLog?.sets[i]?.w || ex.startWeight || ''
   const hintR = (i: number) => (i > 0 && sets[i - 1].r) || best.lastLog?.sets[i]?.r || String(ex.defaultReps ?? '')
 
   const setField = (i: number, field: 'w' | 'r', value: string) =>
@@ -72,7 +75,7 @@ export function useExerciseLog(ex: Exercise, date: string) {
 
   const sideOf = (i: number, side: Side): SideLog => sets[i]?.[side] ?? { w: '', r: '', done: false }
   const hintSideW = (i: number, side: Side) =>
-    (i > 0 && sets[i - 1][side]?.w) || best.lastLog?.sets[i]?.[side]?.w || sideOf(i, other(side)).w || hintW(i)
+    (i > 0 && sets[i - 1][side]?.w) || sugW || best.lastLog?.sets[i]?.[side]?.w || sideOf(i, other(side)).w || hintW(i)
   const hintSideR = (i: number, side: Side) =>
     (i > 0 && sets[i - 1][side]?.r) || best.lastLog?.sets[i]?.[side]?.r || hintR(i)
 
@@ -156,6 +159,7 @@ export function useExerciseLog(ex: Exercise, date: string) {
     maxToday,
     prev,
     asym,
+    suggestion,
     sideOrder,
     sideOf,
     hintSideW,

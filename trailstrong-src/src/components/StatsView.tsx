@@ -2,6 +2,7 @@ import { Activity, CalendarCheck, Dumbbell, Mountain, Table2, TrendingUp } from 
 import { useMemo, useState } from 'react'
 import { useProgram } from '../lib/custom'
 import { exerciseHistory, today, treadmillStats, useData, type AppData } from '../lib/storage'
+import { painSeries } from '../lib/insights'
 import { AsymmetryPanel } from './AsymmetryPanel'
 import { LineChart } from './LineChart'
 
@@ -107,6 +108,17 @@ export function StatsView() {
       </div>
 
       <AsymmetryPanel exercises={ALL_EXERCISES} />
+
+      <div className="b-card p-4">
+        <h3 className="text-[16px] font-black uppercase italic tracking-tight">Douleur genou / cheville</h3>
+        <p className="mb-3 mt-1 text-[12px] font-semibold text-ink/70">Max du jour (avant / après), sur 10. Objectif : rester sous 3.</p>
+        {(['knee', 'ankle'] as const).map((j) => (
+          <div key={j} className="mb-2">
+            <p className="text-[12px] font-black uppercase italic">{j === 'knee' ? '🩹 Genou' : '⚓ Cheville'}</p>
+            <LineChart unit="/10" points={painSeries(data, j).slice(-20).map((x) => ({ label: shortDate(x.date), value: x.value }))} />
+          </div>
+        ))}
+      </div>
 
       <div className="b-card p-4">
         <div className="mb-2 flex items-center justify-between gap-2">

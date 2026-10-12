@@ -47,9 +47,26 @@ export interface GistSettings {
   lastError?: string
 }
 
+/** Douleur ressentie (0 = aucune, 10 = maximale), avant / après la séance. */
+export interface Checkin {
+  kneeBefore?: number
+  kneeAfter?: number
+  ankleBefore?: number
+  ankleAfter?: number
+}
+
+/** Résultat d'un test mensuel : valeur par jambe. */
+export interface TestResult {
+  L?: number
+  R?: number
+}
+
 export interface AppData {
   version: 1
   logs: Record<string, Record<string, ExerciseLog>>
+  checkins: Record<string, Checkin>
+  /** tests[date][testId] */
+  tests: Record<string, Record<string, TestResult>>
   gist: GistSettings
   updatedAt: number
 }
@@ -59,6 +76,8 @@ const KEY = 'trailstrong:v1'
 const empty = (): AppData => ({
   version: 1,
   logs: {},
+  checkins: {},
+  tests: {},
   gist: { enabled: false, token: '', gistId: '' },
   updatedAt: 0,
 })
@@ -240,8 +259,20 @@ export function importJson(text: string): number {
     logs[date] = { ...(logs[date] ?? {}), ...day }
   }
   mergeCustom(parsed.customExercises)
-  setData({ ...state, logs })
+  const checkins = { ...state.checkins, ...(parsed.checkins ?? {}) }
+  const tests = { ...state.tests }
+  for (const [date, day] of Object.entries(parsed.tests ?? {})) tests[date] = { ...(tests[date] ?? {}), ...day }
+  setData({ ...state, logs, checkins, tests })
   return Object.keys(parsed.logs).length
+}
+
+export function updateCheckin(date: string, patch: Partial<Checkin>) {
+  setData({ ...state, checkins: { ...state.checkins, [date]: { ...(state.checkins[date] ?? {}), ...patch } } })
+}
+
+export function updateTest(date: string, testId: string, patch: TestResult) {
+  const day = state.tests[date] ?? {}
+  setData({ ...state, tests: { ...state.tests, [date]: { ...day, [testId]: { ...(day[testId] ?? {}), ...patch } } } })
 }
 
 /** Marque les données comme modifiées (déclenche le backup auto). */

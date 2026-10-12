@@ -76,6 +76,12 @@ export function ExerciseDrawer({ ex, sessionId, date, onClose }: { ex: Exercise;
           {/* Saisie */}
           <section>
             <h3 className="label mb-2">Suivi du jour</h3>
+            {L.suggestion && (
+              <p className={`mb-3 border-2 border-ink px-3 py-2 text-[13px] font-bold leading-snug ${L.suggestion.kind === 'up' ? 'bg-mint' : 'bg-sun'}`}>
+                {L.suggestion.kind === 'up' ? '💡 ' : '✋ '}
+                {L.suggestion.text}
+              </p>
+            )}
             {ex.mode === 'treadmill' ? (
               <TreadmillTracker log={L.log} write={L.write} done={L.done} />
             ) : (

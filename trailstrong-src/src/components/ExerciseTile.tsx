@@ -24,7 +24,7 @@ export function ExerciseTile({
   date: string
   onOpen: () => void
 }) {
-  const { done, toggleDone, doneSets, sets, prev, maxToday } = useExerciseLog(ex, date)
+  const { done, toggleDone, doneSets, sets, prev, maxToday, suggestion } = useExerciseLog(ex, date)
   const Icon = iconOf(ex)
   const s = SESSION_META[sessionId]
   const tid = ex.trackId ?? ex.id
@@ -60,6 +60,11 @@ export function ExerciseTile({
               <div className="shrink-0 text-right">
                 <p className="text-[30px] font-black italic leading-none tracking-tight text-ink">{prev.value.replace('.', ',')}</p>
                 <p className="text-[10px] font-extrabold uppercase italic text-ink/60">{prev.unit} · préc.</p>
+                {suggestion?.kind === 'up' && !done && (
+                  <p className="tag mt-1 h-5 bg-mint px-1.5 text-[10px]" title={suggestion.text}>
+                    ↑ {String(suggestion.weight).replace('.', ',')}
+                  </p>
+                )}
               </div>
             )}
           </div>

@@ -6,6 +6,7 @@ import { AddExerciseSheet } from './AddExerciseSheet'
 import { ExerciseDrawer } from './ExerciseDrawer'
 import { ExerciseTile } from './ExerciseTile'
 import { TAG_META } from './meta'
+import { PainCheckin } from './PainCheckin'
 
 export type Scope = 'all' | SessionId
 
@@ -129,6 +130,8 @@ export function Catalog({
         <div className="mt-5 h-4 border-[2.5px] border-ink bg-paper" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100}>
           <div className={`h-full transition-all duration-500 ${pct === 100 ? 'bg-mint' : 'bg-flame'}`} style={{ width: `${pct}%` }} />
         </div>
+
+        <PainCheckin date={date} />
       </section>
 
       {/* ── Recherche ── */}
