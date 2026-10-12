@@ -1,4 +1,4 @@
-import { Delete, Lock, Mountain } from 'lucide-react'
+import { Delete, Lock, ShieldCheck } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 import { checkPin, startSession, usingDefaultPin } from '../lib/auth'
 
@@ -24,7 +24,7 @@ export function PinLock({ onUnlock }: { onUnlock: () => void }) {
         window.setTimeout(() => {
           setError(false)
           setPin('')
-        }, 500)
+        }, 450)
       }
     },
     [onUnlock],
@@ -33,6 +33,7 @@ export function PinLock({ onUnlock }: { onUnlock: () => void }) {
   const press = useCallback(
     (k: string) => {
       if (busy || error) return
+      navigator.vibrate?.(6)
       if (k === 'del') return setPin((p) => p.slice(0, -1))
       setPin((p) => {
         if (p.length >= 8) return p
@@ -56,67 +57,72 @@ export function PinLock({ onUnlock }: { onUnlock: () => void }) {
     return () => window.removeEventListener('keydown', onKey)
   }, [press, attempt, pin])
 
-  const slots = Math.max(4, Math.min(8, pin.length > 4 ? 6 : 4))
+  const slots = Math.max(pin.length > 4 ? 6 : 4, pin.length)
 
   return (
-    <div className="pt-safe pb-safe flex min-h-dvh flex-col items-center justify-center px-6">
-      <div className="mb-8 flex flex-col items-center text-center">
-        <div className="mb-4 grid h-16 w-16 place-items-center rounded-2xl bg-gradient-to-br from-orange-400 to-orange-600 shadow-[0_0_40px_-6px_#f97316]">
-          <Mountain className="h-8 w-8 text-white" strokeWidth={2.4} />
+    <div className="dot-grid pt-safe pb-safe relative flex min-h-dvh items-center justify-center px-4">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(500px_300px_at_50%_30%,rgba(249,115,22,0.10),transparent_70%)]" />
+      <div className="glass relative w-full max-w-[340px] rounded-2xl p-5 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.9)] backdrop-blur-xl">
+        <div className="flex items-center justify-between">
+          <span className="flex items-center gap-1.5 font-mono text-[10px] font-semibold tracking-[0.14em] text-slate-400">
+            <Lock className="h-3 w-3 text-ember" />
+            TRAILSTRONG // ACCÈS PRIVÉ
+          </span>
+          <span className="flex items-center gap-1 rounded-full bg-moss/10 px-2 py-0.5 text-[10px] font-medium text-emerald-300">
+            <span className="h-1.5 w-1.5 rounded-full bg-moss shadow-[0_0_6px_#10b981]" /> chiffré
+          </span>
         </div>
-        <h1 className="font-display text-3xl font-extrabold tracking-tight text-white">
-          TrailStrong <span className="text-ember">2026</span>
-        </h1>
-        <p className="mt-1 text-sm text-slate-400">ÉconoFitness Beaubien · accès privé</p>
-      </div>
 
-      <div className={`mb-8 flex gap-3 ${error ? 'shake' : ''}`} aria-live="polite">
-        {Array.from({ length: Math.max(slots, pin.length) }).map((_, i) => (
-          <span
-            key={i}
-            className={`h-3.5 w-3.5 rounded-full border-2 transition-all duration-150 ${
-              error
-                ? 'border-red-500 bg-red-500'
-                : i < pin.length
-                  ? 'scale-110 border-ember bg-ember'
-                  : 'border-slate-600'
-            }`}
-          />
-        ))}
-      </div>
+        <h1 className="mt-5 text-lg font-semibold tracking-tight text-fg">Bon retour, Mickael</h1>
+        <p className="text-[13px] text-muted">Saisis ton code PIN pour ouvrir la session.</p>
 
-      <div className="grid w-full max-w-[280px] grid-cols-3 gap-4">
-        {KEYS.map((k, i) =>
-          k === '' ? (
-            <span key={i} />
-          ) : (
-            <button
+        <div className={`my-6 flex justify-center gap-3.5 ${error ? 'shake' : ''}`} aria-live="polite">
+          {Array.from({ length: slots }).map((_, i) => (
+            <span
               key={i}
-              type="button"
-              onClick={() => press(k)}
-              aria-label={k === 'del' ? 'Effacer' : k}
-              className="grid h-16 place-items-center rounded-2xl border border-white/5 bg-white/[0.04] font-display text-2xl font-semibold text-white backdrop-blur transition active:scale-95 active:bg-ember/30"
-            >
-              {k === 'del' ? <Delete className="h-6 w-6 text-slate-300" /> : k}
-            </button>
-          ),
-        )}
-      </div>
+              className={`h-3 w-3 rounded-full transition-all duration-150 ${
+                error
+                  ? 'bg-red-500 shadow-[0_0_10px_#ef4444]'
+                  : i < pin.length
+                    ? 'scale-110 bg-ember shadow-[0_0_10px_#f97316]'
+                    : 'border border-slate-600 bg-transparent'
+              }`}
+            />
+          ))}
+        </div>
 
-      {pin.length >= 4 && pin.length !== 6 && (
+        <div className="grid grid-cols-3 gap-2">
+          {KEYS.map((k, i) =>
+            k === '' ? (
+              <span key={i} />
+            ) : (
+              <button
+                key={i}
+                type="button"
+                onClick={() => press(k)}
+                aria-label={k === 'del' ? 'Effacer' : k}
+                className="grid h-14 place-items-center rounded-xl border border-line bg-chip/60 font-mono text-xl font-semibold text-fg transition duration-150 hover:bg-chip active:scale-95 active:border-ember/40 active:bg-ember/15"
+              >
+                {k === 'del' ? <Delete className="h-5 w-5 text-slate-400" /> : k}
+              </button>
+            ),
+          )}
+        </div>
+
         <button
           type="button"
+          disabled={pin.length < 4}
           onClick={() => void attempt(pin, true)}
-          className="mt-6 rounded-xl bg-ember px-6 py-2.5 font-semibold text-white active:scale-95"
+          className="mt-3 h-11 w-full rounded-xl bg-ember text-sm font-semibold text-white shadow-[0_0_24px_-8px_#f97316] transition duration-150 active:scale-[0.98] disabled:bg-chip disabled:text-slate-500 disabled:shadow-none"
         >
           Déverrouiller
         </button>
-      )}
 
-      <p className="mt-8 flex items-center gap-1.5 text-xs text-slate-500">
-        <Lock className="h-3.5 w-3.5" />
-        {usingDefaultPin() ? 'PIN par défaut actif — change-le dans Réglages' : 'PIN 4 ou 6 chiffres'}
-      </p>
+        <p className="mt-4 flex items-center justify-center gap-1.5 text-[11px] text-slate-500">
+          <ShieldCheck className="h-3.5 w-3.5" />
+          {usingDefaultPin() ? 'PIN par défaut actif — change-le dans Réglages' : 'PIN 4 ou 6 chiffres · SHA-256'}
+        </p>
+      </div>
     </div>
   )
 }

@@ -78,37 +78,37 @@ export function StatsView() {
       label: 'Volume',
       value: compact(s.weeks.at(-1)?.[1] ?? 0),
       sub: 'lbs × reps, cette semaine',
-      color: 'text-glacier',
+      color: 'text-iris',
     },
   ]
 
   return (
     <section className="space-y-3">
       <header className="px-1">
-        <h2 className="font-display text-2xl font-extrabold text-white">Progression</h2>
-        <p className="text-sm text-slate-400">L’évolution de tes charges, semaine après semaine.</p>
+        <h2 className="text-[17px] font-semibold tracking-tight text-fg">Progression</h2>
+        <p className="text-[12px] text-muted">L’évolution de tes charges, semaine après semaine.</p>
       </header>
 
       <div className="grid grid-cols-2 gap-2.5">
         {kpis.map((k) => (
-          <div key={k.label} className="rounded-3xl border border-white/[0.07] bg-white/[0.035] p-3.5 backdrop-blur-xl">
-            <p className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+          <div key={k.label} className="card p-3.5">
+            <p className="flex items-center gap-1.5 label !text-slate-400">
               <k.icon className={`h-3.5 w-3.5 ${k.color}`} />
               {k.label}
             </p>
-            <p className="mt-1 font-display text-3xl font-extrabold tabular-nums text-white">{k.value}</p>
+            <p className="mt-1 font-mono text-2xl font-semibold tabular-nums text-fg">{k.value}</p>
             <p className="text-xs text-slate-500">{k.sub}</p>
           </div>
         ))}
       </div>
 
-      <div className="rounded-3xl border border-white/[0.07] bg-white/[0.035] p-4 backdrop-blur-xl">
+      <div className="card p-4">
         <div className="mb-2 flex items-center justify-between gap-2">
-          <h3 className="font-display text-base font-bold text-white">Charge max par séance</h3>
+          <h3 className="text-[14px] font-semibold tracking-tight text-fg">Charge max par séance</h3>
           <button
             type="button"
             onClick={() => setTable((t) => !t)}
-            className={`rounded-lg p-1.5 ${table ? 'bg-glacier/20 text-glacier' : 'text-slate-500'}`}
+            className={`rounded-lg p-1.5 ${table ? 'bg-glacier/15 text-glacier' : 'text-slate-500'}`}
             aria-label="Afficher en tableau"
             aria-pressed={table}
           >
@@ -118,7 +118,7 @@ export function StatsView() {
         <select
           value={exId}
           onChange={(e) => setExId(e.target.value)}
-          className="mb-3 w-full rounded-xl border border-white/10 bg-ink px-3 py-2 text-sm text-slate-200"
+          className="mb-3 w-full h-11 rounded-xl border border-line bg-chip/60 px-3 text-[13px] text-slate-200"
         >
           {PROGRAM.map((sess) => {
             const exs = weighted.filter((e) => e.sessionId === sess.id)
@@ -143,7 +143,7 @@ export function StatsView() {
         )}
         {hist.length > 1 && (
           <p className="mt-2 text-xs text-slate-400">
-            {current.name} : {hist[0].maxW} → <b className="text-white">{hist.at(-1)!.maxW} lbs</b>{' '}
+            {current.name} : {hist[0].maxW} → <b className="font-mono text-fg">{hist.at(-1)!.maxW} lbs</b>{' '}
             <span className={hist.at(-1)!.maxW >= hist[0].maxW ? 'text-moss' : 'text-red-400'}>
               ({hist.at(-1)!.maxW >= hist[0].maxW ? '+' : ''}
               {Math.round(((hist.at(-1)!.maxW - hist[0].maxW) / (hist[0].maxW || 1)) * 100)} %)
@@ -152,8 +152,8 @@ export function StatsView() {
         )}
       </div>
 
-      <div className="rounded-3xl border border-white/[0.07] bg-white/[0.035] p-4 backdrop-blur-xl">
-        <h3 className="mb-2 font-display text-base font-bold text-white">Volume hebdomadaire</h3>
+      <div className="card p-4">
+        <h3 className="mb-2 text-[14px] font-semibold tracking-tight text-fg">Volume hebdomadaire</h3>
         <LineChart
           kind="bar"
           unit="lbs × reps"
@@ -161,21 +161,21 @@ export function StatsView() {
         />
       </div>
 
-      <div className="rounded-3xl border border-white/[0.07] bg-white/[0.035] p-4 backdrop-blur-xl">
-        <h3 className="mb-2 flex items-center gap-1.5 font-display text-base font-bold text-white">
+      <div className="card p-4">
+        <h3 className="mb-2 flex items-center gap-1.5 text-[14px] font-semibold tracking-tight text-fg">
           <Mountain className="h-4 w-4 text-ember" /> D+ sur tapis
         </h3>
         <LineChart kind="bar" unit="m D+" points={s.hikes.slice(-12).map((h) => ({ label: shortDate(h.date), value: h.dplus, detail: `${h.km.toFixed(2)} km` }))} />
       </div>
 
-      <div className="rounded-3xl border border-white/[0.07] bg-white/[0.035] p-4 backdrop-blur-xl">
-        <h3 className="mb-2 flex items-center gap-1.5 font-display text-base font-bold text-white">
-          <Activity className="h-4 w-4 text-glacier" /> Historique
+      <div className="card p-4">
+        <h3 className="mb-2 flex items-center gap-1.5 text-[14px] font-semibold tracking-tight text-fg">
+          <Activity className="h-4 w-4 text-iris" /> Historique
         </h3>
         {s.days.length === 0 ? (
           <p className="py-4 text-center text-sm text-slate-500">Aucune séance enregistrée pour l’instant.</p>
         ) : (
-          <ul className="divide-y divide-white/5">
+          <ul className="divide-y divide-white/[0.06]">
             {[...s.days]
               .reverse()
               .slice(0, 12)
@@ -190,11 +190,11 @@ export function StatsView() {
                     </span>
                     <span className="flex flex-wrap justify-end gap-1">
                       {sessions.map((p) => (
-                        <span key={p.id} className="rounded-md bg-ember/15 px-1.5 py-0.5 text-[11px] font-semibold text-orange-200">
+                        <span key={p.id} className="rounded-md bg-ember/10 px-1.5 py-0.5 text-[10px] font-medium text-orange-300">
                           {p.short}
                         </span>
                       ))}
-                      {sets > 0 && <span className="rounded-md bg-white/[0.06] px-1.5 py-0.5 text-[11px] text-slate-400">{sets} séries</span>}
+                      {sets > 0 && <span className="rounded-md bg-chip px-1.5 py-0.5 font-mono text-[10px] text-slate-400">{sets} séries</span>}
                     </span>
                   </li>
                 )
@@ -220,7 +220,7 @@ function HistTable({ head, rows }: { head: string[]; rows: string[][] }) {
             ))}
           </tr>
         </thead>
-        <tbody className="divide-y divide-white/5 text-slate-300">
+        <tbody className="divide-y divide-white/[0.06] text-slate-300">
           {[...rows].reverse().map((r, i) => (
             <tr key={i}>
               {r.map((c, j) => (

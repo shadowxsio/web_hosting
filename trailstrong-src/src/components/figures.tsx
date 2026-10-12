@@ -71,10 +71,6 @@ function ik(base: Vec, target: Vec, bend: number): Vec {
   return add(base, [Math.cos(k) * L.th, Math.sin(k) * L.th])
 }
 
-function angleOf(from: Vec, to: Vec) {
-  return (Math.atan2(to[1] - from[1], to[0] - from[0]) * 180) / Math.PI
-}
-
 export function solve(p: Pose): Joints {
   const hip: Vec = [0, 0]
   const hw = (p.hipW ?? 0) / 2
@@ -145,11 +141,12 @@ export function interpolate(a: Pose, b: Pose, t: number): Pose {
 
 const GROUND = 182
 const C = {
-  front: '#f97316',
-  back: '#7c8aa5',
-  prop: '#334155',
-  propLight: '#475569',
-  accent: '#38bdf8',
+  front: '#e2e8f0',
+  back: '#475569',
+  prop: '#1e293b',
+  propLight: '#334155',
+  accent: '#06b6d4',
+  ember: '#f97316',
   ok: '#10b981',
 }
 
@@ -417,56 +414,64 @@ const segs = (j: Joints): Record<Exclude<Segment, 'glute'>, [Vec, Vec]> => ({
   ft2: [j.a2, j.t2],
 })
 
+/** Rendu « fil de fer » : traits fins, articulations creuses, zones ciblées en cyan. */
 function Body({ j, def }: { j: Joints; def: FigureDef }) {
-  const line = (a: Vec, b: Vec, color: string, w = 7, key?: string) => (
-    <line key={key} x1={a[0]} y1={a[1]} x2={b[0]} y2={b[1]} stroke={color} strokeWidth={w} strokeLinecap="round" />
+  const line = (a: Vec, b: Vec, color: string, w = 4, key?: string, opacity = 1) => (
+    <line key={key} x1={a[0]} y1={a[1]} x2={b[0]} y2={b[1]} stroke={color} strokeWidth={w} strokeLinecap="round" opacity={opacity} />
   )
   const s = segs(j)
   const focus = def.focus ?? []
   const back = def.front ? C.front : C.back
-  // Le moyen/grand fessier : petit halo autour de la hanche.
-  const glute = focus.includes('glute')
-  const trunkAngle = angleOf(j.hip, j.sh)
   return (
     <g>
       {/* membres arrière */}
-      {line(j.shL, j.e2, back, 6)}
-      {line(j.e2, j.h2, back, 6)}
-      {line(j.hipL, j.k2, back)}
-      {line(j.k2, j.a2, back)}
-      {line(j.a2, j.t2, back, 5)}
-      {/* focus musculaire */}
+      {line(j.shL, j.e2, back, 3)}
+      {line(j.e2, j.h2, back, 3)}
+      {line(j.hipL, j.k2, back, 3.5)}
+      {line(j.k2, j.a2, back, 3.5)}
+      {line(j.a2, j.t2, back, 3)}
+      {/* zones musculaires ciblées : halo cyan */}
       {focus
         .filter((f): f is Exclude<Segment, 'glute'> => f !== 'glute')
-        .map((f) => line(s[f][0], s[f][1], C.accent, 14, `f-${f}`))}
-      {glute && (
-        <circle
-          cx={j.hip[0] + Math.cos(rad(trunkAngle + 180)) * 3}
-          cy={j.hip[1] + Math.sin(rad(trunkAngle + 180)) * 3}
-          r={def.front ? 15 : 11}
-          fill={C.accent}
-          opacity={0.35}
-        />
-      )}
+        .map((f) => line(s[f][0], s[f][1], C.accent, 10, `f-${f}`, 0.28))}
       {/* tronc + tête */}
-      {line(j.hip, j.sh, C.front, 9)}
-      {def.front && line(j.hipL, j.hipR, C.front, 8)}
-      {def.front && line(j.shL, j.shR, C.front, 8)}
-      <circle cx={j.head[0]} cy={j.head[1]} r={10} fill={C.front} />
+      {line(j.hip, j.sh, C.front, 4.5)}
+      {def.front && line(j.hipL, j.hipR, C.front, 4)}
+      {def.front && line(j.shL, j.shR, C.front, 4)}
+      <circle cx={j.head[0]} cy={j.head[1]} r={8.5} fill="#0c111d" stroke={C.front} strokeWidth={3} />
       {/* membres avant */}
-      {line(j.hipR, j.k1, C.front)}
-      {line(j.k1, j.a1, C.front)}
-      {line(j.a1, j.t1, C.front, 5)}
-      {line(j.shR, j.e1, C.front, 6)}
-      {line(j.e1, j.h1, C.front, 6)}
-      {[j.k1, j.a1, j.hipR].map((p, i) => (
-        <circle key={i} cx={p[0]} cy={p[1]} r={2.2} fill="#0b0f19" />
+      {line(j.hipR, j.k1, C.front, 4)}
+      {line(j.k1, j.a1, C.front, 4)}
+      {line(j.a1, j.t1, C.front, 3.5)}
+      {line(j.shR, j.e1, C.front, 3.5)}
+      {line(j.e1, j.h1, C.front, 3.5)}
+      {[j.sh, j.e1, j.k2, j.a2].map((p, i) => (
+        <circle key={i} cx={p[0]} cy={p[1]} r={2.4} fill="#0c111d" stroke="#64748b" strokeWidth={1.4} />
       ))}
     </g>
   )
 }
 
-export function Figure({ id, t }: { id: AnimationId; t: number }) {
+/** Points de pression animés : hanche (orange) si fessiers, genou / cheville (cyan) selon le focus. */
+function PressurePoints({ j, def }: { j: Joints; def: FigureDef }) {
+  const focus = def.focus ?? []
+  const pts: [Vec, string][] = []
+  if (focus.includes('glute')) pts.push([j.hip, C.ember])
+  if (focus.some((f) => f === 'th1' || f === 'sh1')) pts.push([j.k1, C.accent])
+  if (focus.some((f) => f === 'sh1' || f === 'ft1' || f === 'sh2')) pts.push([j.a1, C.accent])
+  return (
+    <g>
+      {pts.map(([p, c], i) => (
+        <g key={i}>
+          <circle className="pulse-ring" cx={p[0]} cy={p[1]} r={4} fill="none" stroke={c} strokeWidth={1.5} />
+          <circle cx={p[0]} cy={p[1]} r={4} fill={c} stroke="#0c111d" strokeWidth={1.5} />
+        </g>
+      ))}
+    </g>
+  )
+}
+
+export function Figure({ id, t, pressure = true }: { id: AnimationId; t: number; pressure?: boolean }) {
   const def = FIGURES[id]
   const j = solve(interpolate(def.start, def.end, t))
   return (
@@ -474,6 +479,7 @@ export function Figure({ id, t }: { id: AnimationId; t: number }) {
       {def.props?.(j)}
       <Body j={j} def={def} />
       {def.over?.(j)}
+      {pressure && <PressurePoints j={j} def={def} />}
     </svg>
   )
 }

@@ -55,7 +55,7 @@ export function LineChart({ points, unit, kind = 'line' }: { points: Point[]; un
       >
         {ticks.map((t, i) => (
           <g key={i}>
-            <line x1={pad.l} x2={W - pad.r} y1={y(t)} y2={y(t)} stroke="#1e293b" strokeWidth={1} />
+            <line x1={pad.l} x2={W - pad.r} y1={y(t)} y2={y(t)} stroke="rgba(255,255,255,0.06)" strokeWidth={1} />
             <text x={pad.l - 6} y={y(t) + 3} textAnchor="end" fontSize={9} fill="#64748b">
               {t >= 10000 ? `${Math.round(t / 1000)}k` : Math.round(t * 10) / 10}
             </text>
@@ -88,21 +88,21 @@ export function LineChart({ points, unit, kind = 'line' }: { points: Point[]; un
             </defs>
             <path d={path} fill="none" stroke="#f97316" strokeWidth={2} strokeLinejoin="round" />
             {points.map((p, i) => (
-              <circle key={i} cx={x(i)} cy={y(p.value)} r={4} fill="#f97316" stroke="#0b0f19" strokeWidth={2} />
+              <circle key={i} cx={x(i)} cy={y(p.value)} r={4} fill="#f97316" stroke="#101626" strokeWidth={2} />
             ))}
           </>
         )}
         {h && hover != null && (
-          <line x1={x(hover)} x2={x(hover)} y1={pad.t} y2={pad.t + ih} stroke="#38bdf8" strokeWidth={1} strokeDasharray="3 3" />
+          <line x1={x(hover)} x2={x(hover)} y1={pad.t} y2={pad.t + ih} stroke="#8b5cf6" strokeWidth={1} strokeDasharray="3 3" />
         )}
       </svg>
       {h && hover != null && (
         <div
-          className="pointer-events-none absolute top-0 -translate-x-1/2 rounded-lg border border-white/10 bg-ink/95 px-2.5 py-1.5 text-xs shadow-xl"
+          className="pointer-events-none absolute top-0 -translate-x-1/2 glass rounded-lg px-2.5 py-1.5 text-xs shadow-xl"
           style={{ left: `${Math.min(85, Math.max(15, (x(hover) / W) * 100))}%` }}
         >
           <p className="text-slate-400">{h.label}</p>
-          <p className="font-display font-bold text-white">
+          <p className="font-mono font-semibold text-fg">
             {h.value.toLocaleString('fr-CA')} {unit}
           </p>
           {h.detail && <p className="text-slate-400">{h.detail}</p>}

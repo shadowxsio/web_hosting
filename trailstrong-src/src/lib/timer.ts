@@ -85,6 +85,18 @@ export const timer = {
     set({ endAt: null, pausedLeft: null, finishedAt: null })
     void keepAwake(false)
   },
+  /** Ajustement rapide (+30 s / −10 s) sans relancer le chrono. */
+  adjust(delta: number) {
+    if (st.endAt) {
+      const left = Math.max(1, (st.endAt - Date.now()) / 1000 + delta)
+      set({ endAt: Date.now() + left * 1000, duration: Math.max(left, st.duration + delta) })
+    } else if (st.pausedLeft != null) {
+      const left = Math.max(1, st.pausedLeft + delta)
+      set({ pausedLeft: left, duration: Math.max(left, st.duration + delta) })
+    } else {
+      set({ duration: Math.max(5, st.duration + delta), finishedAt: null })
+    }
+  },
   preset(seconds: number) {
     timer.start(seconds)
   },

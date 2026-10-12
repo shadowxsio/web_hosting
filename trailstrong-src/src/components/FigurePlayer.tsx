@@ -41,29 +41,28 @@ function useAnimT(id: AnimationId, playing: boolean) {
   return { ref, t }
 }
 
-export function FigureThumb({ id }: { id: AnimationId }) {
-  const { ref, t } = useAnimT(id, !reduced())
-  return (
-    <div ref={ref} className="h-full w-full">
-      <Figure id={id} t={reduced() ? 1 : t} />
-    </div>
-  )
-}
-
-export function FigurePlayer({ id }: { id: AnimationId }) {
+export function FigurePlayer({ id, active = true }: { id: AnimationId; active?: boolean }) {
   const [mode, setMode] = useState<'play' | 'paused' | 'start' | 'end'>(reduced() ? 'start' : 'play')
-  const { ref, t } = useAnimT(id, mode === 'play')
+  const { ref, t } = useAnimT(id, active && mode === 'play')
   const shown = mode === 'start' ? 0 : mode === 'end' ? 1 : t
   const labels = FIGURES[id].label ?? ['Départ', 'Fin']
   return (
-    <div className="rounded-2xl border border-white/5 bg-gradient-to-b from-slate-900/80 to-ink/80 p-2">
-      <div ref={ref} className="relative mx-auto aspect-square w-full max-w-[280px]">
+    <div className="dot-grid relative overflow-hidden rounded-xl border border-line bg-ink-2">
+      <div ref={ref} className="relative mx-auto aspect-[16/11] w-full max-w-[280px]">
         <Figure id={id} t={shown} />
-        <span className="absolute left-1 top-1 rounded-md bg-ink/80 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-glacier">
-          {shown < 0.5 ? labels[0] : labels[1]}
+      </div>
+      <span className="absolute left-2 top-2 rounded-md border border-line bg-ink/80 px-1.5 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-wider text-glacier">
+        {shown < 0.5 ? labels[0] : labels[1]}
+      </span>
+      <div className="absolute right-2 top-2 flex flex-col items-end gap-1 text-[10px] text-slate-500">
+        <span className="flex items-center gap-1">
+          <span className="h-2 w-2 rounded-full bg-ember" /> hanche
+        </span>
+        <span className="flex items-center gap-1">
+          <span className="h-2 w-2 rounded-full bg-glacier" /> genou / cheville
         </span>
       </div>
-      <div className="mt-2 flex items-center justify-center gap-1.5" data-noswipe>
+      <div className="flex items-center justify-center gap-1 border-t border-line p-1.5" data-noswipe>
         {(
           [
             ['start', labels[0]],
@@ -76,8 +75,8 @@ export function FigurePlayer({ id }: { id: AnimationId }) {
             type="button"
             onClick={() => setMode(m === 'play' && mode === 'play' ? 'paused' : m)}
             aria-label={m === 'play' ? 'Lecture' : label!}
-            className={`flex items-center gap-1 rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
-              mode === m || (m === 'play' && mode === 'paused') ? 'bg-glacier/20 text-sky-200' : 'bg-white/[0.04] text-slate-400'
+            className={`flex h-8 min-w-[64px] items-center justify-center gap-1 rounded-lg px-3 text-[11px] font-semibold transition duration-150 ${
+              mode === m || (m === 'play' && mode === 'paused') ? 'bg-glacier/15 text-cyan-200' : 'text-slate-500 hover:text-slate-300'
             }`}
           >
             {m === 'play' ? (
@@ -88,10 +87,6 @@ export function FigurePlayer({ id }: { id: AnimationId }) {
           </button>
         ))}
       </div>
-      <p className="mt-1.5 text-center text-[11px] text-slate-500">
-        <span className="mr-1 inline-block h-2 w-2 rounded-full bg-glacier align-middle" />
-        zone musculaire ciblée
-      </p>
     </div>
   )
 }

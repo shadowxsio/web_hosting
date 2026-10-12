@@ -2,10 +2,15 @@ import type { AnimationId } from '../components/figures'
 
 export type TrackMode = 'strength' | 'timed' | 'treadmill'
 
+/** Focus anatomique — sert aux filtres « Focus Genou / Cheville / Fessiers ». Le 1er tag est le focus principal. */
+export type FocusTag = 'knee' | 'ankle' | 'glutes'
+
 export interface Exercise {
   id: string
   name: string
   target: string
+  tags: FocusTag[]
+  equipment: string
   sets: number
   /** Texte affiché du protocole (ex. « 8-10 reps », « 45 s »). */
   reps: string
@@ -48,6 +53,8 @@ export const PROGRAM: Session[] = [
     exercises: [
       {
         id: 'sl-balance',
+        tags: ['ankle', 'glutes'],
+        equipment: 'Poids du corps',
         name: 'Proprioception sur une jambe',
         target: 'Stabilisateurs de cheville · moyen fessier',
         sets: 3,
@@ -69,6 +76,8 @@ export const PROGRAM: Session[] = [
       },
       {
         id: 'tibialis-raise',
+        tags: ['ankle', 'knee'],
+        equipment: 'Mur',
         name: 'Tibialis Raises',
         target: 'Tibial antérieur (avant du tibia)',
         sets: 2,
@@ -89,6 +98,8 @@ export const PROGRAM: Session[] = [
       },
       {
         id: 'calf-raise-warm',
+        tags: ['ankle'],
+        equipment: 'Marche',
         name: 'Montées de mollets (soléaire & jumeaux)',
         target: 'Gastrocnémiens · soléaire',
         sets: 2,
@@ -109,6 +120,8 @@ export const PROGRAM: Session[] = [
       },
       {
         id: 'sl-glute-bridge',
+        tags: ['glutes', 'knee'],
+        equipment: 'Tapis de sol',
         name: 'Pont fessier unilatéral',
         target: 'Grand fessier · ischio-jambiers',
         sets: 2,
@@ -130,6 +143,8 @@ export const PROGRAM: Session[] = [
       },
       {
         id: 'banded-walk',
+        tags: ['glutes', 'knee'],
+        equipment: 'Élastique',
         name: 'Banded walks / Clamshells',
         target: 'Moyen fessier (anti-valgus)',
         sets: 2,
@@ -160,6 +175,8 @@ export const PROGRAM: Session[] = [
     exercises: [
       {
         id: 'db-rdl',
+        tags: ['glutes'],
+        equipment: 'Haltères',
         name: 'RDL aux haltères',
         target: 'Ischio-jambiers · grand fessier',
         sets: 4,
@@ -179,6 +196,8 @@ export const PROGRAM: Session[] = [
       },
       {
         id: 'bulgarian',
+        tags: ['knee', 'glutes'],
+        equipment: 'Haltères + banc',
         name: 'Fentes bulgares (buste incliné)',
         target: 'Grand fessier · quadriceps',
         sets: 3,
@@ -199,6 +218,8 @@ export const PROGRAM: Session[] = [
       },
       {
         id: 'leg-curl',
+        tags: ['knee'],
+        equipment: 'Machine',
         name: 'Leg curl assis / couché (machine)',
         target: 'Ischio-jambiers',
         sets: 3,
@@ -219,6 +240,8 @@ export const PROGRAM: Session[] = [
       },
       {
         id: 'hip-abduction',
+        tags: ['knee', 'glutes'],
+        equipment: 'Machine / poulie',
         name: 'Abductions de hanche (machine / poulie basse)',
         target: 'Moyen & petit fessier',
         sets: 3,
@@ -239,6 +262,8 @@ export const PROGRAM: Session[] = [
       },
       {
         id: 'standing-calf',
+        tags: ['ankle'],
+        equipment: 'Machine / haltère',
         name: 'Mollets debout (avec charge)',
         target: 'Gastrocnémiens · soléaire',
         sets: 3,
@@ -268,6 +293,8 @@ export const PROGRAM: Session[] = [
     exercises: [
       {
         id: 'sl-rdl',
+        tags: ['ankle', 'glutes'],
+        equipment: 'Haltère',
         name: 'Single-leg RDL',
         target: 'Ischios · fessiers · cheville d’appui',
         sets: 3,
@@ -288,6 +315,8 @@ export const PROGRAM: Session[] = [
       },
       {
         id: 'hip-thrust',
+        tags: ['glutes'],
+        equipment: 'Barre + banc',
         name: 'Hip Thrust (banc ou Smith)',
         target: 'Grand fessier',
         sets: 3,
@@ -307,6 +336,8 @@ export const PROGRAM: Session[] = [
       },
       {
         id: 'leg-press-high',
+        tags: ['knee', 'glutes'],
+        equipment: 'Presse 45°',
         name: 'Presse inclinée (pieds hauts & larges)',
         target: 'Fessiers · ischios',
         sets: 4,
@@ -326,6 +357,8 @@ export const PROGRAM: Session[] = [
       },
       {
         id: 'step-down',
+        tags: ['knee', 'glutes'],
+        equipment: 'Marche',
         name: 'Step-downs excentriques',
         target: 'Quadriceps (freinage) · moyen fessier',
         sets: 3,
@@ -348,6 +381,8 @@ export const PROGRAM: Session[] = [
       },
       {
         id: 'sl-calf-raise',
+        tags: ['ankle'],
+        equipment: 'Marche',
         name: 'Calf raises unilatéral (assis ou debout)',
         target: 'Mollet · force de cheville',
         sets: 3,
@@ -378,6 +413,8 @@ export const PROGRAM: Session[] = [
     exercises: [
       {
         id: 'power-hike',
+        tags: ['knee', 'ankle', 'glutes'],
+        equipment: 'Tapis incliné',
         name: 'Power Hike sur tapis incliné',
         target: 'Mollets · ischios · fessiers · cardio',
         sets: 1,
