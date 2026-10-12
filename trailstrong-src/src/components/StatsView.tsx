@@ -2,6 +2,7 @@ import { Activity, CalendarCheck, Dumbbell, Mountain, Table2, TrendingUp } from 
 import { useMemo, useState } from 'react'
 import { useProgram } from '../lib/custom'
 import { exerciseHistory, today, treadmillStats, useData, type AppData } from '../lib/storage'
+import { AsymmetryPanel } from './AsymmetryPanel'
 import { LineChart } from './LineChart'
 
 const shortDate = (d: string) => new Date(`${d}T12:00:00`).toLocaleDateString('fr-CA', { day: 'numeric', month: 'short' })
@@ -104,6 +105,8 @@ export function StatsView() {
           </div>
         ))}
       </div>
+
+      <AsymmetryPanel exercises={ALL_EXERCISES} />
 
       <div className="b-card p-4">
         <div className="mb-2 flex items-center justify-between gap-2">

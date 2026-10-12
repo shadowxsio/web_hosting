@@ -38,8 +38,8 @@ export function TimerBar() {
               <span role="timer" className={`block text-[22px] font-black italic tabular-nums ${t.running || finished ? 'text-ink' : 'text-ink/60'}`}>
                 {finished ? '00:00' : fmt(t.left)}
               </span>
-              <span className="text-[9px] font-extrabold uppercase tracking-wide text-ink/60">
-                {finished ? 'Repos terminé !' : t.running ? 'Récupération' : active ? 'En pause' : 'Repos'}
+              <span className={`text-[9px] font-extrabold uppercase tracking-wide ${t.label ? 'text-flame' : 'text-ink/60'}`}>
+                {finished ? (t.label ? `${t.label} : go !` : 'Repos terminé !') : t.label ? t.label : t.running ? 'Récupération' : active ? 'En pause' : 'Repos'}
               </span>
             </span>
           </button>

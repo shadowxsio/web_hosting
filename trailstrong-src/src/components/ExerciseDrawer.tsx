@@ -3,9 +3,9 @@ import { useEffect, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import type { Exercise, SessionId } from '../data/program'
 import { removeCustom } from '../lib/custom'
-import { touch, treadmillStats, type ExerciseLog } from '../lib/storage'
+import { touch, treadmillStats, type ExerciseLog, type Side } from '../lib/storage'
 import { timer } from '../lib/timer'
-import { num, useExerciseLog } from '../lib/useExerciseLog'
+import { SIDE_LABEL, num, useExerciseLog } from '../lib/useExerciseLog'
 import { DIR_META, Pill, SESSION_META, ZONE_META, categoryOf, iconOf, restLabel } from './meta'
 
 /** Tiroir de détail : bas de l'écran sur mobile, à droite sur desktop. */
@@ -18,6 +18,13 @@ export function ExerciseDrawer({ ex, sessionId, date, onClose }: { ex: Exercise;
   const s = SESSION_META[sessionId]
   const cur = sel ?? (L.firstTodo === -1 ? L.sets.length - 1 : L.firstTodo)
   const curSet = L.sets[cur]
+  // Unilatéral : côté courant = premier côté non validé (le plus faible d'abord).
+  const [selSide, setSelSide] = useState<Side | null>(null)
+  const uni = !!ex.perSide && ex.mode !== 'treadmill'
+  const curSide: Side = selSide ?? L.sideOrder.find((sd) => !L.sideOf(cur, sd).done) ?? L.sideOrder[1]
+  const curSideLog = L.sideOf(cur, curSide)
+  const fieldVal = (f: 'w' | 'r') => (uni ? curSideLog[f] : curSet[f])
+  const fieldDone = uni ? curSideLog.done : curSet.done
   const tipKind = ex.tags.find((t) => t === 'knee' || t === 'ankle') ?? 'knee'
 
   useEffect(() => {
@@ -77,7 +84,10 @@ export function ExerciseDrawer({ ex, sessionId, date, onClose }: { ex: Exercise;
                     <button
                       key={i}
                       type="button"
-                      onClick={() => setSel(i)}
+                      onClick={() => {
+                        setSel(i)
+                        setSelSide(null)
+                      }}
                       className={`flex h-9 shrink-0 items-center gap-1 border-2 px-2.5 font-mono text-[11px] transition duration-150 ${
                         i === cur
                           ? 'border-ink bg-sun text-ink'
@@ -87,6 +97,9 @@ export function ExerciseDrawer({ ex, sessionId, date, onClose }: { ex: Exercise;
                       }`}
                     >
                       {x.done && <Check className="h-3 w-3" strokeWidth={3} />}S{i + 1}
+                      {uni && !x.done && (x.L?.done || x.R?.done) && (
+                        <span className="text-[10px] font-black">{x.L?.done ? 'G✓' : 'D✓'}</span>
+                      )}
                       {x.done && (x.w || x.r) && (
                         <span className="text-ink/70">
                           {x.w ? `${x.w}×` : ''}
@@ -107,25 +120,61 @@ export function ExerciseDrawer({ ex, sessionId, date, onClose }: { ex: Exercise;
                     <Plus className="h-3.5 w-3.5" />
                   </button>
                 </div>
+                {uni && (
+                  <>
+                    <p className="mb-2 border-2 border-dashed border-ink/50 px-3 py-2 text-[12px] font-bold leading-snug">
+                      {L.asym ? (
+                        <>
+                          Dernière fois : {L.asym.pct === 0 ? 'équilibre parfait' : `${L.asym.pct > 0 ? 'droite' : 'gauche'} +${Math.abs(L.asym.pct)} %`} → commence par la{' '}
+                          <span className="text-flame">{SIDE_LABEL[L.sideOrder[0]]}</span>.
+                        </>
+                      ) : (
+                        <>Unilatéral : fais la jambe gauche, puis la droite. Un décompte de 10 s te dit quand changer.</>
+                      )}
+                    </p>
+                    <div className="mb-3 grid grid-cols-2 gap-2" role="radiogroup" aria-label="Jambe">
+                      {L.sideOrder.map((sd, k) => {
+                        const sl = L.sideOf(cur, sd)
+                        const active = sd === curSide
+                        return (
+                          <button
+                            key={sd}
+                            type="button"
+                            role="radio"
+                            aria-checked={active}
+                            onClick={() => setSelSide(sd)}
+                            className={`b-btn flex h-11 items-center justify-center gap-1.5 text-[13px] uppercase italic ${
+                              sl.done ? 'bg-mint' : active ? 'b-btn-ink' : ''
+                            }`}
+                          >
+                            <span className="font-black not-italic">{k + 1}</span>
+                            Jambe {SIDE_LABEL[sd]}
+                            {sl.done && <Check className="h-4 w-4" strokeWidth={3} />}
+                          </button>
+                        )
+                      })}
+                    </div>
+                  </>
+                )}
                 <div className="grid grid-cols-2 gap-2">
                   <Stepper
                     id={`log-${tid}-weight`}
                     label="Poids · lbs"
-                    value={curSet.w}
-                    placeholder={L.hintW(cur) || (ex.bodyweight ? 'PDC' : '0')}
+                    value={fieldVal('w')}
+                    placeholder={(uni ? L.hintSideW(cur, curSide) : L.hintW(cur)) || (ex.bodyweight ? 'PDC' : '0')}
                     step={5}
                     decimal
-                    done={curSet.done}
-                    onChange={(v) => L.setField(cur, 'w', v)}
+                    done={fieldDone}
+                    onChange={(v) => (uni ? L.setSideField(cur, curSide, 'w', v) : L.setField(cur, 'w', v))}
                   />
                   <Stepper
                     id={`log-${tid}-reps`}
-                    label={ex.mode === 'timed' ? 'Durée · s' : ex.perSide ? 'Reps · /côté' : 'Reps'}
-                    value={curSet.r}
-                    placeholder={L.hintR(cur)}
+                    label={`${ex.mode === 'timed' ? 'Durée · s' : 'Reps'}${uni ? ` · ${SIDE_LABEL[curSide]}` : ''}`}
+                    value={fieldVal('r')}
+                    placeholder={uni ? L.hintSideR(cur, curSide) : L.hintR(cur)}
                     step={ex.mode === 'timed' ? 5 : 1}
-                    done={curSet.done}
-                    onChange={(v) => L.setField(cur, 'r', v)}
+                    done={fieldDone}
+                    onChange={(v) => (uni ? L.setSideField(cur, curSide, 'r', v) : L.setField(cur, 'r', v))}
                   />
                 </div>
               </>
@@ -234,7 +283,12 @@ export function ExerciseDrawer({ ex, sessionId, date, onClose }: { ex: Exercise;
             {ex.mode === 'timed' && (
               <button
                 type="button"
-                onClick={() => timer.start(num(curSet.r || L.hintR(cur)) || 45)}
+                onClick={() =>
+                  timer.start(
+                    num(fieldVal('r') || (uni ? L.hintSideR(cur, curSide) : L.hintR(cur))) || 45,
+                    uni ? `Jambe ${SIDE_LABEL[curSide]}` : null,
+                  )
+                }
                 aria-label="Lancer le chrono de travail"
                 className="grid h-12 w-12 shrink-0 place-items-center border-2 border-ink bg-paper text-ink active:scale-95"
               >
@@ -244,15 +298,23 @@ export function ExerciseDrawer({ ex, sessionId, date, onClose }: { ex: Exercise;
             <button
               type="button"
               onClick={() => {
-                L.validate(cur)
+                if (uni) L.validateSide(cur, curSide)
+                else L.validate(cur)
                 setSel(null)
+                setSelSide(null)
               }}
               className={`flex h-12 flex-1 items-center justify-center gap-2 text-[14px] font-bold transition duration-150 active:scale-[0.98] ${
-                curSet.done ? 'b-btn' : 'b-btn bg-flame'
+                fieldDone ? 'b-btn' : 'b-btn bg-flame'
               }`}
             >
               <Check className="h-5 w-5" strokeWidth={3} />
-              {curSet.done ? `Annuler la série ${cur + 1}` : `Valider la série ${cur + 1}/${L.sets.length}`}
+              {uni
+                ? fieldDone
+                  ? `Annuler S${cur + 1} · ${SIDE_LABEL[curSide]}`
+                  : `Valider S${cur + 1}/${L.sets.length} · jambe ${SIDE_LABEL[curSide]}`
+                : curSet.done
+                  ? `Annuler la série ${cur + 1}`
+                  : `Valider la série ${cur + 1}/${L.sets.length}`}
             </button>
           </footer>
         )}

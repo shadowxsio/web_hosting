@@ -10,9 +10,11 @@ interface TimerState {
   endAt: number | null // ms epoch quand ça tourne
   pausedLeft: number | null // s restantes en pause
   finishedAt: number | null
+  /** Libellé contextuel (ex. « Change de jambe → D »). */
+  label: string | null
 }
 
-let st: TimerState = { duration: 90, endAt: null, pausedLeft: null, finishedAt: null }
+let st: TimerState = { duration: 90, endAt: null, pausedLeft: null, finishedAt: null, label: null }
 const ls = new Set<() => void>()
 const set = (p: Partial<TimerState>) => {
   st = { ...st, ...p }
@@ -63,10 +65,10 @@ async function keepAwake(on: boolean) {
 }
 
 export const timer = {
-  start(seconds?: number) {
+  start(seconds?: number, label: string | null = null) {
     unlockAudio()
     const d = seconds ?? st.duration
-    set({ duration: d, endAt: Date.now() + d * 1000, pausedLeft: null, finishedAt: null })
+    set({ duration: d, endAt: Date.now() + d * 1000, pausedLeft: null, finishedAt: null, label })
     void keepAwake(true)
   },
   toggle() {
@@ -82,7 +84,7 @@ export const timer = {
     }
   },
   reset() {
-    set({ endAt: null, pausedLeft: null, finishedAt: null })
+    set({ endAt: null, pausedLeft: null, finishedAt: null, label: null })
     void keepAwake(false)
   },
   /** Ajustement rapide (+30 s / −10 s) sans relancer le chrono. */
@@ -101,7 +103,7 @@ export const timer = {
     timer.start(seconds)
   },
   dismiss() {
-    set({ finishedAt: null })
+    set({ finishedAt: null, label: null })
   },
 }
 

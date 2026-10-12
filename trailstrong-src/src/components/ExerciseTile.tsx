@@ -77,7 +77,14 @@ export function ExerciseTile({
         <div className="flex items-center gap-2 border-t-2 border-dashed border-ink/40 px-4 py-2.5">
           <div className="flex min-w-0 flex-1 items-center gap-1 text-[12px] font-bold text-ink/70">
             {ex.mode !== 'treadmill' &&
-              sets.map((x, i) => <span key={i} className={`h-3 w-3 border-2 border-ink ${x.done ? 'bg-leaf' : 'bg-paper'}`} />)}
+              sets.map((x, i) => (
+                <span
+                  key={i}
+                  className={`h-3 w-3 border-2 border-ink ${
+                    x.done ? 'bg-leaf' : x.L?.done || x.R?.done ? 'bg-[linear-gradient(90deg,var(--color-leaf)_50%,var(--color-paper)_50%)]' : 'bg-paper'
+                  }`}
+                />
+              ))}
             <span className="ml-1.5 truncate">
               {done ? `Complété${maxToday ? ` · ${maxToday} lbs` : ''}` : ex.mode === 'treadmill' ? 'À faire' : `${doneSets.length}/${sets.length} séries`}
             </span>

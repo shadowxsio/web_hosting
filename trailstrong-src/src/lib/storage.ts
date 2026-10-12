@@ -8,11 +8,22 @@
 import { useSyncExternalStore } from 'react'
 import { getAllCustom, mergeCustom } from './custom'
 
+export type Side = 'L' | 'R'
+
+export interface SideLog {
+  w: string
+  r: string
+  done: boolean
+}
+
 export interface SetLog {
   w: string // poids (lbs) — string pour garder la saisie telle quelle
   r: string // reps ou secondes
   done: boolean
   at?: number
+  /** Exercices unilatéraux : saisie par jambe (w/r ci-dessus = synthèse pour l'historique). */
+  L?: SideLog
+  R?: SideLog
 }
 
 export interface TreadmillLog {
@@ -163,6 +174,41 @@ export function previousBest(data: AppData, exId: string, date: string) {
   const lastLog = last ? data.logs[last.date][exId] : undefined
   const current = hist.find((h) => h.date === date)
   return { last, pr, lastLog, newPr: pr > 0 && !!current && current.maxW > pr }
+}
+
+/** Travail d'un côté sur une séance : Σ poids×reps (ou Σ reps / secondes sans charge). */
+function sideWork(log: ExerciseLog | undefined, side: Side): number {
+  if (!log) return 0
+  let work = 0
+  for (const set of log.sets) {
+    const x = set[side]
+    if (!x?.done) continue
+    const w = num(x.w)
+    const r = num(x.r)
+    if (r > 0) work += w > 0 ? w * r : r
+  }
+  return work
+}
+
+/**
+ * Asymétrie de la dernière séance unilatérale avant `date` :
+ * pct > 0 → la droite fait plus que la gauche. weak = côté à travailler en premier.
+ */
+export function asymmetry(data: AppData, exId: string, date: string, includeDate = false) {
+  const dates = Object.keys(data.logs)
+    .filter((d) => (includeDate ? d <= date : d < date))
+    .sort()
+    .reverse()
+  for (const d of dates) {
+    const log = data.logs[d][exId]
+    const l = sideWork(log, 'L')
+    const r = sideWork(log, 'R')
+    if (l > 0 && r > 0) {
+      const pct = Math.round(((r - l) / Math.max(l, r)) * 100)
+      return { date: d, l, r, pct, weak: (l <= r ? 'L' : 'R') as Side }
+    }
+  }
+  return null
 }
 
 export function treadmillStats(t?: TreadmillLog) {
