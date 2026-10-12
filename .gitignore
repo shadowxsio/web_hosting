@@ -10,3 +10,7 @@ scratch/
 .system_generated/
 .gemini/
 .DS_Store
+
+# TrailStrong : sortie de build (générée par le workflow Pages) + dépendances
+trailstrong/
+trailstrong-src/node_modules/

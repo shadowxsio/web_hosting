@@ -1,0 +1,212 @@
+@import "tailwindcss";
+
+/* ── Style « quelleia » : néo-brutalisme papier, contours encre, ombres dures ── */
+@theme {
+  /* Valeurs du thème sombre (défaut) ; le thème clair les redéfinit plus bas. */
+  --color-ink: #f1e8d8; /* texte, contours */
+  --color-paper: #231f2c; /* surfaces (cartes, boutons) */
+  --color-paper-2: #16131c; /* fond de page */
+  --color-shadow: #000000; /* ombres dures */
+  --color-hero: #1d3150; /* bandeau « ciel » de nuit */
+  --color-sky: #86c5f7;
+  --color-sun: #f8d95b;
+  --color-mint: #9fe7a4;
+  --color-peach: #f4b183;
+  --color-lilac: #d4a6f7;
+  --color-rose: #ffb4a8;
+  --color-flame: #f0773a;
+  --color-ocean: #67d4f0;
+  --color-leaf: #5fe08a;
+  --color-danger: #ff8a7a;
+  --color-on: #15121b; /* texte sur les aplats colorés */
+  --font-sans: "Montserrat", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Montserrat", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Montserrat", ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Thème clair « papier » (identique à quelleia), activable depuis le Menu. */
+:root[data-theme="light"] {
+  --color-ink: #1b1424;
+  --color-paper: #fdf6e8;
+  --color-paper-2: #f3ead9;
+  --color-shadow: #1b1424;
+  --color-hero: #86c5f7;
+  --color-ocean: #0e7490;
+  --color-leaf: #047857;
+  --color-danger: #b91c1c;
+  color-scheme: light;
+}
+
+:root {
+  color-scheme: dark;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+  color: var(--color-ink);
+  overscroll-behavior-y: none;
+}
+
+body {
+  min-height: 100dvh;
+  overflow-x: clip;
+  font-weight: 500;
+  font-feature-settings: "tnum" 1;
+  background-color: var(--color-paper-2);
+  background-image: radial-gradient(color-mix(in srgb, var(--color-ink) 9%, transparent) 1.2px, transparent 1.4px);
+  background-size: 14px 14px;
+}
+
+/* Bandeau bleu ciel à pois. */
+.hero {
+  background-color: var(--color-hero);
+  background-image: radial-gradient(color-mix(in srgb, var(--color-ink) 16%, transparent) 1.3px, transparent 1.5px);
+  background-size: 12px 12px;
+  border-top: 2.5px solid var(--color-ink);
+  border-bottom: 2.5px solid var(--color-ink);
+}
+
+/* Titre affiche : italique 900 + ombre décalée orange. */
+.headline {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  line-height: 0.95;
+  color: var(--color-ink);
+  text-shadow: 3px 3px 0 var(--color-flame);
+}
+.headline-sun {
+  text-shadow: 2px 2px 0 var(--color-sun);
+}
+
+/* Lignes de cahier (menu). */
+.lined {
+  background-color: var(--color-paper);
+  background-image: repeating-linear-gradient(to bottom, transparent 0 55px, rgba(134, 197, 247, 0.55) 55px 57px);
+}
+
+@layer components {
+  .b-card {
+    background: var(--color-paper);
+    border: 2.5px solid var(--color-ink);
+    box-shadow: 5px 5px 0 var(--color-shadow);
+  }
+  .b-box {
+    background: var(--color-paper);
+    border: 2px solid var(--color-ink);
+  }
+  .b-btn {
+    background: var(--color-paper);
+    border: 2.5px solid var(--color-ink);
+    box-shadow: 3px 3px 0 var(--color-shadow);
+    font-weight: 800;
+    transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease;
+  }
+  .b-btn:active {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0 var(--color-shadow);
+  }
+  .b-btn-ink {
+    background: var(--color-ink);
+    color: var(--color-paper);
+  }
+  .b-input {
+    background: var(--color-paper);
+    border: 2.5px solid var(--color-ink);
+    box-shadow: 4px 4px 0 var(--color-shadow);
+    font-weight: 600;
+  }
+  .b-input:focus {
+    outline: none;
+    box-shadow: 4px 4px 0 var(--color-flame);
+  }
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    border: 2px solid var(--color-ink);
+    font-style: italic;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.01em;
+  }
+  .label {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--color-ink) 62%, transparent);
+  }
+}
+
+/* Aplats colorés : texte toujours foncé (lisible dans les deux thèmes). */
+:is(.bg-sun, .bg-mint, .bg-peach, .bg-lilac, .bg-sky, .bg-flame, .bg-rose),
+:is(.bg-sun, .bg-mint, .bg-peach, .bg-lilac, .bg-sky, .bg-flame, .bg-rose) * {
+  color: var(--color-on);
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes shake {
+  10%, 90% { transform: translateX(-2px); }
+  20%, 80% { transform: translateX(4px); }
+  30%, 50%, 70% { transform: translateX(-7px); }
+  40%, 60% { transform: translateX(7px); }
+}
+.shake { animation: shake 0.4s both; }
+
+@keyframes flash {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
+}
+.flash { animation: flash 0.45s ease-in-out 4; }
+
+@keyframes pop {
+  0% { transform: scale(0.85); }
+  60% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+.pop { animation: pop 0.18s ease-out; }
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+.fade-up { animation: fade-up 0.2s ease-out both; }
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.fade-in { animation: fade-in 0.18s ease-out both; }
+
+@keyframes sheet-up {
+  from { transform: translateY(100%); }
+  to { transform: none; }
+}
+@keyframes sheet-left {
+  from { transform: translateX(100%); }
+  to { transform: none; }
+}
+.sheet { animation: sheet-up 0.22s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+@media (min-width: 768px) {
+  .sheet { animation-name: sheet-left; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+.pt-safe { padding-top: env(safe-area-inset-top); }

@@ -50,6 +50,27 @@ jobs:
           google-chrome --headless --no-sandbox --disable-gpu --no-pdf-header-footer --print-to-pdf=cv/cv_ats_fr.pdf "http://localhost:8000/cv/ats.html?lang=fr"
           google-chrome --headless --no-sandbox --disable-gpu --no-pdf-header-footer --print-to-pdf=cv/cv_ats_en.pdf "http://localhost:8000/cv/ats.html?lang=en"
           kill $SERVER_PID
+      # ── TrailStrong 2026 (PWA Vite/React) → publié sous /trailstrong/ ──
+      - name: Setup Node 🔧
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+          cache-dependency-path: trailstrong-src/package-lock.json
+      - name: Install & build TrailStrong 🏔️
+        working-directory: trailstrong-src
+        env:
+          # Optionnel : SHA-256 hex du PIN (secret du dépôt). Sans secret → PIN par défaut « 2026 ».
+          VITE_APP_PASSWORD_HASH: ${{ secrets.APP_PASSWORD_HASH }}
+          # Connexion Google sans serveur : client OAuth + email(s) autorisé(s) (variable ou secret, au choix).
+          # Sans ces deux valeurs, l'app reste en accès PIN uniquement.
+          VITE_GOOGLE_CLIENT_ID: ${{ vars.GOOGLE_CLIENT_ID || secrets.GOOGLE_CLIENT_ID }}
+          ALLOWED_GOOGLE_EMAIL: ${{ secrets.ALLOWED_GOOGLE_EMAIL || vars.ALLOWED_GOOGLE_EMAIL }}
+        run: |
+          npm ci
+          npm run build
+          # Les dépendances ne doivent pas partir dans l'artefact Pages (on publie '.').
+          rm -rf node_modules
       - name: Setup Pages
         uses: actions/configure-pages@v4
       - name: Upload artifact
