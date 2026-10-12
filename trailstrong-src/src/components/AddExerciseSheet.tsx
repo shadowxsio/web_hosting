@@ -49,7 +49,7 @@ export function AddExerciseSheet({ session, onClose, onAdded }: { session: Sessi
   return createPortal(
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-ink/60 backdrop-blur-md" onClick={onClose}>
       <form
-        className="fade-up glass pb-safe max-h-[92dvh] w-full max-w-xl overflow-y-auto rounded-t-2xl px-4 pt-4"
+        className="fade-up border border-zinc-800 bg-zinc-900/90 backdrop-blur-md pb-safe max-h-[92dvh] w-full max-w-xl overflow-y-auto rounded-t-2xl px-4 pt-4"
         onClick={(e) => e.stopPropagation()}
         onSubmit={(e) => {
           e.preventDefault()
@@ -62,13 +62,13 @@ export function AddExerciseSheet({ session, onClose, onAdded }: { session: Sessi
         <div className="mb-1 flex items-center justify-between">
           <div>
             <p className="label !text-ember">Nouvel exercice · {session.short}</p>
-            <h2 className="text-[17px] font-semibold tracking-tight text-fg">Ajouter un exercice à la main</h2>
+            <h2 className="text-[17px] font-semibold tracking-tight text-zinc-50">Ajouter un exercice à la main</h2>
           </div>
-          <button type="button" onClick={onClose} className="grid h-11 w-11 place-items-center rounded-full text-slate-400 active:bg-white/10" aria-label="Fermer">
+          <button type="button" onClick={onClose} className="grid h-11 w-11 place-items-center rounded-full text-zinc-400 active:bg-white/10" aria-label="Fermer">
             <X className="h-5 w-5" />
           </button>
         </div>
-        <p className="mb-4 text-[12px] text-muted">Il s’ajoute à la suite de la séance, avec suivi poids / reps, chrono et validation.</p>
+        <p className="mb-4 text-[12px] text-zinc-400">Il s’ajoute à la suite de la séance, avec suivi poids / reps, chrono et validation.</p>
 
         <Field label="Nom de l’exercice *" error={touched && !valid ? 'Le nom est obligatoire.' : undefined}>
           <input
@@ -90,7 +90,7 @@ export function AddExerciseSheet({ session, onClose, onAdded }: { session: Sessi
                 type="button"
                 onClick={() => setTarget((cur) => (cur === t ? '' : t))}
                 className={`h-9 shrink-0 rounded-full border px-3 text-[12px] font-medium transition duration-150 ${
-                  target === t ? 'border-ember/50 bg-ember/15 text-orange-100 shadow-[0_0_14px_-4px_rgba(249,115,22,0.6)]' : 'border-transparent bg-chip text-slate-400'
+                  target === t ? 'border-ember/50 bg-ember/15 text-orange-100' : 'border-transparent bg-zinc-900 text-zinc-400'
                 }`}
               >
                 {t}
@@ -133,12 +133,12 @@ export function AddExerciseSheet({ session, onClose, onAdded }: { session: Sessi
         </Field>
 
         <div className="mb-6 mt-2 grid grid-cols-[1fr_1.6fr] gap-2">
-          <button type="button" onClick={onClose} className="h-12 rounded-xl border border-line bg-chip text-[13px] font-medium text-slate-300 active:scale-[0.98]">
+          <button type="button" onClick={onClose} className="h-12 rounded-xl border border-zinc-800 bg-zinc-900 text-[13px] font-medium text-zinc-300 active:scale-[0.98]">
             Annuler
           </button>
           <button
             type="submit"
-            className="flex h-12 items-center justify-center gap-1.5 rounded-xl bg-[#f97316] text-[13px] font-semibold text-white shadow-[0_0_24px_-8px_#f97316] transition duration-150 active:scale-[0.98] disabled:opacity-50"
+            className="flex h-12 items-center justify-center gap-1.5 rounded-xl bg-[#f97316] text-[13px] font-semibold text-white transition duration-150 active:scale-[0.98] disabled:opacity-50"
           >
             <Plus className="h-4 w-4" strokeWidth={2.5} /> Ajouter l’exercice
           </button>
@@ -150,7 +150,7 @@ export function AddExerciseSheet({ session, onClose, onAdded }: { session: Sessi
 }
 
 const input =
-  'h-11 w-full rounded-xl border border-line bg-ink-2 px-3 text-[13px] text-slate-100 placeholder:text-slate-600 focus:border-ember/50 focus:outline-none'
+  'h-11 w-full rounded-xl border border-zinc-800 bg-zinc-950 px-3 text-[13px] text-zinc-100 placeholder:text-zinc-600 focus:border-ember/50 focus:outline-none'
 
 function Field({ label, hint, error, children }: { label: string; hint?: string; error?: string; children: ReactNode }) {
   return (

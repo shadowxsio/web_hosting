@@ -60,21 +60,20 @@ export function PinLock({ onUnlock }: { onUnlock: () => void }) {
   const slots = Math.max(pin.length > 4 ? 6 : 4, pin.length)
 
   return (
-    <div className="dot-grid pt-safe pb-safe relative flex min-h-dvh items-center justify-center px-4">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(500px_300px_at_50%_30%,rgba(249,115,22,0.10),transparent_70%)]" />
-      <div className="glass relative w-full max-w-[340px] rounded-2xl p-5 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.9)] backdrop-blur-xl">
+    <div className="dots pt-safe pb-safe relative flex min-h-dvh items-center justify-center px-4">
+      <div className="border border-zinc-800 bg-zinc-900/90 backdrop-blur-md relative w-full max-w-[340px] rounded-2xl p-5 backdrop-blur-xl">
         <div className="flex items-center justify-between">
-          <span className="flex items-center gap-1.5 font-mono text-[10px] font-semibold tracking-[0.14em] text-slate-400">
+          <span className="flex items-center gap-1.5 font-mono text-[10px] font-semibold tracking-[0.14em] text-zinc-400">
             <Lock className="h-3 w-3 text-ember" />
             TRAILSTRONG // ACCÈS PRIVÉ
           </span>
           <span className="flex items-center gap-1 rounded-full bg-moss/10 px-2 py-0.5 text-[10px] font-medium text-emerald-300">
-            <span className="h-1.5 w-1.5 rounded-full bg-moss shadow-[0_0_6px_#10b981]" /> chiffré
+            <span className="h-1.5 w-1.5 rounded-full bg-moss" /> chiffré
           </span>
         </div>
 
-        <h1 className="mt-5 text-lg font-semibold tracking-tight text-fg">Bon retour, Mickael</h1>
-        <p className="text-[13px] text-muted">Saisis ton code PIN pour ouvrir la session.</p>
+        <h1 className="mt-5 text-lg font-semibold tracking-tight text-zinc-50">Bon retour, Mickael</h1>
+        <p className="text-[13px] text-zinc-400">Saisis ton code PIN pour ouvrir la session.</p>
 
         <div className={`my-6 flex justify-center gap-3.5 ${error ? 'shake' : ''}`} aria-live="polite">
           {Array.from({ length: slots }).map((_, i) => (
@@ -82,10 +81,10 @@ export function PinLock({ onUnlock }: { onUnlock: () => void }) {
               key={i}
               className={`h-3 w-3 rounded-full transition-all duration-150 ${
                 error
-                  ? 'bg-red-500 shadow-[0_0_10px_#ef4444]'
+                  ? 'bg-red-500'
                   : i < pin.length
-                    ? 'scale-110 bg-ember shadow-[0_0_10px_#f97316]'
-                    : 'border border-slate-600 bg-transparent'
+                    ? 'scale-110 bg-ember'
+                    : 'border border-zinc-600 bg-transparent'
               }`}
             />
           ))}
@@ -101,9 +100,9 @@ export function PinLock({ onUnlock }: { onUnlock: () => void }) {
                 type="button"
                 onClick={() => press(k)}
                 aria-label={k === 'del' ? 'Effacer' : k}
-                className="grid h-14 place-items-center rounded-xl border border-line bg-chip/60 font-mono text-xl font-semibold text-fg transition duration-150 hover:bg-chip active:scale-95 active:border-ember/40 active:bg-ember/15"
+                className="grid h-14 place-items-center rounded-xl border border-zinc-800 bg-zinc-900 font-mono text-xl font-semibold text-zinc-50 transition duration-150 hover:bg-zinc-900 active:scale-95 active:border-ember/40 active:bg-ember/15"
               >
-                {k === 'del' ? <Delete className="h-5 w-5 text-slate-400" /> : k}
+                {k === 'del' ? <Delete className="h-5 w-5 text-zinc-400" /> : k}
               </button>
             ),
           )}
@@ -113,14 +112,14 @@ export function PinLock({ onUnlock }: { onUnlock: () => void }) {
           type="button"
           disabled={pin.length < 4}
           onClick={() => void attempt(pin, true)}
-          className="mt-3 h-11 w-full rounded-xl bg-ember text-sm font-semibold text-white shadow-[0_0_24px_-8px_#f97316] transition duration-150 active:scale-[0.98] disabled:bg-chip disabled:text-slate-500 disabled:shadow-none"
+          className="mt-3 h-11 w-full rounded-xl bg-ember text-sm font-semibold text-white transition duration-150 active:scale-[0.98] disabled:bg-zinc-900 disabled:text-zinc-500 disabled:shadow-none"
         >
           Déverrouiller
         </button>
 
-        <p className="mt-4 flex items-center justify-center gap-1.5 text-[11px] text-slate-500">
+        <p className="mt-4 flex items-center justify-center gap-1.5 text-[11px] text-zinc-500">
           <ShieldCheck className="h-3.5 w-3.5" />
-          {usingDefaultPin() ? 'PIN par défaut actif — change-le dans Réglages' : 'PIN 4 ou 6 chiffres · SHA-256'}
+          {usingDefaultPin() ? 'PIN par défaut actif — change-le dans le Menu' : 'PIN 4 ou 6 chiffres · SHA-256'}
         </p>
       </div>
     </div>

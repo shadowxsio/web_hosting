@@ -1,4 +1,24 @@
-import type { AnimationId } from '../components/figures'
+
+export type IconName =
+  | 'Footprints'
+  | 'ArrowUpFromLine'
+  | 'MoveVertical'
+  | 'MoveHorizontal'
+  | 'Anchor'
+  | 'Dumbbell'
+  | 'Repeat'
+  | 'ArrowDownToLine'
+  | 'ArrowUpRight'
+  | 'Activity'
+  | 'Mountain'
+
+export type Zone = 'hanche' | 'genou' | 'cheville' | 'tronc' | 'pied'
+export type Direction = 'up' | 'down' | 'back' | 'forward' | 'out' | 'hold'
+export interface AttentionPoint {
+  zone: Zone
+  dir: Direction
+  text: string
+}
 
 export type TrackMode = 'strength' | 'timed' | 'treadmill'
 
@@ -24,8 +44,10 @@ export interface Exercise {
   /** Conseil spécial genou / cheville. */
   kneeAnkle: string
   steps: string[]
-  /** Illustration animée (absente pour les exercices personnalisés). */
-  animation?: AnimationId
+  /** Icône Lucide de la fiche (voir components/ExerciseIcon). */
+  icon?: IconName
+  /** 3 points d'attention biomécaniques : zone, direction du mouvement, consigne. */
+  points?: AttentionPoint[]
   mode: TrackMode
   /** Suffixe des IDs DOM de suivi : check-{trackId}, log-{trackId}-weight, log-{trackId}-note. */
   trackId?: string
@@ -61,6 +83,12 @@ export const PROGRAM: Session[] = [
     exercises: [
       {
         id: 'sl-balance',
+        icon: 'Footprints',
+        points: [
+          { zone: 'cheville', dir: 'hold', text: "Le pied « agrippe » le sol, la cheville corrige seule" },
+          { zone: 'genou', dir: 'hold', text: "Légèrement fléchi, aligné sur le 2e orteil" },
+          { zone: 'hanche', dir: 'hold', text: "Bassin horizontal : le moyen fessier tient" },
+        ],
         tags: ['ankle', 'glutes'],
         equipment: 'Poids du corps',
         name: 'Proprioception sur une jambe',
@@ -78,12 +106,17 @@ export const PROGRAM: Session[] = [
           '15 s yeux ouverts, 15 s yeux fermés, 15 s avec bras qui balaient.',
           'Bassin horizontal : le moyen fessier d’appui empêche la hanche de tomber.',
         ],
-        animation: 'balance',
         mode: 'timed',
         bodyweight: true,
       },
       {
         id: 'tibialis-raise',
+        icon: 'ArrowUpFromLine',
+        points: [
+          { zone: 'tronc', dir: 'hold', text: "Dos et fessiers collés au mur" },
+          { zone: 'cheville', dir: 'up', text: "Orteils tirés vers les tibias au maximum" },
+          { zone: 'cheville', dir: 'down', text: "Retour en 2 s sans claquer les pieds" },
+        ],
         tags: ['ankle', 'knee'],
         equipment: 'Mur',
         name: 'Tibialis Raises',
@@ -100,12 +133,17 @@ export const PROGRAM: Session[] = [
           'Tire les orteils vers les tibias le plus haut possible.',
           'Redescends en 2 s sans claquer les pieds.',
         ],
-        animation: 'tibialis',
         mode: 'strength',
         bodyweight: true,
       },
       {
         id: 'calf-raise-warm',
+        icon: 'MoveVertical',
+        points: [
+          { zone: 'pied', dir: 'up', text: "Monte droit sur le gros orteil" },
+          { zone: 'cheville', dir: 'hold', text: "Pas d’inversion en haut : cheville dans l’axe" },
+          { zone: 'genou', dir: 'hold', text: "Moitié tendu (jumeaux), moitié fléchi (soléaire)" },
+        ],
         tags: ['ankle'],
         equipment: 'Marche',
         name: 'Montées de mollets (soléaire & jumeaux)',
@@ -122,12 +160,17 @@ export const PROGRAM: Session[] = [
           'Monte au maximum, tiens 1 s, descends sous l’horizontale.',
           '8 reps jambes tendues puis 7 reps genoux fléchis.',
         ],
-        animation: 'calfRaise',
         mode: 'strength',
         bodyweight: true,
       },
       {
         id: 'sl-glute-bridge',
+        icon: 'ArrowUpFromLine',
+        points: [
+          { zone: 'pied', dir: 'down', text: "Pousse dans le talon, pied sous le genou" },
+          { zone: 'hanche', dir: 'up', text: "Monte jusqu’à l’alignement épaule-hanche-genou" },
+          { zone: 'tronc', dir: 'hold', text: "Bassin rentré : rien dans le bas du dos" },
+        ],
         tags: ['glutes', 'knee'],
         equipment: 'Tapis de sol',
         name: 'Pont fessier unilatéral',
@@ -145,12 +188,17 @@ export const PROGRAM: Session[] = [
           'Monte les hanches jusqu’à l’alignement épaule-hanche-genou.',
           'Pause 2 s, redescends sans toucher le sol entre les reps.',
         ],
-        animation: 'gluteBridge',
         mode: 'strength',
         bodyweight: true,
       },
       {
         id: 'banded-walk',
+        icon: 'MoveHorizontal',
+        points: [
+          { zone: 'genou', dir: 'out', text: "Genoux poussés vers l’extérieur contre l’élastique" },
+          { zone: 'hanche', dir: 'hold', text: "Demi-squat constant, buste droit" },
+          { zone: 'pied', dir: 'out', text: "Pas latéraux, les pieds ne se touchent jamais" },
+        ],
         tags: ['glutes', 'knee'],
         equipment: 'Élastique',
         name: 'Banded walks / Clamshells',
@@ -167,12 +215,17 @@ export const PROGRAM: Session[] = [
           'Demi-squat, buste droit, tension constante sur l’élastique.',
           'Pas latéraux contrôlés, 15 vers la droite puis 15 vers la gauche.',
         ],
-        animation: 'bandedWalk',
         mode: 'strength',
         bodyweight: true,
       },
       {
         id: 'spanish-squat',
+        icon: 'Anchor',
+        points: [
+          { zone: 'genou', dir: 'back', text: "Bande derrière le pli des genoux, en tension" },
+          { zone: 'cheville', dir: 'hold', text: "Tibias rigoureusement verticaux" },
+          { zone: 'hanche', dir: 'down', text: "Assis en arrière jusqu’à 70-80° de flexion" },
+        ],
         trackId: 'w4',
         tags: ['knee'],
         equipment: 'Bande élastique épaisse + poteau',
@@ -190,7 +243,6 @@ export const PROGRAM: Session[] = [
           'Recule jusqu’à une bonne tension, pieds largeur de hanches.',
           'Assieds-toi en arrière, tibias verticaux, jusqu’à 70-80° de flexion ; maintiens 30-45 s.',
         ],
-        animation: 'spanishSquat',
         mode: 'timed',
         bodyweight: true,
       },
@@ -206,6 +258,12 @@ export const PROGRAM: Session[] = [
     exercises: [
       {
         id: 'db-rdl',
+        icon: 'Dumbbell',
+        points: [
+          { zone: 'hanche', dir: 'back', text: "Fesses loin derrière, dos plat" },
+          { zone: 'genou', dir: 'hold', text: "Souples mais fixes : ils n’avancent pas" },
+          { zone: 'pied', dir: 'hold', text: "Poids sur le milieu du pied / talon" },
+        ],
         tags: ['glutes'],
         equipment: 'Haltères',
         name: 'RDL aux haltères',
@@ -222,11 +280,16 @@ export const PROGRAM: Session[] = [
           'Pousse les hanches vers l’arrière, dos plat, jusqu’à l’étirement des ischios.',
           'Remonte en poussant les hanches vers l’avant, serre les fessiers.',
         ],
-        animation: 'rdl',
         mode: 'strength',
       },
       {
         id: 'bulgarian',
+        icon: 'Dumbbell',
+        points: [
+          { zone: 'tronc', dir: 'forward', text: "Buste incliné ~20° pour charger le fessier" },
+          { zone: 'genou', dir: 'hold', text: "Genou avant dans l’axe du 2e orteil" },
+          { zone: 'pied', dir: 'down', text: "Pousse dans le talon avant pour remonter" },
+        ],
         tags: ['knee', 'glutes'],
         equipment: 'Haltères + banc',
         name: 'Fentes bulgares (buste incliné)',
@@ -244,11 +307,16 @@ export const PROGRAM: Session[] = [
           'Descends verticalement, buste incliné, jusqu’à la cuisse ≈ parallèle.',
           'Remonte en poussant dans le talon avant.',
         ],
-        animation: 'bulgarian',
         mode: 'strength',
       },
       {
         id: 'leg-curl',
+        icon: 'Repeat',
+        points: [
+          { zone: 'genou', dir: 'hold', text: "Axe du genou aligné avec l’axe machine" },
+          { zone: 'cheville', dir: 'up', text: "Pointe de pied tirée vers toi" },
+          { zone: 'genou', dir: 'down', text: "Retour freiné en 3 s" },
+        ],
         tags: ['knee'],
         equipment: 'Machine',
         name: 'Leg curl assis / couché (machine)',
@@ -266,11 +334,16 @@ export const PROGRAM: Session[] = [
           'Fléchis rapidement en ramenant le boudin sous le siège.',
           'Reviens en 3 s, sans laisser retomber la charge.',
         ],
-        animation: 'legCurl',
         mode: 'strength',
       },
       {
         id: 'nordic-curl',
+        icon: 'ArrowDownToLine',
+        points: [
+          { zone: 'cheville', dir: 'hold', text: "Talons verrouillés sous le boudin" },
+          { zone: 'hanche', dir: 'hold', text: "Genoux-bassin-épaules alignés, sans casser" },
+          { zone: 'genou', dir: 'down', text: "Freine la chute 4-5 s avec les ischios" },
+        ],
         trackId: 'a5',
         tags: ['knee'],
         equipment: 'Tapis + boudin / barre guidée chargée',
@@ -289,12 +362,17 @@ export const PROGRAM: Session[] = [
           'Corps gainé et droit des genoux aux épaules.',
           'Descends le plus lentement possible (4-5 s), réceptionne-toi sur les mains, repousse pour revenir.',
         ],
-        animation: 'nordic',
         mode: 'strength',
         bodyweight: true,
       },
       {
         id: 'hip-abduction',
+        icon: 'MoveHorizontal',
+        points: [
+          { zone: 'hanche', dir: 'out', text: "Seule la jambe s’écarte, bassin verrouillé" },
+          { zone: 'genou', dir: 'hold', text: "Genou d’appui souple, pied vissé au sol" },
+          { zone: 'hanche', dir: 'hold', text: "Pause 1 s en haut, retour lent" },
+        ],
         tags: ['knee', 'glutes'],
         equipment: 'Machine / poulie',
         name: 'Abductions de hanche (machine / poulie basse)',
@@ -312,11 +390,16 @@ export const PROGRAM: Session[] = [
           'Écarte la jambe sans pencher le buste.',
           'Tiens 1 s en haut, reviens lentement.',
         ],
-        animation: 'abduction',
         mode: 'strength',
       },
       {
         id: 'standing-calf',
+        icon: 'MoveVertical',
+        points: [
+          { zone: 'cheville', dir: 'down', text: "Talons sous la marche : étirement complet" },
+          { zone: 'pied', dir: 'up', text: "Monte au maximum sur le gros orteil" },
+          { zone: 'cheville', dir: 'hold', text: "Pause 1 s en haut, charge centrée" },
+        ],
         tags: ['ankle'],
         equipment: 'Machine / haltère',
         name: 'Mollets debout (avec charge)',
@@ -333,7 +416,6 @@ export const PROGRAM: Session[] = [
           'Descends talons sous la marche (étirement).',
           'Monte au maximum, pause 1 s.',
         ],
-        animation: 'calfRaise',
         mode: 'strength',
       },
     ],
@@ -348,6 +430,12 @@ export const PROGRAM: Session[] = [
     exercises: [
       {
         id: 'sl-rdl',
+        icon: 'Footprints',
+        points: [
+          { zone: 'hanche', dir: 'hold', text: "Hanches parallèles au sol" },
+          { zone: 'hanche', dir: 'back', text: "La jambe libre prolonge le dos" },
+          { zone: 'cheville', dir: 'hold', text: "Appui talon / gros orteil / petit orteil" },
+        ],
         tags: ['ankle', 'glutes'],
         equipment: 'Haltère',
         name: 'Single-leg RDL',
@@ -365,11 +453,16 @@ export const PROGRAM: Session[] = [
           'Bascule le buste en tendant la jambe libre vers l’arrière.',
           'Remonte en serrant le fessier d’appui.',
         ],
-        animation: 'singleLegRdl',
         mode: 'strength',
       },
       {
         id: 'hip-thrust',
+        icon: 'ArrowUpFromLine',
+        points: [
+          { zone: 'pied', dir: 'down', text: "Presse les talons, tibias verticaux en haut" },
+          { zone: 'hanche', dir: 'up', text: "Rétroversion du bassin, 1 s en haut" },
+          { zone: 'genou', dir: 'out', text: "Genoux écartés dans l’axe des pieds" },
+        ],
         tags: ['glutes'],
         equipment: 'Barre + banc',
         name: 'Hip Thrust (banc ou Smith)',
@@ -386,11 +479,16 @@ export const PROGRAM: Session[] = [
           'Pousse dans les talons jusqu’à l’alignement épaules-hanches-genoux.',
           'Bascule le bassin (rétroversion), tiens 1 s, redescends.',
         ],
-        animation: 'hipThrust',
         mode: 'strength',
       },
       {
         id: 'leg-press-high',
+        icon: 'ArrowUpRight',
+        points: [
+          { zone: 'pied', dir: 'up', text: "Pieds hauts et larges sur la plateforme" },
+          { zone: 'genou', dir: 'hold', text: "Jamais verrouillés, alignés sur les pieds" },
+          { zone: 'tronc', dir: 'hold', text: "Bas du dos collé au dossier jusqu’à 90°" },
+        ],
         tags: ['knee', 'glutes'],
         equipment: 'Presse 45°',
         name: 'Presse inclinée (pieds hauts & larges)',
@@ -407,11 +505,16 @@ export const PROGRAM: Session[] = [
           'Descends jusqu’à ~90° sans décoller le bas du dos.',
           'Pousse dans les talons, sans verrouiller les genoux.',
         ],
-        animation: 'legPress',
         mode: 'strength',
       },
       {
         id: 'step-down',
+        icon: 'ArrowDownToLine',
+        points: [
+          { zone: 'genou', dir: 'hold', text: "Au-dessus du 2e orteil, il ne rentre pas" },
+          { zone: 'genou', dir: 'down', text: "Descente 4 s, le talon effleure le sol" },
+          { zone: 'hanche', dir: 'hold', text: "Bassin horizontal pendant la descente" },
+        ],
         tags: ['knee', 'glutes'],
         equipment: 'Marche',
         name: 'Step-downs excentriques',
@@ -430,12 +533,17 @@ export const PROGRAM: Session[] = [
           'Fléchis la jambe d’appui en 4 s jusqu’à effleurer le sol du talon.',
           'Remonte sans pousser avec la jambe libre.',
         ],
-        animation: 'stepDown',
         mode: 'strength',
         bodyweight: true,
       },
       {
         id: 'copenhagen-plank',
+        icon: 'Activity',
+        points: [
+          { zone: 'pied', dir: 'hold', text: "Pied (ou genou) du haut posé sur le banc" },
+          { zone: 'hanche', dir: 'up', text: "Bassin décollé, aligné épaules-pieds" },
+          { zone: 'genou', dir: 'hold', text: "Adducteurs : verrou contre la torsion" },
+        ],
         trackId: 'b5',
         tags: ['knee'],
         equipment: 'Banc plat + tapis',
@@ -454,12 +562,17 @@ export const PROGRAM: Session[] = [
           'Monte le bassin pour aligner épaules-hanches-pieds, décolle la jambe du bas.',
           'Tiens 20-30 s sans laisser le bassin tomber, puis change de côté.',
         ],
-        animation: 'copenhagen',
         mode: 'timed',
         bodyweight: true,
       },
       {
         id: 'soleus-raise',
+        icon: 'MoveVertical',
+        points: [
+          { zone: 'genou', dir: 'hold', text: "Genoux à 90° : jumeaux désactivés" },
+          { zone: 'pied', dir: 'up', text: "Pousse sur la base du gros orteil" },
+          { zone: 'cheville', dir: 'hold', text: "Cheville droite, pas de vrille externe" },
+        ],
         trackId: 'b6',
         tags: ['ankle'],
         equipment: 'Banc + cale + haltères',
@@ -478,11 +591,16 @@ export const PROGRAM: Session[] = [
           'Monte les talons lentement, tiens 1 s en haut.',
           'Redescends sous l’horizontale pour étirer le tendon d’Achille.',
         ],
-        animation: 'soleusRaise',
         mode: 'strength',
       },
       {
         id: 'sl-calf-raise',
+        icon: 'MoveVertical',
+        points: [
+          { zone: 'cheville', dir: 'up', text: "Monte sur l’avant-pied, pause 1 s" },
+          { zone: 'cheville', dir: 'down', text: "Descente 3 s sous l’horizontale" },
+          { zone: 'pied', dir: 'hold', text: "Commence toujours par la cheville faible" },
+        ],
         tags: ['ankle'],
         equipment: 'Marche',
         name: 'Calf raises unilatéral (assis ou debout)',
@@ -500,7 +618,6 @@ export const PROGRAM: Session[] = [
           'Monte sur l’avant-pied, pause 1 s.',
           'Descends en 3 s sous l’horizontale.',
         ],
-        animation: 'singleCalf',
         mode: 'strength',
       },
     ],
@@ -515,6 +632,12 @@ export const PROGRAM: Session[] = [
     exercises: [
       {
         id: 'power-hike',
+        icon: 'Mountain',
+        points: [
+          { zone: 'pied', dir: 'down', text: "Pose tout le pied, pousse dans le talon" },
+          { zone: 'hanche', dir: 'forward', text: "Buste légèrement penché, foulée courte" },
+          { zone: 'genou', dir: 'hold', text: "Zéro impact : mains sur les cuisses si raide" },
+        ],
         tags: ['knee', 'ankle', 'glutes'],
         equipment: 'Tapis incliné',
         name: 'Power Hike sur tapis incliné',
@@ -530,7 +653,6 @@ export const PROGRAM: Session[] = [
           'Bloc principal à 12-15 %, 4,5-5,5 km/h, foulée courte.',
           'Retour au calme 3-5 min à plat.',
         ],
-        animation: 'powerHike',
         mode: 'treadmill',
       },
     ],

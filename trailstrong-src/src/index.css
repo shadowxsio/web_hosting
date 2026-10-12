@@ -1,20 +1,20 @@
 @import "tailwindcss";
 
-/* ── SaaS Dark 2026 ─────────────────────────────────────────────── */
+/* ── Zinc Dark 2026 — structure « annuaire » inspirée de quelleia.com ── */
 @theme {
-  --color-ink: #070a13;
-  --color-ink-2: #0c111d;
-  --color-panel: #101626;
-  --color-chip: #182235;
-  --color-line: rgba(255, 255, 255, 0.06);
-  --color-fg: #f8fafc;
-  --color-muted: #94a3b8;
+  --color-ink: #09090b; /* zinc-950 */
+  --color-ink-2: #0f0f12;
+  --color-panel: #18181b; /* zinc-900 */
+  --color-chip: #18181b;
+  --color-line: #27272a; /* zinc-800 */
+  --color-fg: #fafafa;
+  --color-muted: #a1a1aa; /* zinc-400 */
   --color-ember: #f97316;
   --color-glacier: #06b6d4;
-  --color-iris: #8b5cf6;
   --color-moss: #10b981;
+  --color-amber: #f59e0b;
   --font-sans: "Inter", "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --font-display: "Inter", "Geist", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Montserrat", "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "Geist Mono", "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
@@ -32,57 +32,38 @@ body {
 
 body {
   min-height: 100dvh;
-  font-feature-settings: "tnum" 1, "cv11" 1, "ss01" 1;
-  letter-spacing: -0.005em;
-  background:
-    radial-gradient(1200px 500px at 85% -10%, rgba(249, 115, 22, 0.07), transparent 60%),
-    radial-gradient(900px 500px at -10% 110%, rgba(139, 92, 246, 0.07), transparent 60%),
-    linear-gradient(180deg, #070a13 0%, #0c111d 100%) fixed;
+  font-feature-settings: "tnum" 1, "cv11" 1;
 }
 
-/* Grille de points façon dashboard (illustrations, écran PIN). */
-.dot-grid {
-  background-image: radial-gradient(rgba(148, 163, 184, 0.12) 1px, transparent 1px);
-  background-size: 14px 14px;
+/* Trame de points (clin d'œil quelleia), très discrète. */
+.dots {
+  background-image: radial-gradient(rgba(161, 161, 170, 0.09) 1px, transparent 1.2px);
+  background-size: 12px 12px;
+}
+
+/* Titre « affiche » : italique très gras, ombre décalée orange plate (pas de flou). */
+.headline {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  line-height: 0.92;
+  text-shadow: 3px 3px 0 rgba(249, 115, 22, 0.55);
 }
 
 @layer components {
-  /* Carte de base : panneau #101626, bordure 1 px quasi invisible, micro-dégradé. */
   .card {
-    border-radius: var(--radius-2xl);
+    border-radius: var(--radius-xl);
     border: 1px solid var(--color-line);
-    background:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0) 40%),
-      var(--color-panel);
-  }
-  /* Bordure en dégradé (état actif). */
-  .ring-gradient {
-    position: relative;
-  }
-  .ring-gradient::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    padding: 1px;
-    background: linear-gradient(135deg, rgba(249, 115, 22, 0.55), rgba(139, 92, 246, 0.35) 60%, rgba(255, 255, 255, 0.04));
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    pointer-events: none;
-  }
-  .glass {
-    background: rgba(16, 22, 38, 0.72);
-    -webkit-backdrop-filter: blur(16px) saturate(140%);
-    backdrop-filter: blur(16px) saturate(140%);
-    border: 1px solid var(--color-line);
+    background: rgba(24, 24, 27, 0.6);
   }
   .label {
     font-size: 10px;
     font-weight: 600;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: #64748b;
+    color: #71717a; /* zinc-500 */
   }
 }
 
@@ -93,36 +74,11 @@ body {
   display: none;
 }
 
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-input[type="number"] {
-  -moz-appearance: textfield;
-}
-
-/* Accordéon fluide : grid-rows 0fr → 1fr (≈180 ms). */
-.collapse-grid {
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows 180ms ease-out, opacity 180ms ease-out;
-  opacity: 0;
-}
-.collapse-grid[data-open="true"] {
-  grid-template-rows: 1fr;
-  opacity: 1;
-}
-.collapse-grid > * {
-  min-height: 0;
-  overflow: hidden;
-}
-
 @keyframes shake {
   10%, 90% { transform: translateX(-2px); }
   20%, 80% { transform: translateX(4px); }
-  30%, 50%, 70% { transform: translateX(-8px); }
-  40%, 60% { transform: translateX(8px); }
+  30%, 50%, 70% { transform: translateX(-7px); }
+  40%, 60% { transform: translateX(7px); }
 }
 .shake { animation: shake 0.4s both; }
 
@@ -130,14 +86,14 @@ input[type="number"] {
   0%, 100% { opacity: 0; }
   50% { opacity: 1; }
 }
-.flash { animation: flash 0.5s ease-in-out 6; }
+.flash { animation: flash 0.45s ease-in-out 4; }
 
 @keyframes pop {
   0% { transform: scale(0.85); }
-  60% { transform: scale(1.1); }
+  60% { transform: scale(1.08); }
   100% { transform: scale(1); }
 }
-.pop { animation: pop 0.2s ease-out; }
+.pop { animation: pop 0.18s ease-out; }
 
 @keyframes fade-up {
   from { opacity: 0; transform: translateY(4px); }
@@ -145,11 +101,25 @@ input[type="number"] {
 }
 .fade-up { animation: fade-up 0.18s ease-out both; }
 
-@keyframes pulse-dot {
-  0% { r: 3.5; opacity: 0.9; }
-  100% { r: 11; opacity: 0; }
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
-.pulse-ring { animation: pulse-dot 1.4s ease-out infinite; }
+.fade-in { animation: fade-in 0.18s ease-out both; }
+
+/* Tiroir : depuis le bas sur mobile, depuis la droite sur desktop. */
+@keyframes sheet-up {
+  from { transform: translateY(100%); }
+  to { transform: none; }
+}
+@keyframes sheet-left {
+  from { transform: translateX(100%); }
+  to { transform: none; }
+}
+.sheet { animation: sheet-up 0.22s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+@media (min-width: 768px) {
+  .sheet { animation-name: sheet-left; }
+}
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

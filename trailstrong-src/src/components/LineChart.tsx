@@ -15,7 +15,7 @@ export function LineChart({ points, unit, kind = 'line' }: { points: Point[]; un
   const W = 340
   const H = 170
   const pad = { l: 40, r: 22, t: 14, b: 24 }
-  if (!points.length) return <p className="py-8 text-center text-sm text-slate-500">Pas encore de données — valide quelques séries !</p>
+  if (!points.length) return <p className="py-8 text-center text-sm text-zinc-500">Pas encore de données — valide quelques séries !</p>
 
   const max = Math.max(...points.map((p) => p.value))
   const min = kind === 'bar' ? 0 : Math.min(...points.map((p) => p.value))
@@ -93,19 +93,19 @@ export function LineChart({ points, unit, kind = 'line' }: { points: Point[]; un
           </>
         )}
         {h && hover != null && (
-          <line x1={x(hover)} x2={x(hover)} y1={pad.t} y2={pad.t + ih} stroke="#8b5cf6" strokeWidth={1} strokeDasharray="3 3" />
+          <line x1={x(hover)} x2={x(hover)} y1={pad.t} y2={pad.t + ih} stroke="#71717a" strokeWidth={1} strokeDasharray="3 3" />
         )}
       </svg>
       {h && hover != null && (
         <div
-          className="pointer-events-none absolute top-0 -translate-x-1/2 glass rounded-lg px-2.5 py-1.5 text-xs shadow-xl"
+          className="pointer-events-none absolute top-0 -translate-x-1/2 border border-zinc-800 bg-zinc-900/90 backdrop-blur-md rounded-lg px-2.5 py-1.5 text-xs shadow-xl"
           style={{ left: `${Math.min(85, Math.max(15, (x(hover) / W) * 100))}%` }}
         >
-          <p className="text-slate-400">{h.label}</p>
-          <p className="font-mono font-semibold text-fg">
+          <p className="text-zinc-400">{h.label}</p>
+          <p className="font-mono font-semibold text-zinc-50">
             {h.value.toLocaleString('fr-CA')} {unit}
           </p>
-          {h.detail && <p className="text-slate-400">{h.detail}</p>}
+          {h.detail && <p className="text-zinc-400">{h.detail}</p>}
         </div>
       )}
     </div>

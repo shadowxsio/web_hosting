@@ -1,10 +1,19 @@
 import { CloudUpload, Download, KeyRound, Lock, RotateCcw, Upload, X } from 'lucide-react'
 import { useRef, useState, type ComponentType, type ReactNode } from 'react'
+import { createPortal } from 'react-dom'
 import { lock, resetLocalPin, setLocalPin, usingDefaultPin } from '../lib/auth'
 import { backupNow, restoreFromGist } from '../lib/backup'
 import { exportJson, importJson, today, updateGist, useData } from '../lib/storage'
 
-export function SettingsSheet({ onClose, onLock }: { onClose: () => void; onLock: () => void }) {
+export function SettingsSheet({
+  onClose,
+  onLock,
+  onNavigate,
+}: {
+  onClose: () => void
+  onLock: () => void
+  onNavigate: (tab: 'catalogue' | 'progression') => void
+}) {
   const data = useData()
   const g = data.gist
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null)
@@ -37,21 +46,41 @@ export function SettingsSheet({ onClose, onLock }: { onClose: () => void; onLock
 
   const days = Object.keys(data.logs).length
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-ink/60 backdrop-blur-md" onClick={onClose}>
+  return createPortal(
+    <div className="fade-in fixed inset-0 z-50 flex items-end justify-center bg-black/60 backdrop-blur-sm md:items-stretch md:justify-end" onClick={onClose}>
       <div
-        className="fade-up glass pb-safe max-h-[92dvh] w-full max-w-xl overflow-y-auto rounded-t-2xl px-4 pt-4"
+        className="sheet pb-safe max-h-[92dvh] w-full max-w-xl overflow-y-auto rounded-t-2xl border border-zinc-800 bg-zinc-950 px-4 pt-4 md:max-h-none md:w-[440px] md:rounded-none md:rounded-l-2xl"
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-label="Réglages"
         data-noswipe
       >
         <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-[17px] font-semibold tracking-tight text-fg">Réglages & sauvegardes</h2>
-          <button type="button" onClick={onClose} className="rounded-full p-2 text-slate-400 active:bg-white/10" aria-label="Fermer">
+          <h2 className="headline text-[22px] text-zinc-50">Menu</h2>
+          <button type="button" onClick={onClose} className="rounded-full p-2 text-zinc-400 active:bg-zinc-900" aria-label="Fermer">
             <X className="h-5 w-5" />
           </button>
         </div>
+
+        {/* Liste de navigation façon quelleia : surtitre + titre italique gras */}
+        <nav className="mb-4 overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900/60">
+          {(
+            [
+              ['catalogue', 'Vos 4 séances, filtres & recherche', 'Catalogue'],
+              ['progression', 'Charges, volume & D+', 'Progression'],
+            ] as const
+          ).map(([id, over, title]) => (
+            <button
+              key={id}
+              type="button"
+              onClick={() => onNavigate(id)}
+              className="flex w-full items-baseline gap-3 border-b border-zinc-800 px-4 py-3.5 text-left last:border-b-0 hover:bg-zinc-900"
+            >
+              <span className="text-[10px] font-semibold uppercase tracking-[0.1em] text-zinc-500">{over}</span>
+              <span className="ml-auto font-display text-[17px] font-black uppercase italic tracking-tight text-zinc-50">{title}</span>
+            </button>
+          ))}
+        </nav>
 
         {msg && (
           <p className={`mb-3 rounded-xl px-3 py-2 text-sm ${msg.ok ? 'bg-moss/15 text-emerald-200' : 'bg-red-500/15 text-red-200'}`}>{msg.text}</p>
@@ -83,7 +112,7 @@ export function SettingsSheet({ onClose, onLock }: { onClose: () => void; onLock
           title="Backup cloud — GitHub Gist"
           desc="Optionnel. Copie chiffrée (AES-256, clé dérivée de ton PIN) dans un Gist secret, 20 s après chaque modification."
         >
-          <label className="mb-2 flex h-11 items-center justify-between rounded-xl border border-line bg-ink-2 px-3 text-[13px] text-slate-200">
+          <label className="mb-2 flex h-11 items-center justify-between rounded-xl border border-zinc-800 bg-zinc-950 px-3 text-[13px] text-zinc-200">
             Backup automatique
             <input
               type="checkbox"
@@ -112,7 +141,7 @@ export function SettingsSheet({ onClose, onLock }: { onClose: () => void; onLock
               Restaurer
             </Btn>
           </div>
-          <p className="mt-2 text-xs text-slate-500">
+          <p className="mt-2 text-xs text-zinc-500">
             {g.lastBackup ? `Dernier backup : ${new Date(g.lastBackup).toLocaleString('fr-CA')}` : 'Aucun backup cloud pour l’instant.'}
             {g.lastError && <span className="block text-red-300">Dernière erreur : {g.lastError}</span>}
           </p>
@@ -163,21 +192,22 @@ export function SettingsSheet({ onClose, onLock }: { onClose: () => void; onLock
             lock()
             onLock()
           }}
-          className="mb-6 mt-1 flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-line bg-chip font-medium text-slate-200 active:scale-[0.98]"
+          className="mb-6 mt-1 flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-zinc-800 bg-zinc-900 font-medium text-zinc-200 active:scale-[0.98]"
         >
           <Lock className="h-4 w-4" /> Verrouiller maintenant
         </button>
-        <p className="mb-6 text-center text-[11px] text-slate-600">TrailStrong 2026 · v{__APP_VERSION__} · données 100 % locales</p>
+        <p className="mb-6 text-center text-[11px] text-zinc-600">TrailStrong 2026 · v{__APP_VERSION__} · données 100 % locales</p>
       </div>
-    </div>
+    </div>,
+    document.body,
   )
 }
 
 function Block({ title, desc, children }: { title: string; desc: string; children: ReactNode }) {
   return (
     <section className="card mb-3 p-3.5">
-      <h3 className="text-[14px] font-semibold tracking-tight text-fg">{title}</h3>
-      <p className="mb-3 mt-0.5 text-[12px] leading-snug text-muted">{desc}</p>
+      <h3 className="text-[14px] font-semibold tracking-tight text-zinc-50">{title}</h3>
+      <p className="mb-3 mt-0.5 text-[12px] leading-snug text-zinc-400">{desc}</p>
       {children}
     </section>
   )
@@ -199,7 +229,7 @@ function Btn({
       type="button"
       disabled={disabled}
       onClick={onClick}
-      className="flex h-11 items-center justify-center gap-1.5 rounded-xl border border-line bg-chip/70 px-3 text-[13px] font-medium text-slate-200 transition active:scale-95 disabled:opacity-40"
+      className="flex h-11 items-center justify-center gap-1.5 rounded-xl border border-zinc-800 bg-zinc-900 px-3 text-[13px] font-medium text-zinc-200 transition active:scale-95 disabled:opacity-40"
     >
       <Icon className="h-4 w-4 text-ember" />
       {children}
@@ -232,7 +262,7 @@ function Field({
         placeholder={placeholder}
         autoComplete="off"
         onChange={(e) => onChange(e.target.value)}
-        className="mt-1 h-11 w-full rounded-xl border border-line bg-ink-2 px-3 text-[13px] normal-case tracking-normal text-slate-100 placeholder:text-slate-600 focus:border-glacier/50 focus:outline-none"
+        className="mt-1 h-11 w-full rounded-xl border border-zinc-800 bg-zinc-950 px-3 text-[13px] normal-case tracking-normal text-zinc-100 placeholder:text-zinc-600 focus:border-glacier/50 focus:outline-none"
       />
     </label>
   )
