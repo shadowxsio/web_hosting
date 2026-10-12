@@ -6,6 +6,7 @@ import { removeCustom } from '../lib/custom'
 import { touch, treadmillStats, type ExerciseLog, type Side } from '../lib/storage'
 import { timer } from '../lib/timer'
 import { SIDE_LABEL, num, useExerciseLog } from '../lib/useExerciseLog'
+import { DemoPlayer } from './DemoPlayer'
 import { DIR_META, Pill, SESSION_META, ZONE_META, categoryOf, iconOf, restLabel } from './meta'
 
 /** Tiroir de détail : bas de l'écran sur mobile, à droite sur desktop. */
@@ -188,6 +189,8 @@ export function ExerciseDrawer({ ex, sessionId, date, onClose }: { ex: Exercise;
               className="mt-2 w-full resize-none border-2 border-ink bg-paper px-3 py-2 text-[13px] text-ink placeholder:text-ink/40 focus:shadow-[3px_3px_0_#f0773a] focus:outline-none"
             />
           </section>
+
+          <DemoPlayer ex={ex} />
 
           {/* Points d'attention : zone colorée + direction du mouvement */}
           {ex.points && ex.points.length > 0 && (

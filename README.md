@@ -55,3 +55,4 @@ Code source dans `trailstrong-src/` (Vite + React + TypeScript + Tailwind + Luci
   ```bash
   cd trailstrong-src && npm install && npm run dev   # http://localhost:5173 (/#figures : planche des illustrations)
   ```
+- **Photos de démo** : `trailstrong-src/public/demos/` — paires départ/fin issues de [free-exercise-db](https://github.com/yuhonas/free-exercise-db) (domaine public, Unlicense), converties en WebP 480 px.

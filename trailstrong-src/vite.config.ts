@@ -1,4 +1,7 @@
 import { createHash } from 'node:crypto'
+import { readdirSync } from 'node:fs'
+import { join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { defineConfig, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
@@ -15,7 +18,12 @@ function serviceWorker(): Plugin {
     apply: 'build',
     generateBundle(_, bundle) {
       const files = Object.keys(bundle).filter((f) => !f.endsWith('.map'))
-      const publicFiles = ['manifest.webmanifest', 'icon.svg', 'icon-192.png', 'icon-512.png', 'icon-maskable.png']
+      // Tout public/ (icônes, manifest, photos de démo) est précaché pour le hors-ligne.
+      const walk = (dir: string, rel = ''): string[] =>
+        readdirSync(dir, { withFileTypes: true }).flatMap((e) =>
+          e.isDirectory() ? walk(join(dir, e.name), `${rel}${e.name}/`) : [`${rel}${e.name}`],
+        )
+      const publicFiles = walk(fileURLToPath(new URL('./public', import.meta.url)))
       const urls = ['./', ...new Set([...files, ...publicFiles])].map((f) => (f === './' ? f : `./${f}`))
       const version = createHash('sha256').update(urls.join('|')).digest('hex').slice(0, 12)
       const source = `/* TrailStrong 2026 — service worker généré au build */
