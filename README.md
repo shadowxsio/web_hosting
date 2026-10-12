@@ -44,7 +44,7 @@ Code source dans `trailstrong-src/` (Vite + React + TypeScript + Tailwind + Luci
 
 - **Déploiement** : le workflow `Deploy to GitHub Pages` installe Node, build l'app dans `trailstrong/` puis publie tout le site (aucun build à committer).
 - **Accès** : connexion **Google sans serveur** — le jeton Google est vérifié dans l'app (signature via les clés publiques Google, audience, expiration, email vérifié) et l'email doit figurer dans la liste autorisée, publiée uniquement sous forme d'empreinte SHA-256. L'appareil reste autorisé 30 jours (utilisable hors-ligne). À configurer dans *Settings → Secrets and variables → Actions* :
-  - variable `GOOGLE_CLIENT_ID` : client OAuth « Application Web » avec l'origine JavaScript autorisée `https://shadowxsio.github.io` ;
+  - `GOOGLE_CLIENT_ID` (variable ou secret) : client OAuth « Application Web » avec l'origine JavaScript autorisée `https://shadowxsio.github.io` ;
   - secret `ALLOWED_GOOGLE_EMAIL` : ton email Gmail (plusieurs possibles, séparés par des virgules).
   Sans ces deux valeurs, l'app fonctionne en accès PIN uniquement.
 - **PIN = mode admin** : déverrouille les Réglages (sauvegardes, Gist, PIN) pendant 10 min et sert d'accès de secours si Google est indisponible. Blocage après 5 PIN faux (30 s → 2 min → 10 min). Définir le secret de dépôt `APP_PASSWORD_HASH` = SHA-256 hex du PIN :
