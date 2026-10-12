@@ -1,6 +1,6 @@
 /**
  * Accès à l'app :
- *   - Connexion Google (compte autorisé côté backend run-agent) → accès normal ;
+ *   - Connexion Google (jeton vérifié dans l'app, email autorisé fixé au build) → accès normal ;
  *   - PIN → « mode admin » : déverrouille les Réglages (sauvegardes, PIN, token)
  *     pendant 10 min, et sert d'accès de secours si Google est indisponible.
  *

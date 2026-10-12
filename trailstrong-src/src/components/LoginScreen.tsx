@@ -1,14 +1,15 @@
 import { KeyRound, Lock, WifiOff } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
-import { renderGoogleButton, verifyCredential } from '../lib/googleAuth'
+import { googleConfigured, renderGoogleButton, verifyCredential } from '../lib/googleAuth'
 import { PinLock } from './PinLock'
 
 /** Écran d'accès : connexion Google (compte autorisé) ; PIN en secours. */
 export function LoginScreen({ onUnlock }: { onUnlock: () => void }) {
   const btn = useRef<HTMLDivElement>(null)
+  const configured = googleConfigured()
   const [status, setStatus] = useState<'loading' | 'ready' | 'verifying' | 'offline'>('loading')
   const [error, setError] = useState('')
-  const [pinMode, setPinMode] = useState(false)
+  const [pinMode, setPinMode] = useState(!configured)
 
   useEffect(() => {
     if (pinMode || !btn.current) return
@@ -44,10 +45,10 @@ export function LoginScreen({ onUnlock }: { onUnlock: () => void }) {
   if (pinMode)
     return (
       <PinLock
-        title="Accès admin"
-        subtitle="Accès de secours par PIN (ouvre aussi le mode admin)."
+        title={configured ? 'Accès admin' : 'Bon retour, Mickael'}
+        subtitle={configured ? 'Accès de secours par PIN (ouvre aussi le mode admin).' : 'Saisis ton code PIN pour ouvrir la session.'}
         onUnlock={onUnlock}
-        onCancel={() => setPinMode(false)}
+        onCancel={configured ? () => setPinMode(false) : undefined}
       />
     )
 
