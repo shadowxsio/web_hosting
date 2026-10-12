@@ -7,6 +7,7 @@ import { ExerciseDrawer } from './ExerciseDrawer'
 import { ExerciseTile } from './ExerciseTile'
 import { TAG_META } from './meta'
 import { PainCheckin } from './PainCheckin'
+import { nextTestIn } from '../lib/tests'
 
 export type Scope = 'all' | SessionId
 
@@ -33,6 +34,7 @@ export function Catalog({
   setQuery,
   date,
   setDate,
+  onTests,
 }: {
   program: Session[]
   scope: Scope
@@ -42,6 +44,7 @@ export function Catalog({
   setQuery: (q: string) => void
   date: string
   setDate: (d: string) => void
+  onTests: () => void
 }) {
   const data = useData()
   const day = data.logs[date] ?? {}
@@ -132,6 +135,13 @@ export function Catalog({
         </div>
 
         <PainCheckin date={date} />
+        {nextTestIn(data, today()) <= 0 && (
+          <button type="button" onClick={onTests} className="b-btn mt-3 flex min-h-11 w-full items-center gap-2 bg-lilac px-3 py-2 text-left text-[13px]">
+            <span className="text-[16px]">🧪</span>
+            <span className="uppercase italic">Test mensuel à faire</span>
+            <span className="ml-auto text-[12px] font-extrabold">4 tests · 15 min →</span>
+          </button>
+        )}
       </section>
 
       {/* ── Recherche ── */}

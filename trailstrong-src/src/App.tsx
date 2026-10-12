@@ -50,6 +50,11 @@ function Shell({ onLock }: { onLock: () => void }) {
   const [query, setQuery] = useState('')
   const [date, setDate] = useState(today())
   const [menu, setMenu] = useState(false)
+  const [testsOpen, setTestsOpen] = useState(false)
+  const openTests = () => {
+    setView('stats')
+    setTestsOpen(true)
+  }
   const touch = useRef<{ x: number; y: number; ok: boolean } | null>(null)
 
   const setView = (v: View) => {
@@ -147,9 +152,9 @@ function Shell({ onLock }: { onLock: () => void }) {
 
       <main className="mx-auto max-w-6xl px-3 pb-44 md:px-6 md:pb-28">
         {view === 'stats' ? (
-          <StatsView />
+          <StatsView testsOpen={testsOpen} setTestsOpen={setTestsOpen} />
         ) : (
-          <Catalog program={program} scope={view} focus={focus} setFocus={setFocus} query={query} setQuery={setQuery} date={date} setDate={setDate} />
+          <Catalog program={program} scope={view} focus={focus} setFocus={setFocus} query={query} setQuery={setQuery} date={date} setDate={setDate} onTests={openTests} />
         )}
       </main>
 
@@ -191,6 +196,10 @@ function Shell({ onLock }: { onLock: () => void }) {
             setView(v)
             if (f) setFocus(f)
             setMenu(false)
+          }}
+          onTests={() => {
+            setMenu(false)
+            openTests()
           }}
         />
       )}

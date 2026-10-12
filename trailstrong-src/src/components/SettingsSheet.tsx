@@ -14,10 +14,12 @@ export function SettingsSheet({
   onClose,
   onLock,
   onNavigate,
+  onTests,
 }: {
   onClose: () => void
   onLock: () => void
   onNavigate: (view: View, focus?: FocusTag) => void
+  onTests: () => void
 }) {
   const data = useData()
   const g = data.gist
@@ -93,6 +95,14 @@ export function SettingsSheet({
               <span className="text-[19px] font-black uppercase italic leading-tight tracking-tight text-ink">{title}</span>
             </button>
           ))}
+          <button
+            type="button"
+            onClick={onTests}
+            className="flex min-h-[57px] w-full flex-wrap items-center gap-x-3 px-4 py-2 text-left transition-colors hover:bg-sun/60"
+          >
+            <span className="text-[10px] font-extrabold uppercase tracking-[0.1em] text-ink/70">Toutes les 4 semaines, G / D</span>
+            <span className="text-[19px] font-black uppercase italic leading-tight tracking-tight text-ink">Tests mensuels</span>
+          </button>
           <button
             type="button"
             onClick={() => {

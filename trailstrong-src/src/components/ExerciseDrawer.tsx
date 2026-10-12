@@ -347,7 +347,7 @@ function Callout({ tone, title, children }: { tone: 'orange' | 'cyan'; title: st
 }
 
 /** Champ numérique compact −/+ (cibles tactiles ≥ 44 px). */
-function Stepper({
+export function Stepper({
   id,
   label,
   value,
@@ -379,7 +379,7 @@ function Stepper({
       <p className="label mb-1">{label}</p>
       <div
         className={`flex h-12 items-center border-2 transition-colors duration-150 ${
-          done ? 'border-ink bg-mint/60' : 'border-ink bg-paper focus-within:shadow-[3px_3px_0_#f0773a]'
+          done ? 'border-leaf bg-leaf/15' : 'border-ink bg-paper focus-within:shadow-[3px_3px_0_#f0773a]'
         }`}
       >
         <button type="button" onClick={() => bump(-step)} aria-label={`${label} moins ${step}`} className={btn}>

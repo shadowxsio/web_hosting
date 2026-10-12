@@ -4,6 +4,7 @@ import { useProgram } from '../lib/custom'
 import { exerciseHistory, today, treadmillStats, useData, type AppData } from '../lib/storage'
 import { painSeries } from '../lib/insights'
 import { AsymmetryPanel } from './AsymmetryPanel'
+import { TestsPanel } from './TestsPanel'
 import { LineChart } from './LineChart'
 
 const shortDate = (d: string) => new Date(`${d}T12:00:00`).toLocaleDateString('fr-CA', { day: 'numeric', month: 'short' })
@@ -21,7 +22,7 @@ function activeDays(data: AppData) {
     .sort()
 }
 
-export function StatsView() {
+export function StatsView({ testsOpen = false, setTestsOpen = () => {} }: { testsOpen?: boolean; setTestsOpen?: (o: boolean) => void }) {
   const data = useData()
   const PROGRAM = useProgram()
   const ALL_EXERCISES = useMemo(() => PROGRAM.flatMap((s) => s.exercises.map((e) => ({ ...e, sessionId: s.id }))), [PROGRAM])
@@ -106,6 +107,8 @@ export function StatsView() {
           </div>
         ))}
       </div>
+
+      <TestsPanel open={testsOpen} setOpen={setTestsOpen} />
 
       <AsymmetryPanel exercises={ALL_EXERCISES} />
 
