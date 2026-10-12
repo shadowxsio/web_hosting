@@ -1,7 +1,8 @@
-import { CalendarDays, Clock } from 'lucide-react'
+import { CalendarDays, Clock, Plus } from 'lucide-react'
 import { useState } from 'react'
 import type { Exercise, Session } from '../data/program'
 import { today, useData } from '../lib/storage'
+import { AddExerciseSheet } from './AddExerciseSheet'
 import { ExerciseCard } from './ExerciseCard'
 
 export interface Group {
@@ -16,12 +17,14 @@ export function SessionView({
   setDate,
   title,
   subtitle,
+  allowAdd = true,
 }: {
   groups: Group[]
   date: string
   setDate: (d: string) => void
   title: string
   subtitle?: string
+  allowAdd?: boolean
 }) {
   const data = useData()
   const day = data.logs[date] ?? {}
@@ -36,7 +39,8 @@ export function SessionView({
   const complete = all.length > 0 && done === all.length
 
   // Ouvre automatiquement la 1re carte non terminée (au montage uniquement).
-  const [autoOpen] = useState(() => all.find((e) => !day[e.id]?.done)?.id)
+  const [autoOpen, setAutoOpen] = useState(() => all.find((e) => !day[e.id]?.done)?.id)
+  const [adding, setAdding] = useState<Session | null>(null)
 
   return (
     <section className="space-y-4">
@@ -101,12 +105,33 @@ export function SessionView({
                 ex={ex}
                 index={g.session.exercises.indexOf(ex)}
                 date={date}
+                sessionId={g.session.id}
                 defaultOpen={ex.id === autoOpen}
               />
             ))}
+            {allowAdd && (
+              <button
+                type="button"
+                onClick={() => setAdding(g.session)}
+                className="flex h-12 w-full items-center justify-center gap-1.5 rounded-xl border border-dashed border-slate-700 bg-ink-2/40 text-[12px] font-medium text-slate-400 transition duration-200 hover:border-orange-500 hover:text-white active:scale-[0.99] active:border-orange-500"
+              >
+                <Plus className="h-3.5 w-3.5" /> Ajouter un exercice à cette séance
+              </button>
+            )}
           </div>
         )
       })}
+      {adding && (
+        <AddExerciseSheet
+          session={adding}
+          onClose={() => setAdding(null)}
+          onAdded={(id) => {
+            setAutoOpen(id)
+            setAdding(null)
+            window.setTimeout(() => document.getElementById(`check-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 60)
+          }}
+        />
+      )}
     </section>
   )
 }

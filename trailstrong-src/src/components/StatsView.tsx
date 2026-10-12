@@ -1,6 +1,6 @@
 import { Activity, CalendarCheck, Dumbbell, Mountain, Table2, TrendingUp } from 'lucide-react'
 import { useMemo, useState } from 'react'
-import { ALL_EXERCISES, PROGRAM } from '../data/program'
+import { useProgram } from '../lib/custom'
 import { exerciseHistory, today, treadmillStats, useData, type AppData } from '../lib/storage'
 import { LineChart } from './LineChart'
 
@@ -21,6 +21,8 @@ function activeDays(data: AppData) {
 
 export function StatsView() {
   const data = useData()
+  const PROGRAM = useProgram()
+  const ALL_EXERCISES = useMemo(() => PROGRAM.flatMap((s) => s.exercises.map((e) => ({ ...e, sessionId: s.id }))), [PROGRAM])
   const weighted = ALL_EXERCISES.filter((e) => e.mode === 'strength' && !e.bodyweight)
   const [exId, setExId] = useState(weighted[0].id)
   const [table, setTable] = useState(false)
@@ -64,10 +66,10 @@ export function StatsView() {
       })
     }
     return { days, last4w, dplus, km, hikes, weeks: [...weeks.entries()], prs }
-  }, [data])
+  }, [data, ALL_EXERCISES])
 
   const hist = exerciseHistory(data, exId).filter((h) => h.maxW > 0)
-  const current = weighted.find((e) => e.id === exId)!
+  const current = weighted.find((e) => e.id === exId) ?? weighted[0]
 
   const kpis = [
     { icon: CalendarCheck, label: 'Séances', value: s.days.length, sub: `${s.last4w} sur 4 sem.`, color: 'text-moss' },

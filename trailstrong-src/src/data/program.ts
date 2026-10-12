@@ -24,8 +24,16 @@ export interface Exercise {
   /** Conseil spécial genou / cheville. */
   kneeAnkle: string
   steps: string[]
-  animation: AnimationId
+  /** Illustration animée (absente pour les exercices personnalisés). */
+  animation?: AnimationId
   mode: TrackMode
+  /** Suffixe des IDs DOM de suivi : check-{trackId}, log-{trackId}-weight, log-{trackId}-note. */
+  trackId?: string
+  /** Badge libre (exercices personnalisés) à la place du badge de focus. */
+  badge?: string
+  /** Poids de départ suggéré (exercices personnalisés). */
+  startWeight?: string
+  custom?: boolean
   /** Poids optionnel (exercices au poids du corps). */
   bodyweight?: boolean
 }
@@ -163,6 +171,29 @@ export const PROGRAM: Session[] = [
         mode: 'strength',
         bodyweight: true,
       },
+      {
+        id: 'spanish-squat',
+        trackId: 'w4',
+        tags: ['knee'],
+        equipment: 'Bande élastique épaisse + poteau',
+        name: 'Spanish Squat isométrique',
+        target: 'Tendon rotulien · vaste médial',
+        sets: 3,
+        reps: '30-45 s',
+        defaultReps: 40,
+        rest: 45,
+        cue: 'Tibias rigoureusement verticaux, dos droit, descends à 70-80° de flexion et tiens.',
+        kneeAnkle:
+          'La tension de la bande derrière le pli des genoux décharge la rotule tout en recrutant le vaste médial en isométrie : effet antalgique sur le tendon rotulien et verrouillage du genou avant de charger.',
+        steps: [
+          'Bande épaisse attachée à un poteau / une cage, calée derrière le pli des deux genoux.',
+          'Recule jusqu’à une bonne tension, pieds largeur de hanches.',
+          'Assieds-toi en arrière, tibias verticaux, jusqu’à 70-80° de flexion ; maintiens 30-45 s.',
+        ],
+        animation: 'spanishSquat',
+        mode: 'timed',
+        bodyweight: true,
+      },
     ],
   },
   {
@@ -237,6 +268,30 @@ export const PROGRAM: Session[] = [
         ],
         animation: 'legCurl',
         mode: 'strength',
+      },
+      {
+        id: 'nordic-curl',
+        trackId: 'a5',
+        tags: ['knee'],
+        equipment: 'Tapis + boudin / barre guidée chargée',
+        name: 'Nordic Hamstring Curl',
+        target: 'Ischios en excentrique pur',
+        sets: 3,
+        reps: '5-6 reps',
+        defaultReps: 5,
+        rest: 90,
+        tempo: '4-5 s de descente',
+        cue: 'Alignement strict genoux-bassin-épaules, sans casser les hanches. Freine la chute 4-5 s.',
+        kneeAnkle:
+          'L’excentrique pur des ischios prépare au freinage violent des descentes de trail et protège l’arrière du genou. Réceptionne-toi avec les mains, puis repousse le sol pour remonter.',
+        steps: [
+          'À genoux sur un tapis, talons verrouillés sous un boudin ou la barre guidée chargée.',
+          'Corps gainé et droit des genoux aux épaules.',
+          'Descends le plus lentement possible (4-5 s), réceptionne-toi sur les mains, repousse pour revenir.',
+        ],
+        animation: 'nordic',
+        mode: 'strength',
+        bodyweight: true,
       },
       {
         id: 'hip-abduction',
@@ -378,6 +433,53 @@ export const PROGRAM: Session[] = [
         animation: 'stepDown',
         mode: 'strength',
         bodyweight: true,
+      },
+      {
+        id: 'copenhagen-plank',
+        trackId: 'b5',
+        tags: ['knee'],
+        equipment: 'Banc plat + tapis',
+        name: 'Gainage Copenhague (Copenhagen Plank)',
+        target: 'Adducteurs · stabilité latérale du genou',
+        sets: 3,
+        reps: '20-30 s / jambe',
+        defaultReps: 25,
+        perSide: true,
+        rest: 60,
+        cue: 'Planche latérale, pied du haut sur le banc : décolle le bassin et la jambe du bas.',
+        kneeAnkle:
+          'L’effort sur l’intérieur de la cuisse stabilise le genou face aux forces de torsion en sentier — un excellent complément anti-valgus du moyen fessier.',
+        steps: [
+          'En appui sur l’avant-bras, pied (ou genou, version facile) du haut posé sur le banc.',
+          'Monte le bassin pour aligner épaules-hanches-pieds, décolle la jambe du bas.',
+          'Tiens 20-30 s sans laisser le bassin tomber, puis change de côté.',
+        ],
+        animation: 'copenhagen',
+        mode: 'timed',
+        bodyweight: true,
+      },
+      {
+        id: 'soleus-raise',
+        trackId: 'b6',
+        tags: ['ankle'],
+        equipment: 'Banc + cale + haltères',
+        name: 'Élévations de mollet assis (Soleus Raises)',
+        target: 'Soléaire · tendon d’Achille',
+        sets: 3,
+        reps: '12-15 reps',
+        defaultReps: 15,
+        rest: 60,
+        tempo: '1 s d’arrêt en haut',
+        cue: 'Genoux pliés à 90° : les jumeaux sont désactivés, le soléaire travaille seul.',
+        kneeAnkle:
+          'Pousse fermement sur la base du gros orteil pour garder la cheville dans l’axe, sans vriller vers l’extérieur. Le soléaire propulse et absorbe dans les montées raides.',
+        steps: [
+          'Assis sur un banc, avant des pieds sur une cale, haltères posés sur les cuisses.',
+          'Monte les talons lentement, tiens 1 s en haut.',
+          'Redescends sous l’horizontale pour étirer le tendon d’Achille.',
+        ],
+        animation: 'soleusRaise',
+        mode: 'strength',
       },
       {
         id: 'sl-calf-raise',

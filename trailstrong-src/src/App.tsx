@@ -5,9 +5,10 @@ import { SessionView, type Group } from './components/SessionView'
 import { SettingsSheet } from './components/SettingsSheet'
 import { StatsView } from './components/StatsView'
 import { TimerBar } from './components/TimerBar'
-import { PROGRAM, type FocusTag, type SessionId } from './data/program'
+import { type FocusTag, type Session, type SessionId } from './data/program'
 import { hasValidSession } from './lib/auth'
 import { useAutoBackup } from './lib/backup'
+import { useProgram } from './lib/custom'
 import { today } from './lib/storage'
 
 type FilterId = 'all' | SessionId | `focus-${FocusTag}` | 'stats'
@@ -51,12 +52,13 @@ function useOnline() {
   return online
 }
 
-function view(filter: FilterId): { title: string; subtitle?: string; groups: Group[] } {
+function view(PROGRAM: Session[], filter: FilterId): { title: string; subtitle?: string; groups: Group[]; allowAdd: boolean } {
   if (filter === 'all') {
     return {
       title: 'Programme complet',
       subtitle: 'Activation, force postérieure, unilatéral & D+ — ÉconoFitness Beaubien.',
       groups: PROGRAM.map((s) => ({ session: s, exercises: s.exercises })),
+      allowAdd: true,
     }
   }
   if (filter.startsWith('focus-')) {
@@ -70,15 +72,17 @@ function view(filter: FilterId): { title: string; subtitle?: string; groups: Gro
       title: titles[tag][0],
       subtitle: titles[tag][1],
       groups: PROGRAM.map((s) => ({ session: s, exercises: s.exercises.filter((e) => e.tags.includes(tag)) })).filter((g) => g.exercises.length),
+      allowAdd: false,
     }
   }
   const s = PROGRAM.find((p) => p.id === filter)!
-  return { title: s.title, subtitle: `${s.subtitle} · ${s.duration}. ${s.goal}`, groups: [{ session: s, exercises: s.exercises }] }
+  return { title: s.title, subtitle: `${s.subtitle.includes(s.duration) ? s.subtitle : `${s.subtitle} · ${s.duration}`}. ${s.goal}`, groups: [{ session: s, exercises: s.exercises }], allowAdd: true }
 }
 
 function Shell({ onLock }: { onLock: () => void }) {
   useAutoBackup()
   const online = useOnline()
+  const program = useProgram()
   const [filter, setFilterState] = useState<FilterId>(() => {
     const saved = localStorage.getItem(TAB_KEY) as FilterId | null
     return saved && FILTERS.some((t) => t.id === saved) ? saved : 'activation'
@@ -132,7 +136,7 @@ function Shell({ onLock }: { onLock: () => void }) {
     return () => window.clearInterval(id)
   }, [date])
 
-  const v = filter === 'stats' ? null : view(filter)
+  const v = filter === 'stats' ? null : view(program, filter)
 
   return (
     <div className="min-h-dvh" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
@@ -189,7 +193,7 @@ function Shell({ onLock }: { onLock: () => void }) {
       </header>
 
       <main key={filter} className="fade-up mx-auto max-w-xl px-3 pb-40 pt-4">
-        {v ? <SessionView title={v.title} subtitle={v.subtitle} groups={v.groups} date={date} setDate={setDate} /> : <StatsView />}
+        {v ? <SessionView title={v.title} subtitle={v.subtitle} groups={v.groups} allowAdd={v.allowAdd} date={date} setDate={setDate} /> : <StatsView />}
       </main>
 
       <TimerBar />

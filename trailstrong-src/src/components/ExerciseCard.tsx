@@ -1,7 +1,8 @@
-import { Check, Footprints, ChevronDown, Dumbbell, Gauge, Layers, Mountain, Play, Plus, Repeat, Timer, Trophy, Zap } from 'lucide-react'
+import { Check, Footprints, Trash2, ChevronDown, Dumbbell, Gauge, Layers, Mountain, Play, Plus, Repeat, Timer, Trophy, Zap } from 'lucide-react'
 import { useState, type ReactNode } from 'react'
-import type { Exercise, FocusTag } from '../data/program'
-import { previousBest, treadmillStats, updateExercise, useData, type ExerciseLog, type SetLog } from '../lib/storage'
+import type { Exercise, FocusTag, SessionId } from '../data/program'
+import { removeCustom } from '../lib/custom'
+import { previousBest, touch, treadmillStats, updateExercise, useData, type ExerciseLog, type SetLog } from '../lib/storage'
 import { timer } from '../lib/timer'
 import { FigurePlayer } from './FigurePlayer'
 
@@ -22,7 +23,19 @@ const num = (s: string) => {
   return Number.isFinite(n) ? n : 0
 }
 
-export function ExerciseCard({ ex, index, date, defaultOpen = false }: { ex: Exercise; index: number; date: string; defaultOpen?: boolean }) {
+export function ExerciseCard({
+  ex,
+  index,
+  date,
+  sessionId,
+  defaultOpen = false,
+}: {
+  ex: Exercise
+  index: number
+  date: string
+  sessionId?: SessionId
+  defaultOpen?: boolean
+}) {
   const data = useData()
   const log: ExerciseLog = data.logs[date]?.[ex.id] ?? { sets: [] }
   const sets = log.sets.length >= ex.sets ? log.sets : [...log.sets, ...emptySets(ex.sets - log.sets.length)]
@@ -30,12 +43,15 @@ export function ExerciseCard({ ex, index, date, defaultOpen = false }: { ex: Exe
   const [open, setOpen] = useState(defaultOpen)
   const [mounted, setMounted] = useState(defaultOpen)
   const [sel, setSel] = useState<number | null>(null)
+  const [confirmDelete, setConfirmDelete] = useState(false)
+  // IDs DOM de suivi : check-{tid}, log-{tid}-weight, log-{tid}-note.
+  const tid = ex.trackId ?? ex.id
   const done = !!log.done
 
   const write = (fn: (l: ExerciseLog) => ExerciseLog) => updateExercise(date, ex.id, fn)
 
   // Valeur suggérée : série précédente du jour, sinon même série la dernière fois.
-  const hintW = (i: number) => (i > 0 && sets[i - 1].w) || lastLog?.sets[i]?.w || ''
+  const hintW = (i: number) => (i > 0 && sets[i - 1].w) || lastLog?.sets[i]?.w || ex.startWeight || ''
   const hintR = (i: number) => (i > 0 && sets[i - 1].r) || lastLog?.sets[i]?.r || String(ex.defaultReps ?? '')
 
   const setField = (i: number, field: 'w' | 'r', value: string) =>
@@ -93,8 +109,8 @@ export function ExerciseCard({ ex, index, date, defaultOpen = false }: { ex: Exe
       ? null
       : last && last.maxW > 0
         ? `Préc. ${last.maxW} lbs`
-        : last
-          ? `Préc. ${last.reps} ${unit}`
+        : last && lastLog
+          ? `Préc. ${lastLog.sets.filter((x) => x.done).length}×${Math.max(...lastLog.sets.filter((x) => x.done).map((x) => num(x.r)))} ${unit}`
           : null
 
   return (
@@ -111,9 +127,13 @@ export function ExerciseCard({ ex, index, date, defaultOpen = false }: { ex: Exe
           <span className="min-w-0 flex-1">
             <span className={`block truncate text-[14px] font-semibold tracking-tight ${done ? 'text-slate-300' : 'text-fg'}`}>{ex.name}</span>
             <span className="mt-1 flex items-center gap-1.5 overflow-hidden whitespace-nowrap text-[11px] text-muted">
-              <span className={`rounded-md px-1.5 py-px text-[10px] font-medium ${TAG_META[primary].cls}`}>
-                {TAG_META[primary].emoji} {TAG_META[primary].label}
-              </span>
+              {ex.badge ? (
+                <span className="max-w-[110px] truncate rounded-md bg-ember/10 px-1.5 py-px text-[10px] font-medium text-orange-300">✦ {ex.badge}</span>
+              ) : primary ? (
+                <span className={`rounded-md px-1.5 py-px text-[10px] font-medium ${TAG_META[primary].cls}`}>
+                  {TAG_META[primary].emoji} {TAG_META[primary].label}
+                </span>
+              ) : null}
               {done ? (
                 <span className="fade-up truncate font-medium text-emerald-400">
                   ✓ Complété
@@ -132,6 +152,34 @@ export function ExerciseCard({ ex, index, date, defaultOpen = false }: { ex: Exe
             </span>
           </span>
         </button>
+        {confirmDelete && sessionId ? (
+          <span className="fade-up flex shrink-0 items-center gap-1 text-[11px]">
+            <span className="text-slate-400">Supprimer ?</span>
+            <button
+              type="button"
+              onClick={() => {
+                navigator.vibrate?.(20)
+                removeCustom(sessionId, ex.id)
+                touch()
+              }}
+              className="h-9 rounded-lg bg-red-500/15 px-2.5 font-semibold text-red-300"
+            >
+              Oui
+            </button>
+            <button type="button" onClick={() => setConfirmDelete(false)} className="h-9 rounded-lg bg-chip px-2.5 text-slate-300">
+              Non
+            </button>
+          </span>
+        ) : ex.custom && sessionId ? (
+          <button
+            type="button"
+            onClick={() => setConfirmDelete(true)}
+            aria-label="Supprimer l’exercice personnalisé"
+            className="grid h-11 w-8 shrink-0 place-items-center text-slate-600 transition hover:text-red-400"
+          >
+            <Trash2 className="h-3.5 w-3.5" />
+          </button>
+        ) : null}
         {!done && ex.mode !== 'treadmill' && doneSets.length > 0 && (
           <span className="font-mono text-[11px] text-ember">
             {doneSets.length}/{sets.length}
@@ -139,6 +187,7 @@ export function ExerciseCard({ ex, index, date, defaultOpen = false }: { ex: Exe
         )}
         <button
           type="button"
+          id={`check-${tid}`}
           onClick={toggleDone}
           aria-pressed={done}
           aria-label={done ? 'Marquer non terminé' : 'Marquer terminé'}
@@ -167,11 +216,11 @@ export function ExerciseCard({ ex, index, date, defaultOpen = false }: { ex: Exe
                 <Spec icon={Layers}>{ex.sets} Série{ex.sets > 1 ? 's' : ''}</Spec>
                 <Spec icon={Repeat}>{ex.reps}</Spec>
                 {ex.rest > 0 && <Spec icon={Timer}>{restLabel(ex.rest)} Repos</Spec>}
-                <Spec icon={Dumbbell}>{ex.equipment}</Spec>
+                {ex.equipment && <Spec icon={Dumbbell}>{ex.equipment}</Spec>}
                 {ex.tempo && <Spec icon={Gauge}>{ex.tempo}</Spec>}
               </div>
 
-              <FigurePlayer id={ex.animation} active={open} />
+              {ex.animation && <FigurePlayer id={ex.animation} active={open} />}
 
               {(pr > 0 || newPr) && (
                 <p className="flex items-center gap-1.5 text-[11px] text-slate-400">
@@ -183,9 +232,12 @@ export function ExerciseCard({ ex, index, date, defaultOpen = false }: { ex: Exe
 
               {/* Conseils — atténués une fois l'exercice complété */}
               <div className={`space-y-2 transition-opacity duration-200 ${done ? 'opacity-50' : ''}`}>
-                <Tip color="border-ember/60" title="⚡ Cue" titleCls="text-orange-300">
-                  {ex.cue}
-                </Tip>
+                {ex.cue && (
+                  <Tip color="border-ember/60" title={ex.custom ? '⚡ Consigne' : '⚡ Cue'} titleCls="text-orange-300">
+                    {ex.cue}
+                  </Tip>
+                )}
+                {ex.kneeAnkle && (
                 <Tip
                   color={tipKind === 'ankle' ? 'border-iris/70' : 'border-glacier/70'}
                   title={tipKind === 'ankle' ? '⚓ Conseil Cheville' : '🩹 Conseil Genou'}
@@ -193,7 +245,8 @@ export function ExerciseCard({ ex, index, date, defaultOpen = false }: { ex: Exe
                 >
                   {ex.kneeAnkle}
                 </Tip>
-                {!done && (
+                )}
+                {!done && ex.steps.length > 0 && (
                   <ol className="space-y-1 pl-0.5 text-[12px] leading-snug text-muted">
                     {ex.steps.map((s, i) => (
                       <li key={i} className="flex gap-2">
@@ -246,6 +299,7 @@ export function ExerciseCard({ ex, index, date, defaultOpen = false }: { ex: Exe
 
                     <div className="grid grid-cols-2 gap-2">
                       <Stepper
+                        id={`log-${tid}-weight`}
                         label="Poids · lbs"
                         value={curSet.w}
                         placeholder={hintW(cur) || (ex.bodyweight ? 'PDC' : '0')}
@@ -255,6 +309,7 @@ export function ExerciseCard({ ex, index, date, defaultOpen = false }: { ex: Exe
                         done={curSet.done}
                       />
                       <Stepper
+                        id={`log-${tid}-reps`}
                         label={ex.mode === 'timed' ? 'Durée · s' : ex.perSide ? 'Reps · /côté' : 'Reps'}
                         value={curSet.r}
                         placeholder={hintR(cur)}
@@ -291,6 +346,7 @@ export function ExerciseCard({ ex, index, date, defaultOpen = false }: { ex: Exe
                   </>
                 )}
                 <textarea
+                  id={`log-${tid}-note`}
                   value={log.note ?? ''}
                   onChange={(e) => write((l) => ({ ...l, sets: l.sets.length ? l.sets : sets, note: e.target.value }))}
                   placeholder="Notes · sensations genou / cheville, réglage machine…"
@@ -326,6 +382,7 @@ function Tip({ color, title, titleCls, children }: { color: string; title: strin
 
 /** Champ numérique compact avec −/+ (cibles tactiles ≥ 44 px). */
 function Stepper({
+  id,
   label,
   value,
   placeholder,
@@ -336,6 +393,7 @@ function Stepper({
   compact,
   min = 0,
 }: {
+  id?: string
   label: string
   value: string
   placeholder: string
@@ -369,6 +427,7 @@ function Stepper({
           value={value}
           placeholder={placeholder}
           onChange={(e) => onChange(e.target.value.replace(decimal ? /[^\d.,]/g : /[^\d]/g, ''))}
+          id={id}
           aria-label={label}
           className={`h-full w-full min-w-0 bg-transparent text-center font-mono ${compact ? 'text-base' : 'text-lg'} font-semibold text-fg placeholder:text-slate-600 focus:outline-none`}
         />

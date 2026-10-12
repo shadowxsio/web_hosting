@@ -24,6 +24,10 @@ export type AnimationId =
   | 'legPress'
   | 'stepDown'
   | 'powerHike'
+  | 'spanishSquat'
+  | 'nordic'
+  | 'copenhagen'
+  | 'soleusRaise'
 
 type JointName = 'hip' | 'sh' | 'head' | 'k1' | 'a1' | 't1' | 'k2' | 'a2' | 't2' | 'e1' | 'h1' | 'e2' | 'h2'
 
@@ -401,6 +405,70 @@ export const FIGURES: Record<AnimationId, FigureDef> = {
     focus: ['th1', 'sh1', 'glute'],
     duration: 1300,
     label: ['Pas gauche', 'Pas droit'],
+  },
+  spanishSquat: {
+    start: { ...stand, anchor: { joint: 'a1', at: [96, GROUND - 3] }, th1: 88, sh1: 90, th2: 88, sh2: 90, ua1: 10, fa1: 0 },
+    end: { ...stand, anchor: { joint: 'a1', at: [96, GROUND - 3] }, trunk: -82, th1: 14, sh1: 90, th2: 16, sh2: 90, ua1: -2, fa1: -4 },
+    props: (j) => (
+      <g>
+        <Ground />
+        <rect x={172} y={30} width={9} height={GROUND - 30} fill={C.prop} rx={2} />
+        <path
+          d={`M174 ${j.k1[1] - 4} L${j.k1[0] - 5} ${j.k1[1] - 3} L${j.k1[0] - 5} ${j.k1[1] + 5} L174 ${j.k1[1] + 6}`}
+          fill="none"
+          stroke={C.ok}
+          strokeWidth={3}
+          strokeLinejoin="round"
+          opacity={0.85}
+        />
+      </g>
+    ),
+    focus: ['th1'],
+    duration: 3400,
+  },
+  nordic: {
+    start: { anchor: { joint: 'a1', at: [44, GROUND - 6] }, trunk: -90, ua1: 20, fa1: -150, th1: 90, sh1: 180, ft1: 150, th2: 90, sh2: 180, ft2: 150 },
+    end: { anchor: { joint: 'a1', at: [44, GROUND - 6] }, trunk: -22, ua1: 60, fa1: 75, th1: 158, sh1: 180, ft1: 150, th2: 158, sh2: 180, ft2: 150 },
+    props: (j) => (
+      <g>
+        <Ground />
+        <rect x={20} y={GROUND - 3} width={150} height={4} rx={2} fill={C.propLight} />
+        <circle cx={j.a1[0] - 2} cy={j.a1[1] - 10} r={7} fill={C.accent} opacity={0.85} />
+        <line x1={j.a1[0] - 2} y1={j.a1[1] - 10} x2={j.a1[0] - 2} y2={GROUND} stroke={C.prop} strokeWidth={4} />
+      </g>
+    ),
+    focus: ['th1'],
+    duration: 4200,
+  },
+  copenhagen: {
+    start: { anchor: { joint: 'sh', at: [45, 150] }, trunk: -150, ua1: 90, fa1: 0, ua2: 90, fa2: 0, tgt1: [170, 133], bend1: -1, ft1: -10, th2: 8, sh2: 2, ft2: -40 },
+    end: { anchor: { joint: 'sh', at: [45, 150] }, trunk: 172, ua1: 90, fa1: 0, ua2: 90, fa2: 0, tgt1: [170, 133], bend1: -1, ft1: -10, th2: -6, sh2: -6, ft2: -40 },
+    props: () => (
+      <g>
+        <Ground />
+        <rect x={154} y={136} width={42} height={9} rx={3} fill={C.propLight} />
+        <rect x={160} y={145} width={6} height={GROUND - 145} fill={C.prop} />
+        <rect x={184} y={145} width={6} height={GROUND - 145} fill={C.prop} />
+      </g>
+    ),
+    focus: ['th1', 'glute'],
+    duration: 3000,
+  },
+  soleusRaise: {
+    start: { anchor: { joint: 'hip', at: [78, 133] }, trunk: -92, ua1: 60, fa1: 10, tgt1: [119, 173], bend1: -1, ft1: -25, tgt2: [115, 173], bend2: -1, ft2: -25 },
+    end: { anchor: { joint: 'hip', at: [78, 133] }, trunk: -92, ua1: 55, fa1: 5, tgt1: [121, 161], bend1: -1, ft1: 40, tgt2: [117, 161], bend2: -1, ft2: 40 },
+    props: () => (
+      <g>
+        <Ground />
+        <rect x={34} y={138} width={60} height={9} rx={3} fill={C.propLight} />
+        <rect x={40} y={147} width={6} height={GROUND - 147} fill={C.prop} />
+        <rect x={82} y={147} width={6} height={GROUND - 147} fill={C.prop} />
+        <rect x={118} y={170} width={30} height={GROUND - 170} rx={2} fill={C.prop} />
+      </g>
+    ),
+    over: (j) => <Dumbbell at={[(j.hip[0] + j.k1[0]) / 2 + 6, (j.hip[1] + j.k1[1]) / 2 - 6]} />,
+    focus: ['sh1', 'ft1'],
+    duration: 2200,
   },
 }
 

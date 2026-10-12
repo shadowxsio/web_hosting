@@ -6,6 +6,7 @@
  * l'indice « Ton record précédent ».
  */
 import { useSyncExternalStore } from 'react'
+import { getAllCustom, mergeCustom } from './custom'
 
 export interface SetLog {
   w: string // poids (lbs) — string pour garder la saisie telle quelle
@@ -178,11 +179,11 @@ export function treadmillStats(t?: TreadmillLog) {
 export function exportJson(): string {
   const { gist, ...rest } = state
   // Le token GitHub ne quitte jamais l'appareil via un export.
-  return JSON.stringify({ ...rest, gist: { ...gist, token: '' }, exportedAt: new Date().toISOString() }, null, 2)
+  return JSON.stringify({ ...rest, gist: { ...gist, token: '' }, customExercises: getAllCustom(), exportedAt: new Date().toISOString() }, null, 2)
 }
 
 export function importJson(text: string): number {
-  const parsed = JSON.parse(text) as Partial<AppData>
+  const parsed = JSON.parse(text) as Partial<AppData> & { customExercises?: unknown }
   if (!parsed || typeof parsed !== 'object' || typeof parsed.logs !== 'object' || parsed.logs === null) {
     throw new Error('Fichier invalide : champ « logs » manquant.')
   }
@@ -192,6 +193,12 @@ export function importJson(text: string): number {
     if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) continue
     logs[date] = { ...(logs[date] ?? {}), ...day }
   }
+  mergeCustom(parsed.customExercises)
   setData({ ...state, logs })
   return Object.keys(parsed.logs).length
+}
+
+/** Marque les données comme modifiées (déclenche le backup auto). */
+export function touch() {
+  setData(state)
 }
