@@ -1,5 +1,5 @@
 import { ArrowLeft, BookOpen, Check, ImageOff, Info, Library, Loader2, PenLine, Plus, Search, X } from 'lucide-react'
-import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
+import { startTransition, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { LIBRARY_OF_CATALOG } from '../data/demos'
 import { GOAL_LABEL, libraryMeta, type Goal } from '../data/generator'
@@ -150,6 +150,12 @@ function LibraryTab({ session, inSession, onPick }: { session: Session; inSessio
       })
       .sort((a, b) => Number(inSession.has(a.id)) - Number(inSession.has(b.id)) || a.name.localeCompare(b.name, 'fr'))
   }, [q, filter, inSession])
+  // Ouverture rapide : 10 lignes tout de suite, le reste juste après (sans bloquer l'animation).
+  const [limit, setLimit] = useState(10)
+  useEffect(() => {
+    const id = window.setTimeout(() => startTransition(() => setLimit(Infinity)), 260)
+    return () => window.clearTimeout(id)
+  }, [])
 
   return (
     <div>
@@ -174,10 +180,10 @@ function LibraryTab({ session, inSession, onPick }: { session: Session; inSessio
         {list.length} exercice{list.length > 1 ? 's' : ''} {filter ? `· ${FILTER_LABEL(filter).replace(/^\S+\s/, '')}` : 'à fiche complète'}
       </p>
       <ul className="mt-2 space-y-2">
-        {list.map((ex) => {
+        {list.slice(0, limit).map((ex) => {
           const added = inSession.has(ex.id)
           return (
-            <li key={ex.id}>
+            <li key={ex.id} className="cv-row">
               <button
                 type="button"
                 onClick={() => onPick(ex)}
@@ -313,7 +319,7 @@ function CatalogTab({ onPick }: { onPick: (e: CatalogEntry) => void }) {
         {results.map((e) => {
           const full = !!LIBRARY_OF_CATALOG[e.id]
           return (
-            <li key={e.id}>
+            <li key={e.id} className="cv-row">
               <button type="button" onClick={() => onPick(e)} className="b-card flex w-full items-center gap-3 p-2 text-left !shadow-[0_3px_0_var(--color-shadow)] active:translate-y-px">
                 <Thumb src={imgUrl(e.img[0])} />
                 <span className="min-w-0 flex-1">

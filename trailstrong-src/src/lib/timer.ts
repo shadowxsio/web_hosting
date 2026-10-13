@@ -105,7 +105,7 @@ export function useTimer() {
     },
     () => st,
   )
-  // Tick d'affichage (5 Hz) uniquement quand le chrono tourne.
+  // Affichage : un rendu par seconde seulement (la barre de progression est animée en CSS).
   const [, setTick] = useState(0)
   useEffect(() => {
     if (!s.endAt) return
@@ -114,8 +114,9 @@ export function useTimer() {
       if (!st.endAt) return
       const left = (st.endAt - Date.now()) / 1000
       if (left <= 0) return finish()
-      // Tic de plus en plus aigu sur les 5 dernières secondes (3 pour les chronos courts).
       const sec = Math.ceil(left)
+      if (sec === lastSec) return
+      // Tic de plus en plus aigu sur les 5 dernières secondes (3 pour les chronos courts).
       if (sec <= (st.duration > 20 ? 5 : 3) && sec < lastSec && st.duration > 5) sfx.restTick(sec)
       lastSec = sec
       setTick((x) => x + 1)

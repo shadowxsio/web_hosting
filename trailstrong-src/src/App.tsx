@@ -3,9 +3,7 @@ import { Suspense, lazy, useEffect, useMemo, useRef, useState, type ComponentPro
 import { Catalog, type Scope } from './components/Catalog'
 import { SESSION_META } from './components/meta'
 import { LoginScreen } from './components/LoginScreen'
-import { SettingsSheet } from './components/SettingsSheet'
-import { StatsView } from './components/StatsView'
-import { GuidedTour } from './components/GuidedTour'
+import type { SettingsSheet as SettingsSheetType } from './components/SettingsSheet'
 import { TimerBar } from './components/TimerBar'
 import type { FocusTag, Session } from './data/program'
 import { hasValidSession } from './lib/auth'
@@ -16,6 +14,10 @@ import { inSandbox } from './lib/sandbox'
 import { today, updateProfile, useData } from './lib/storage'
 
 const CloudApp = lazy(() => import('./CloudApp'))
+// Écrans secondaires chargés à la demande (démarrage plus léger ; précachés pour le hors-ligne).
+const SettingsSheet = lazy(() => import('./components/SettingsSheet').then((m) => ({ default: m.SettingsSheet })))
+const StatsView = lazy(() => import('./components/StatsView').then((m) => ({ default: m.StatsView })))
+const GuidedTour = lazy(() => import('./components/GuidedTour').then((m) => ({ default: m.GuidedTour })))
 const SandboxApp = lazy(() => import('./SandboxApp'))
 
 export type View = Scope | 'stats'
@@ -70,7 +72,7 @@ function LocalApp() {
   return <Shell onLock={() => setAuth('locked')} />
 }
 
-export function Shell({ onLock, cloud }: { onLock: () => void; cloud?: ComponentProps<typeof SettingsSheet>['cloud'] }) {
+export function Shell({ onLock, cloud }: { onLock: () => void; cloud?: ComponentProps<typeof SettingsSheetType>['cloud'] }) {
   useAutoBackup()
   const program = useProgram()
   const { profile } = useData()
@@ -195,7 +197,9 @@ export function Shell({ onLock, cloud }: { onLock: () => void; cloud?: Component
 
       <main className="mx-auto max-w-6xl px-3 pb-44 md:px-6 md:pb-28">
         {view === 'stats' ? (
-          <StatsView testsOpen={testsOpen} setTestsOpen={setTestsOpen} />
+          <Suspense fallback={null}>
+            <StatsView testsOpen={testsOpen} setTestsOpen={setTestsOpen} />
+          </Suspense>
         ) : (
           <Catalog program={program} scope={view} focus={focus} setFocus={setFocus} query={query} setQuery={setQuery} date={date} setDate={setDate} onTests={openTests} />
         )}
@@ -231,28 +235,30 @@ export function Shell({ onLock, cloud }: { onLock: () => void; cloud?: Component
         </ul>
       </nav>
 
-      {menu && (
-        <SettingsSheet
-          onClose={() => setMenu(false)}
-          onLock={onLock}
-          cloud={cloud}
-          onTour={() => {
-            setMenu(false)
-            setView(TABS[1]?.id ?? 'all')
-            window.setTimeout(() => setTour(true), 400)
-          }}
-          onNavigate={(v, f) => {
-            setView(v)
-            if (f) setFocus(f)
-            setMenu(false)
-          }}
-          onTests={() => {
-            setMenu(false)
-            openTests()
-          }}
-        />
-      )}
-      {tour && <GuidedTour onClose={endTour} />}
+      <Suspense fallback={null}>
+        {menu && (
+          <SettingsSheet
+            onClose={() => setMenu(false)}
+            onLock={onLock}
+            cloud={cloud}
+            onTour={() => {
+              setMenu(false)
+              setView(TABS[1]?.id ?? 'all')
+              window.setTimeout(() => setTour(true), 400)
+            }}
+            onNavigate={(v, f) => {
+              setView(v)
+              if (f) setFocus(f)
+              setMenu(false)
+            }}
+            onTests={() => {
+              setMenu(false)
+              openTests()
+            }}
+          />
+        )}
+        {tour && <GuidedTour onClose={endTour} />}
+      </Suspense>
     </div>
   )
 }

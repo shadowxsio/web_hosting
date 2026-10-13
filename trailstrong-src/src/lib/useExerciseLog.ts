@@ -3,7 +3,7 @@
  * chrono de repos auto. Partagée par la carte du catalogue et le tiroir de détail.
  */
 import type { Exercise } from '../data/program'
-import { asymmetry, previousBest, updateExercise, useData, type ExerciseLog, type SetLog, type Side, type SideLog } from './storage'
+import { asymmetry, previousBest, updateExercise, useExerciseData, type ExerciseLog, type SetLog, type Side, type SideLog } from './storage'
 import { loadSuggestion } from './insights'
 import { timer } from './timer'
 
@@ -20,7 +20,7 @@ export const SWITCH_SECONDS = 10
 const emptySets = (n: number): SetLog[] => Array.from({ length: n }, () => ({ w: '', r: '', done: false }))
 
 export function useExerciseLog(ex: Exercise, date: string) {
-  const data = useData()
+  const data = useExerciseData(ex.id)
   const log: ExerciseLog = data.logs[date]?.[ex.id] ?? { sets: [] }
   const sets = log.sets.length >= ex.sets ? log.sets : [...log.sets, ...emptySets(ex.sets - log.sets.length)]
   const best = previousBest(data, ex.id, date)

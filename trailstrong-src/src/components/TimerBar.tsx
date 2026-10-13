@@ -1,4 +1,5 @@
 import { Pause, Play, RotateCcw, Timer as TimerIcon } from 'lucide-react'
+import { useMemo } from 'react'
 import { timer, useTimer } from '../lib/timer'
 
 export const fmt = (s: number) => {
@@ -12,6 +13,11 @@ export function TimerBar() {
   const pct = t.duration > 0 ? Math.min(1, t.left / t.duration) : 0
   const finished = t.finishedAt != null
   const active = t.running || t.pausedLeft != null
+  // Barre animée par le navigateur (aucun rendu React pendant le repos) : calée sur la fin prévue.
+  const drain = useMemo(
+    () => (t.endAt && t.duration > 0 ? { animation: `timer-drain ${t.duration}s linear ${-(t.duration - (t.endAt - Date.now()) / 1000)}s forwards` } : null),
+    [t.endAt, t.duration],
+  )
 
   return (
     <>
@@ -76,9 +82,13 @@ export function TimerBar() {
             {t.running ? <Pause className="h-4 w-4" fill="currentColor" /> : <Play className="ml-0.5 h-4 w-4" fill="currentColor" />}
           </button>
 
-          {/* Progression 2 px */}
-          <span className="absolute inset-x-0 bottom-0 h-[3px] bg-ink/10">
-            <span className={`block h-full transition-[width] duration-200 ease-linear ${finished ? 'bg-leaf' : 'bg-flame'}`} style={{ width: `${(finished ? 1 : active ? pct : 0) * 100}%` }} />
+          {/* Progression 3 px */}
+          <span className="absolute inset-x-0 bottom-0 h-[3px] overflow-hidden bg-ink/10">
+            <span
+              key={t.endAt ?? 'still'}
+              className={`block h-full origin-left will-change-transform ${finished ? 'bg-leaf' : 'bg-flame'}`}
+              style={drain ?? { transform: `scaleX(${finished ? 1 : active ? pct : 0})` }}
+            />
           </span>
         </div>
       </div>

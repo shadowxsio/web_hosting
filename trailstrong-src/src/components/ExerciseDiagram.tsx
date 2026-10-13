@@ -3,7 +3,7 @@
  * position finale, position de départ en pointillés, flèches de mouvement
  * (orange = hanche / tronc, cyan = genou / cheville). Aucune animation.
  */
-import type { ReactNode } from 'react'
+import { memo, type ReactNode } from 'react'
 import { FIGURES, solve, type AnimationId, type FigureDef, type JointName, type Joints } from './diagram-base'
 
 type Vec = [number, number]
@@ -146,7 +146,8 @@ function Arrows({ s, e, def }: { s: Joints; e: Joints; def: FigureDef }) {
   return <g>{out}</g>
 }
 
-export function ExerciseDiagram({ id }: { id: AnimationId }) {
+/** Mémoïsé : un schéma ne dépend que de son id (listes de 55 schémas). */
+export const ExerciseDiagram = memo(function ExerciseDiagram({ id }: { id: AnimationId }) {
   const def = FIGURES[id]
   const s = solve(def.start)
   const e = solve(def.end)
@@ -159,4 +160,4 @@ export function ExerciseDiagram({ id }: { id: AnimationId }) {
       <Arrows s={s} e={e} def={def} />
     </svg>
   )
-}
+})
