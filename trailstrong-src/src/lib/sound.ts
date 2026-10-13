@@ -1,18 +1,20 @@
 /**
  * Sons de l'app (Web Audio) + voix optionnelle (synthèse vocale).
  *
- * iPhone : le bouton « silencieux » coupe le son Web Audio sur le haut-parleur
- * (les écouteurs, eux, jouent toujours). Avec « Haut-parleur forcé », on passe
- * la session audio en mode lecture (`navigator.audioSession`, iOS 17+) — ou, à
- * défaut, on joue une boucle de silence via un <audio> — pour que les bips
- * sortent même en mode silencieux. Contrepartie : ça peut mettre en pause la
- * musique d'une autre app.
+ * Deux sorties possibles sur iPhone :
+ *   - « Par-dessus YouTube / musique » (défaut) : session audio `ambient`, les bips
+ *     se mélangent à l'autre app. Le bouton silencieux les coupe sur le
+ *     haut-parleur (pas dans les écouteurs).
+ *   - « Haut-parleur forcé » : session `playback` (`navigator.audioSession`,
+ *     iOS 17+, sinon boucle de silence via un <audio>) → bips même en mode
+ *     silencieux, mais iOS met en pause la vidéo / musique de l'autre app.
  */
 import { useSyncExternalStore } from 'react'
 
 export type SoundMode = 'voice' | 'beep' | 'off'
 interface SoundPrefs {
   mode: SoundMode
+  /** true = haut-parleur forcé (coupe l'autre app) ; false = mélange avec YouTube / musique. */
   speaker: boolean
 }
 
@@ -21,10 +23,12 @@ const read = (): SoundPrefs => {
   try {
     const raw = JSON.parse(localStorage.getItem(KEY) ?? '{}') as Partial<SoundPrefs> & { v?: number }
     // v2 : la voix coupait les bips sur iPhone → bips par défaut (la voix reste au choix).
-    if (raw.v !== 2) raw.mode = 'beep'
-    return { mode: 'beep', speaker: true, ...raw }
+    if (!raw.v || raw.v < 2) raw.mode = 'beep'
+    // v3 : mélange avec YouTube / musique par défaut.
+    if (!raw.v || raw.v < 3) raw.speaker = false
+    return { mode: 'beep', speaker: false, ...raw }
   } catch {
-    return { mode: 'beep', speaker: true }
+    return { mode: 'beep', speaker: false }
   }
 }
 
@@ -32,7 +36,7 @@ let prefs = read()
 const ls = new Set<() => void>()
 export function setSoundPrefs(p: Partial<SoundPrefs>) {
   prefs = { ...prefs, ...p }
-  localStorage.setItem(KEY, JSON.stringify({ ...prefs, v: 2 }))
+  localStorage.setItem(KEY, JSON.stringify({ ...prefs, v: 3 }))
   ls.forEach((l) => l())
   unlockAudio()
 }
@@ -56,7 +60,7 @@ export function unlockAudio() {
   try {
     const nav = navigator as AudioSessionNav
     if (nav.audioSession) {
-      const want = prefs.speaker ? 'playback' : 'auto'
+      const want = prefs.speaker ? 'playback' : 'ambient'
       if (nav.audioSession.type !== want) nav.audioSession.type = want
     } else if (prefs.speaker && /iPhone|iPad|iPod/.test(navigator.userAgent)) {
       silentLoop ??= Object.assign(new Audio('./silence.wav'), { loop: true, preload: 'auto' })

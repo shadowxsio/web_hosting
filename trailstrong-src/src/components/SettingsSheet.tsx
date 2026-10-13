@@ -166,20 +166,27 @@ export function SettingsSheet({
               </button>
             ))}
           </div>
-          <label className="mt-2 flex items-start gap-3 border-2 border-ink bg-paper px-3 py-2.5">
-            <input
-              type="checkbox"
-              checked={sound.speaker}
-              onChange={(e) => setSoundPrefs({ speaker: e.target.checked })}
-              className="mt-0.5 h-5 w-5 shrink-0 accent-[var(--color-flame)]"
-            />
-            <span className="text-[13px] font-bold leading-snug">
-              Haut-parleur même en mode silencieux
-              <span className="block text-[12px] font-semibold text-ink/65">
-                iPhone : sans ça, le bouton silencieux coupe les bips (sauf écouteurs). Peut mettre ta musique en pause : décoche si tu t’entraînes avec tes écouteurs.
-              </span>
-            </span>
-          </label>
+          <p className="label mb-1 mt-3">Sortie du son</p>
+          <div className="grid gap-2" role="radiogroup" aria-label="Sortie du son">
+            {(
+              [
+                [false, '🎧 Par-dessus YouTube / musique', 'Les bips se mélangent à ta vidéo. En mode silencieux, ils ne sortent que dans les écouteurs.'],
+                [true, '🔊 Haut-parleur forcé', 'Bips même en mode silencieux, mais l’iPhone met YouTube / la musique en pause.'],
+              ] as const
+            ).map(([v, label, hint]) => (
+              <button
+                key={label}
+                type="button"
+                role="radio"
+                aria-checked={sound.speaker === v}
+                onClick={() => setSoundPrefs({ speaker: v })}
+                className={`b-btn px-3 py-2 text-left ${sound.speaker === v ? 'b-btn-ink' : ''}`}
+              >
+                <span className="block text-[13px] font-black uppercase italic">{label}</span>
+                <span className={`block text-[12px] font-semibold normal-case not-italic leading-snug ${sound.speaker === v ? 'opacity-80' : 'text-ink/65'}`}>{hint}</span>
+              </button>
+            ))}
+          </div>
           <button
             type="button"
             onClick={() => {
