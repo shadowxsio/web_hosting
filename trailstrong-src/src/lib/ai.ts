@@ -85,6 +85,8 @@ export const DIAGRAMS: Record<AnimationId, string> = {
   figure4: 'étirement des fessiers couché en « figure 4 » (cheville sur le genou)',
   kneeToWall: 'mobilité de cheville genou au mur, en fente',
   soleusStretch: 'étirement du soléaire contre un mur, genou arrière fléchi',
+  bodySquat: 'squat au poids du corps, bras tendus devant',
+  singleCalfWeighted: 'montée sur pointe une jambe avec haltère, main au mur',
 }
 
 /** Profil de l'utilisateur pour le prompt (questionnaire), sinon profil du programme de base. */

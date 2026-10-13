@@ -53,7 +53,7 @@ export const EXTRAS: Exercise[] = [
     ],
     mode: 'strength',
     bodyweight: true,
-    diagram: 'squat',
+    diagram: 'bodySquat',
     cadence: [P('Descends', 3, 'back'), P('Monte', 1, 'go')],
   },
   {

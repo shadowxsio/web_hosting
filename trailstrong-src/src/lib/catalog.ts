@@ -235,6 +235,7 @@ const RULES: [RegExp, AnimationId][] = [
   [/wall sit/, 'wallSit'],
   [/spanish/, 'spanishSquat'],
   [/jump|hop|bound|skater|plyo/, 'jump'],
+  [/bodyweight squat|air squat|freehand squat/, 'bodySquat'],
   [/squat|thruster/, 'squat'],
   [/copenhagen|adduct/, 'copenhagen'],
   [/side plank|side bridge/, 'sidePlank'],
