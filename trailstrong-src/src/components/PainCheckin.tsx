@@ -25,11 +25,11 @@ export function PainCheckin({ date }: { date: string }) {
         onClick={() => setOpen(true)}
         className="b-btn mt-4 flex min-h-11 w-full flex-wrap items-center gap-x-3 gap-y-1 px-3 py-2 text-left text-[13px]"
       >
-        <span className="uppercase italic">Douleur du jour</span>
+        <span className="uppercase tracking-wide">Douleur du jour</span>
         {JOINTS.map((j) => {
           const v = dayPain(c, j.id)
           return (
-            <span key={j.id} className={`border-2 border-ink px-1.5 text-[12px] font-black ${v === undefined ? 'bg-paper' : scaleBg(v)}`}>
+            <span key={j.id} className={`border-2 border-ink px-1.5 text-[12px] font-black rounded-xl ${v === undefined ? 'bg-paper' : scaleBg(v)}`}>
               {j.emoji} {v === undefined ? '–' : `${v}/10`}
             </span>
           )
@@ -38,7 +38,7 @@ export function PainCheckin({ date }: { date: string }) {
       </button>
 
       {alerts.map((a) => (
-        <p key={a.joint} className="mt-3 flex items-start gap-2 border-2 border-ink bg-rose px-3 py-2 text-[13px] font-bold leading-snug" role="alert">
+        <p key={a.joint} className="mt-3 flex items-start gap-2 border-2 border-ink bg-rose px-3 py-2 text-[13px] font-bold leading-snug rounded-xl" role="alert">
           <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" strokeWidth={2.5} />
           <span>
             Attention : {a.reason}. Garde les charges actuelles, privilégie le contrôle (tempo lent, isométrie) et parles-en à un physio si ça persiste.
@@ -58,7 +58,7 @@ function PainSheet({ date, value, onClose }: { date: string; value: Checkin; onC
   return createPortal(
     <div className="fade-in fixed inset-0 z-50 flex items-end justify-center bg-ink/40 md:items-center" onClick={onClose}>
       <div
-        className="sheet pb-safe w-full max-w-xl border-[2.5px] border-b-0 border-ink bg-paper-2 px-4 pt-4 md:border-b-[2.5px]"
+        className="sheet pb-safe w-full max-w-xl border-[2.5px] border-b-0 border-ink bg-paper-2 px-4 pt-4 md:border-b-[2.5px] rounded-t-[26px] md:rounded-none md:rounded-l-[26px]"
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-label="Check-in douleur"
@@ -85,7 +85,7 @@ function PainSheet({ date, value, onClose }: { date: string; value: Checkin; onC
               role="radio"
               aria-checked={moment === m}
               onClick={() => setMoment(m)}
-              className={`b-btn h-11 text-[13px] uppercase italic ${moment === m ? 'b-btn-ink' : ''}`}
+              className={`b-btn h-11 text-[13px] uppercase tracking-wide ${moment === m ? 'b-btn-ink' : ''}`}
             >
               {label}
             </button>
@@ -96,7 +96,7 @@ function PainSheet({ date, value, onClose }: { date: string; value: Checkin; onC
           const cur = value[key(j.id)]
           return (
             <section key={j.id} className="mt-5">
-              <p className="mb-2 text-[15px] font-black uppercase italic">
+              <p className="mb-2 text-[15px] font-black uppercase tracking-wide">
                 {j.emoji} {j.label} <span className="text-ink/60">· {cur === undefined ? 'non noté' : `${cur}/10`}</span>
               </p>
               <div className="grid grid-cols-11 gap-1">
@@ -110,8 +110,8 @@ function PainSheet({ date, value, onClose }: { date: string; value: Checkin; onC
                       navigator.vibrate?.(8)
                       updateCheckin(date, { [key(j.id)]: v })
                     }}
-                    className={`grid h-11 place-items-center border-2 border-ink text-[14px] font-black italic transition duration-100 active:translate-y-px ${
-                      cur === v ? `${scaleBg(v)} -translate-y-0.5 shadow-[2px_2px_0_var(--color-shadow)]` : 'bg-paper'
+                    className={`grid h-11 place-items-center border-2 border-ink text-[14px] font-black italic transition duration-100 active:translate-y-px rounded-xl ${
+                      cur === v ? `${scaleBg(v)} -translate-y-0.5 shadow-[0_2px_0_var(--color-shadow)]` : 'bg-paper'
                     }`}
                   >
                     {v}
@@ -122,7 +122,7 @@ function PainSheet({ date, value, onClose }: { date: string; value: Checkin; onC
           )
         })}
 
-        <button type="button" onClick={onClose} className="b-btn mb-6 mt-6 h-12 w-full bg-sun text-[14px] uppercase italic">
+        <button type="button" onClick={onClose} className="b-btn mb-6 mt-6 h-12 w-full bg-sun text-[14px] uppercase tracking-wide">
           Enregistrer
         </button>
       </div>

@@ -73,10 +73,10 @@ export default function CloudApp() {
   if (phase === 'error')
     return (
       <Splash text={`Impossible d’ouvrir ton compte : ${error}`}>
-        <button type="button" onClick={() => location.reload()} className="b-btn mt-4 h-12 w-full bg-sun uppercase italic">
+        <button type="button" onClick={() => location.reload()} className="b-btn mt-4 h-12 w-full bg-sun uppercase tracking-wide">
           Réessayer
         </button>
-        <button type="button" onClick={() => void signOutAll()} className="b-btn mt-2 h-11 w-full uppercase italic">
+        <button type="button" onClick={() => void signOutAll()} className="b-btn mt-2 h-11 w-full uppercase tracking-wide">
           Se déconnecter
         </button>
       </Splash>
@@ -109,7 +109,7 @@ export default function CloudApp() {
             await startSync(user, doc, { fresh: true })
             setPhase('ready')
           }}
-          className="b-btn mt-5 h-12 w-full bg-mint text-[14px] uppercase italic"
+          className="b-btn mt-5 h-12 w-full bg-mint text-[14px] uppercase tracking-wide"
         >
           Importer mes données
         </button>
@@ -121,7 +121,7 @@ export default function CloudApp() {
             await startSync(user, doc)
             setPhase('onboard')
           }}
-          className="b-btn mt-2 h-12 w-full text-[13px] uppercase italic"
+          className="b-btn mt-2 h-12 w-full text-[13px] uppercase tracking-wide"
         >
           Non, nouveau départ
         </button>
@@ -171,13 +171,11 @@ export default function CloudApp() {
 function Splash({ text, children }: { text: string; children?: ReactNode }) {
   return (
     <div className="hero pt-safe pb-safe flex min-h-dvh flex-col items-center justify-center !border-0 px-5">
-      <div className="mb-7 -rotate-2 border-[2.5px] border-ink bg-paper p-1 shadow-[5px_5px_0_var(--color-shadow)]">
-        <span className="block border-2 border-dashed border-ink px-4 py-2">
-          <span className="headline block text-[30px]">TrailStrong</span>
-        </span>
-      </div>
+      <div className="mb-7 -rotate-2 logo-patch text-[28px]">
+          <span>TrailStrong</span>
+        </div>
       <div className="b-card w-full max-w-[380px] p-5">
-        <p className="text-[16px] font-black uppercase italic leading-snug">{text}</p>
+        <p className="text-[16px] font-black uppercase tracking-wide leading-snug">{text}</p>
         {children}
       </div>
     </div>

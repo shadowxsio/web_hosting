@@ -6,7 +6,7 @@ export function DiagramGallery() {
   return (
     <div className="grid grid-cols-4 gap-3 p-3">
       {(Object.keys(FIGURES) as AnimationId[]).map((id) => (
-        <div key={id} className="b-card hero !border-[2.5px] p-1">
+        <div key={id} className="b-card diagram-bg p-1">
           <p className="px-1 text-[10px] font-bold">{id}</p>
           <div className="aspect-square">
             <ExerciseDiagram id={id} />

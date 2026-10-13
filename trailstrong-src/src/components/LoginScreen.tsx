@@ -56,17 +56,15 @@ export function LoginScreen({ onUnlock, onGoogleToken }: { onUnlock: () => void;
 
   return (
     <div className="hero pt-safe pb-safe flex min-h-dvh flex-col items-center justify-center !border-0 px-5">
-      <div className="mb-7 -rotate-2 border-[2.5px] border-ink bg-paper p-1 shadow-[5px_5px_0_var(--color-shadow)]">
-        <span className="block border-2 border-dashed border-ink px-4 py-2">
-          <span className="headline block text-[30px]">TrailStrong</span>
-        </span>
-      </div>
+      <div className="mb-7 -rotate-2 logo-patch text-[28px]">
+          <span>TrailStrong</span>
+        </div>
 
       <div className="b-card w-full max-w-[360px] p-5">
         <span className="tag h-7 -rotate-1 bg-sun px-2 text-[11px]">
           <Lock className="mr-1 h-3 w-3" strokeWidth={3} /> {cloud ? 'Ton espace' : 'Accès privé'}
         </span>
-        <h1 className="headline mt-5 text-[26px] [text-shadow:2px_2px_0_#f0773a]">{cloud ? 'Bienvenue !' : 'Bon retour !'}</h1>
+        <h1 className="headline mt-5 text-[26px]">{cloud ? 'Bienvenue !' : 'Bon retour !'}</h1>
         <p className="mt-1 text-[14px] font-semibold text-ink/75">
           {cloud ? 'Connecte-toi avec ton compte Google : ton programme et tes données te suivent sur tous tes appareils.' : 'Connecte-toi avec ton compte Google autorisé.'}
         </p>
@@ -82,7 +80,7 @@ export function LoginScreen({ onUnlock, onGoogleToken }: { onUnlock: () => void;
         </div>
         {status === 'verifying' && <p className="mt-3 text-center text-[13px] font-bold">Vérification du compte…</p>}
         {error && (
-          <p className="mt-3 border-2 border-ink bg-rose px-3 py-2 text-[12px] font-bold" role="alert">
+          <p className="mt-3 border-2 border-ink bg-rose px-3 py-2 text-[12px] font-bold rounded-xl" role="alert">
             {error}
           </p>
         )}
@@ -92,7 +90,7 @@ export function LoginScreen({ onUnlock, onGoogleToken }: { onUnlock: () => void;
         </p>
 
         {!cloud && (
-          <button type="button" onClick={() => setPinMode(true)} className="b-btn mt-4 flex h-11 w-full items-center justify-center gap-2 text-[13px] uppercase italic">
+          <button type="button" onClick={() => setPinMode(true)} className="b-btn mt-4 flex h-11 w-full items-center justify-center gap-2 text-[13px] uppercase tracking-wide">
             <KeyRound className="h-4 w-4" strokeWidth={2.5} /> Accès admin (PIN)
           </button>
         )}

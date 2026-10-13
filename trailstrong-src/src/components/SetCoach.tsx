@@ -243,7 +243,7 @@ export function SetCoach({ name, cadence, sides, target, setLabel, rest, onSideD
             setSoundPrefs({ mode: MODE_NEXT[prefs.mode] })
             if (MODE_NEXT[prefs.mode] !== 'off') window.setTimeout(sfx.tick, 60)
           }}
-          className="b-btn flex h-10 shrink-0 items-center gap-1.5 px-2.5 text-[11px] uppercase italic"
+          className="b-btn flex h-10 shrink-0 items-center gap-1.5 px-2.5 text-[11px] uppercase tracking-wide"
           aria-label={`Son : ${M.label} (toucher pour changer)`}
         >
           <M.Icon className="h-4 w-4" strokeWidth={2.5} /> {M.label}
@@ -262,13 +262,13 @@ export function SetCoach({ name, cadence, sides, target, setLabel, rest, onSideD
       </header>
 
       <main className={`flex flex-1 flex-col items-center justify-center px-5 text-center transition-colors duration-200 ${bg}`}>
-        <p className="headline text-[44px] leading-none [text-shadow:3px_3px_0_#f0773a] min-[400px]:text-[52px]" aria-live="polite">
+        <p className="headline text-[44px] leading-none min-[400px]:text-[52px]" aria-live="polite">
           {title}
         </p>
         <p className="mt-2 font-mono text-[120px] font-black leading-none tabular-nums text-ink min-[400px]:text-[150px]" role="timer">
           {big}
         </p>
-        <p className="mt-2 text-[18px] font-black uppercase italic">{sub}</p>
+        <p className="mt-2 text-[18px] font-black uppercase tracking-wide">{sub}</p>
 
         {cadence && (
           <ol className="mt-6 flex w-full max-w-sm gap-1.5" aria-label="Tempo d’une répétition">
@@ -276,8 +276,8 @@ export function SetCoach({ name, cadence, sides, target, setLabel, rest, onSideD
               <li
                 key={i}
                 style={{ flexGrow: p.s }}
-                className={`basis-0 border-2 border-ink px-1 py-1.5 text-[11px] font-extrabold uppercase transition-transform duration-150 ${BG[p.kind]} ${
-                  i === phaseIdx ? '-translate-y-1 shadow-[3px_3px_0_var(--color-shadow)]' : 'opacity-60'
+                className={`basis-0 border-2 border-ink px-1 py-1.5 text-[11px] font-extrabold uppercase transition-transform duration-150 rounded-xl ${BG[p.kind]} ${
+                  i === phaseIdx ? '-translate-y-1 shadow-[0_3px_0_var(--color-shadow)]' : 'opacity-60'
                 }`}
               >
                 {p.label}
@@ -297,7 +297,7 @@ export function SetCoach({ name, cadence, sides, target, setLabel, rest, onSideD
           type="button"
           onClick={togglePause}
           disabled={e.stage === 'end'}
-          className="b-btn flex h-14 flex-1 items-center justify-center gap-2 text-[15px] uppercase italic disabled:opacity-40"
+          className="b-btn flex h-14 flex-1 items-center justify-center gap-2 text-[15px] uppercase tracking-wide disabled:opacity-40"
         >
           {paused ? <Play className="h-5 w-5" fill="currentColor" /> : <Pause className="h-5 w-5" fill="currentColor" />}
           {paused ? 'Reprendre' : 'Pause'}
@@ -306,7 +306,7 @@ export function SetCoach({ name, cadence, sides, target, setLabel, rest, onSideD
           type="button"
           onClick={stopNow}
           disabled={e.stage !== 'work'}
-          className="b-btn flex h-14 flex-[1.4] items-center justify-center gap-2 bg-flame text-[15px] uppercase italic disabled:opacity-40"
+          className="b-btn flex h-14 flex-[1.4] items-center justify-center gap-2 bg-flame text-[15px] uppercase tracking-wide disabled:opacity-40"
         >
           <Check className="h-5 w-5" strokeWidth={3} /> {sides.length > 1 && e.sideIdx === 0 ? 'Fini · jambe suivante' : 'Terminer'}
         </button>

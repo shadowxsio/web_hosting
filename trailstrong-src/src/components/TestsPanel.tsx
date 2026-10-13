@@ -20,7 +20,7 @@ export function TestsPanel({ open, setOpen }: { open: boolean; setOpen: (o: bool
     <div id="tests" className="b-card scroll-mt-4 p-4">
       <div className="flex items-start justify-between gap-2">
         <div>
-          <h3 className="text-[16px] font-black uppercase italic tracking-tight">🧪 Tests mensuels</h3>
+          <h3 className="text-[16px] font-black uppercase tracking-wide tracking-tight">🧪 Tests mensuels</h3>
           <p className="mt-1 text-[12px] font-semibold text-ink/70">
             {last ? `Dernier test : ${fr(last)} · ` : ''}
             {due <= 0 ? 'à faire maintenant' : `prochain dans ${due} j`} (toutes les {TEST_INTERVAL_DAYS / 7} semaines)
@@ -33,7 +33,7 @@ export function TestsPanel({ open, setOpen }: { open: boolean; setOpen: (o: bool
           const v = last ? jointScore(data, last, j) : undefined
           const prev = dates.length > 1 ? jointScore(data, dates[dates.length - 2], j) : undefined
           return (
-            <div key={j} className={`border-[2.5px] border-ink p-3 shadow-[3px_3px_0_var(--color-shadow)] ${scoreBg(v)}`}>
+            <div key={j} className={`border-[2.5px] border-ink p-3 shadow-[0_3px_0_var(--color-shadow)] rounded-xl ${scoreBg(v)}`}>
               <p className="text-[10px] font-extrabold uppercase tracking-[0.08em]">Score {j === 'ankle' ? 'cheville ⚓' : 'genou 🩹'}</p>
               <p className="text-[30px] font-black italic leading-none">{v ?? '–'}<span className="text-[14px]">/100</span></p>
               {v !== undefined && prev !== undefined && (
@@ -48,7 +48,7 @@ export function TestsPanel({ open, setOpen }: { open: boolean; setOpen: (o: bool
       </div>
 
       {last && (
-        <ul className="mt-4 divide-y-2 divide-ink/15 border-2 border-ink">
+        <ul className="mt-4 divide-y-2 divide-ink/15 border-2 border-ink rounded-xl">
           {MONTHLY_TESTS.map((t) => {
             const r = data.tests[last][t.id]
             const a = testAsym(r)
@@ -58,14 +58,14 @@ export function TestsPanel({ open, setOpen }: { open: boolean; setOpen: (o: bool
                 <span className="font-black italic">
                   G {r?.L ?? '–'} · D {r?.R ?? '–'} <span className="text-[11px] font-bold text-ink/60">{t.unit}</span>
                 </span>
-                {a !== undefined && Math.abs(a) >= 10 && <span className="border-2 border-ink bg-sun px-1 text-[10px] font-black">{a > 0 ? 'D' : 'G'} +{Math.abs(a)} %</span>}
+                {a !== undefined && Math.abs(a) >= 10 && <span className="border-2 border-ink bg-sun px-1 text-[10px] font-black rounded-xl">{a > 0 ? 'D' : 'G'} +{Math.abs(a)} %</span>}
               </li>
             )
           })}
         </ul>
       )}
 
-      <button type="button" onClick={() => setOpen(true)} className="b-btn mt-4 flex h-12 w-full items-center justify-center gap-2 bg-sun text-[14px] uppercase italic">
+      <button type="button" onClick={() => setOpen(true)} className="b-btn mt-4 flex h-12 w-full items-center justify-center gap-2 bg-sun text-[14px] uppercase tracking-wide">
         <FlaskConical className="h-4 w-4" /> {data.tests[today()] ? 'Reprendre le test du jour' : 'Faire le test du mois'}
       </button>
 
@@ -82,7 +82,7 @@ function TestSheet({ onClose }: { onClose: () => void }) {
   return createPortal(
     <div className="fade-in fixed inset-0 z-50 flex items-end justify-center bg-ink/40 md:items-stretch md:justify-end" onClick={onClose}>
       <div
-        className="sheet pb-safe max-h-[92dvh] w-full max-w-xl overflow-y-auto border-[2.5px] border-b-0 border-ink bg-paper-2 px-4 pt-4 md:max-h-none md:w-[480px] md:border-b-[2.5px] md:border-r-0"
+        className="sheet pb-safe max-h-[92dvh] w-full max-w-xl overflow-y-auto border-[2.5px] border-b-0 border-ink bg-paper-2 px-4 pt-4 md:max-h-none md:w-[480px] md:border-b-[2.5px] md:border-r-0 rounded-t-[26px] md:rounded-none md:rounded-l-[26px]"
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-label="Test mensuel"
@@ -105,7 +105,7 @@ function TestSheet({ onClose }: { onClose: () => void }) {
               <p className={`tag h-6 px-2 text-[10px] ${t.joint === 'ankle' ? 'bg-lilac' : 'bg-sky'}`}>
                 Test {n + 1} · {t.joint === 'ankle' ? 'cheville' : 'genou'}
               </p>
-              <h3 className="mt-2 text-[17px] font-black uppercase italic leading-tight">{t.name}</h3>
+              <h3 className="mt-2 text-[17px] font-black uppercase tracking-wide leading-tight">{t.name}</h3>
               <p className="mt-1 text-[12px] font-semibold text-ink/70">{t.why}</p>
               <ol className="mt-2 space-y-1">
                 {t.protocol.map((s, i) => (
@@ -135,7 +135,7 @@ function TestSheet({ onClose }: { onClose: () => void }) {
                   {prev ? ` · précédent (${fr(prev.date)}) : G ${prev.result.L ?? '–'} / D ${prev.result.R ?? '–'}` : ''}
                 </span>
                 {timed > 0 && (
-                  <button type="button" onClick={() => timer.start(timed, t.name)} className="b-btn flex h-9 shrink-0 items-center gap-1 px-2.5 text-[11px] uppercase italic">
+                  <button type="button" onClick={() => timer.start(timed, t.name)} className="b-btn flex h-9 shrink-0 items-center gap-1 px-2.5 text-[11px] uppercase tracking-wide">
                     <Play className="h-3 w-3" fill="currentColor" /> {timed} s
                   </button>
                 )}
@@ -144,7 +144,7 @@ function TestSheet({ onClose }: { onClose: () => void }) {
           )
         })}
 
-        <button type="button" onClick={onClose} className="b-btn mb-8 mt-6 h-12 w-full bg-sun text-[14px] uppercase italic">
+        <button type="button" onClick={onClose} className="b-btn mb-8 mt-6 h-12 w-full bg-sun text-[14px] uppercase tracking-wide">
           Terminer
         </button>
       </div>

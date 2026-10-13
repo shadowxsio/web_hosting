@@ -23,7 +23,7 @@ export function TimerBar() {
         data-noswipe
       >
         <div
-          className={`pointer-events-auto relative mx-auto flex h-[52px] max-w-xl items-center gap-1.5 overflow-hidden border-[2.5px] border-ink pl-3 pr-1.5 shadow-[4px_4px_0_var(--color-shadow)] transition-colors duration-200 ${
+          className={`pointer-events-auto relative mx-auto flex h-[52px] max-w-xl items-center gap-1.5 overflow-hidden rounded-full border-2 border-ink pl-4 pr-1.5 shadow-[0_4px_0_var(--color-shadow)] transition-colors duration-200 ${
             finished ? 'bg-mint' : 'bg-paper'
           }`}
         >
@@ -35,7 +35,7 @@ export function TimerBar() {
           >
             {active ? <RotateCcw className="h-4 w-4 text-ink/60" strokeWidth={2.5} /> : <TimerIcon className="h-4 w-4" strokeWidth={2.5} />}
             <span className="leading-none">
-              <span role="timer" className={`block text-[22px] font-black italic tabular-nums ${t.running || finished ? 'text-ink' : 'text-ink/60'}`}>
+              <span role="timer" className={`block font-display text-[21px] tabular-nums ${t.running || finished ? 'text-ink' : 'text-ink/60'}`}>
                 {finished ? '00:00' : fmt(t.left)}
               </span>
               <span className={`text-[9px] font-extrabold uppercase tracking-wide ${t.label ? 'text-flame' : 'text-ink/60'}`}>
@@ -50,7 +50,7 @@ export function TimerBar() {
                 key={p}
                 type="button"
                 onClick={() => timer.preset(p)}
-                className={`h-8 border-2 px-2 text-[12px] font-black italic transition duration-150 active:translate-y-px ${
+                className={`h-8 rounded-full border-2 px-2 text-[12px] font-black transition duration-150 active:translate-y-px ${
                   t.duration === p && active ? 'border-ink bg-sun' : 'border-transparent hover:border-ink'
                 }`}
               >
@@ -60,7 +60,7 @@ export function TimerBar() {
             <button
               type="button"
               onClick={() => timer.adjust(30)}
-              className="h-8 border-2 border-transparent px-2 text-[12px] font-black italic transition duration-150 hover:border-ink active:translate-y-px"
+              className="h-8 rounded-full border-2 border-transparent px-2 text-[12px] font-black transition duration-150 hover:border-ink active:translate-y-px"
             >
               +30s
             </button>
@@ -70,7 +70,7 @@ export function TimerBar() {
             type="button"
             onClick={timer.toggle}
             aria-label={t.running ? 'Pause' : 'Démarrer'}
-            className="grid h-10 w-10 shrink-0 place-items-center rounded-full border-[2.5px] border-ink bg-flame text-ink transition duration-150 active:scale-90"
+            className="grid h-10 w-10 shrink-0 place-items-center rounded-full border-2 border-ink bg-flame text-ink transition duration-150 active:scale-90"
           >
             {t.running ? <Pause className="h-4 w-4" fill="currentColor" /> : <Play className="ml-0.5 h-4 w-4" fill="currentColor" />}
           </button>

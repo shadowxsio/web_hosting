@@ -67,19 +67,19 @@ export function ExerciseDrawer({ ex, sessionId, date, onClose }: { ex: Exercise;
       <aside
         role="dialog"
         aria-label={ex.name}
-        className="sheet pb-safe relative flex max-h-[92dvh] w-full max-w-xl flex-col border-[2.5px] border-b-0 border-ink bg-paper-2 md:max-h-none md:w-[460px] md:border-b-[2.5px] md:border-r-0"
+        className="sheet pb-safe relative flex max-h-[92dvh] w-full max-w-xl flex-col border-[2.5px] border-b-0 border-ink bg-paper-2 md:max-h-none md:w-[460px] md:border-b-[2.5px] md:border-r-0 rounded-t-[26px] md:rounded-none md:rounded-l-[26px]"
       >
         {/* Poignée + en-tête */}
         <div className="mx-auto mt-2 h-1.5 w-12 rounded-full bg-ink/30 md:hidden" />
         <header className="hero flex items-start gap-3 !border-t-0 px-4 pb-4 pt-3">
-          <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full border-[2.5px] border-ink bg-paper shadow-[2px_2px_0_var(--color-shadow)]">
+          <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full border-[2.5px] border-ink bg-paper shadow-[0_2px_0_var(--color-shadow)]">
             <Icon className="h-5 w-5" strokeWidth={2.4} />
           </span>
           <div className="min-w-0 flex-1">
             <p className={`tag h-6 px-2 text-[10px] ${s.bg}`}>
               {s.label} · {categoryOf(ex)}
             </p>
-            <h2 className="headline mt-2 text-[24px] [text-shadow:2px_2px_0_#f0773a]">{ex.name}</h2>
+            <h2 className="headline mt-2 text-[24px]">{ex.name}</h2>
             {ex.equipment && <p className="mt-1.5 text-[13px] font-bold text-ink">Matériel ÉconoFitness : {ex.equipment}</p>}
           </div>
           <button type="button" onClick={onClose} aria-label="Fermer" className="b-btn grid h-10 w-10 shrink-0 place-items-center rounded-full">
@@ -97,7 +97,7 @@ export function ExerciseDrawer({ ex, sessionId, date, onClose }: { ex: Exercise;
 
           {/* Schéma d'exécution (comme la maquette) */}
           {diagram && (
-            <section className="hero overflow-hidden border-[2.5px] border-ink shadow-[4px_4px_0_var(--color-shadow)]">
+            <section className="diagram-bg overflow-hidden border-[2.5px] border-ink shadow-[0_4px_0_var(--color-shadow)] rounded-xl">
               <div className="mx-auto aspect-[5/4] w-full max-w-[340px]">
                 <ExerciseDiagram id={diagram} />
               </div>
@@ -111,7 +111,7 @@ export function ExerciseDrawer({ ex, sessionId, date, onClose }: { ex: Exercise;
                 <span className="flex items-center gap-1 text-flame">➜ hanche / tronc</span>
                 <span className="flex items-center gap-1 text-ocean">➜ genou / cheville</span>
                 <span className="flex items-center gap-1">
-                  <span className="inline-block h-2 w-3 border border-ink bg-ocean" /> muscle ciblé
+                  <span className="inline-block h-2 w-3 border border-ink bg-ocean rounded-xl" /> muscle ciblé
                 </span>
               </p>
             </section>
@@ -121,7 +121,7 @@ export function ExerciseDrawer({ ex, sessionId, date, onClose }: { ex: Exercise;
           <section>
             <h3 className="label mb-2">Suivi du jour</h3>
             {L.suggestion && (
-              <p className={`mb-3 border-2 border-ink px-3 py-2 text-[13px] font-bold leading-snug ${L.suggestion.kind === 'up' ? 'bg-mint' : 'bg-sun'}`}>
+              <p className={`mb-3 border-2 border-ink px-3 py-2 text-[13px] font-bold leading-snug rounded-xl ${L.suggestion.kind === 'up' ? 'bg-mint' : 'bg-sun'}`}>
                 {L.suggestion.kind === 'up' ? '💡 ' : '✋ '}
                 {L.suggestion.text}
               </p>
@@ -166,14 +166,14 @@ export function ExerciseDrawer({ ex, sessionId, date, onClose }: { ex: Exercise;
                       setSel(L.sets.length)
                     }}
                     aria-label="Ajouter une série"
-                    className="grid h-9 w-9 shrink-0 place-items-center border-2 border-dashed border-ink/50 text-ink/60"
+                    className="grid h-9 w-9 shrink-0 place-items-center border-2 border-dashed border-ink/50 text-ink/60 rounded-xl"
                   >
                     <Plus className="h-3.5 w-3.5" />
                   </button>
                 </div>
                 {uni && (
                   <>
-                    <p className="mb-2 border-2 border-dashed border-ink/50 px-3 py-2 text-[12px] font-bold leading-snug">
+                    <p className="mb-2 border-2 border-dashed border-ink/50 px-3 py-2 text-[12px] font-bold leading-snug rounded-xl">
                       {L.asym ? (
                         <>
                           Dernière fois : {L.asym.pct === 0 ? 'équilibre parfait' : `${L.asym.pct > 0 ? 'droite' : 'gauche'} +${Math.abs(L.asym.pct)} %`} → commence par la{' '}
@@ -194,7 +194,7 @@ export function ExerciseDrawer({ ex, sessionId, date, onClose }: { ex: Exercise;
                             role="radio"
                             aria-checked={active}
                             onClick={() => setSelSide(sd)}
-                            className={`b-btn flex h-11 items-center justify-center gap-1.5 text-[13px] uppercase italic ${
+                            className={`b-btn flex h-11 items-center justify-center gap-1.5 text-[13px] uppercase tracking-wide ${
                               sl.done ? 'bg-mint' : active ? 'b-btn-ink' : ''
                             }`}
                           >
@@ -228,7 +228,7 @@ export function ExerciseDrawer({ ex, sessionId, date, onClose }: { ex: Exercise;
                     onChange={(v) => (uni ? L.setSideField(cur, curSide, 'r', v) : L.setField(cur, 'r', v))}
                   />
                 </div>
-                <p className="mt-2 flex items-start gap-2 border-2 border-dashed border-ink/50 px-3 py-2 text-[12px] font-bold leading-snug">
+                <p className="mt-2 flex items-start gap-2 border-2 border-dashed border-ink/50 px-3 py-2 text-[12px] font-bold leading-snug rounded-xl">
                   <AudioLines className="mt-0.5 h-4 w-4 shrink-0 text-flame" strokeWidth={2.5} />
                   <span>
                     {cadence ? (
@@ -249,7 +249,7 @@ export function ExerciseDrawer({ ex, sessionId, date, onClose }: { ex: Exercise;
               onChange={(e) => L.write((l) => ({ ...l, sets: l.sets.length ? l.sets : L.sets, note: e.target.value }))}
               placeholder="Notes · sensations genou / cheville, réglage machine…"
               rows={2}
-              className="mt-2 w-full resize-none border-2 border-ink bg-paper px-3 py-2 text-[13px] text-ink placeholder:text-ink/40 focus:shadow-[3px_3px_0_#f0773a] focus:outline-none"
+              className="mt-2 w-full resize-none border-2 border-ink bg-paper px-3 py-2 text-[13px] text-ink placeholder:text-ink/40 focus:shadow-[0_3px_0_var(--color-flame)] focus:outline-none rounded-xl"
             />
           </section>
 
@@ -259,7 +259,7 @@ export function ExerciseDrawer({ ex, sessionId, date, onClose }: { ex: Exercise;
           {ex.points && ex.points.length > 0 && (
             <section>
               <h3 className="label mb-2">Points d’attention</h3>
-              <ol className="divide-y divide-ink/25 overflow-hidden border-2 border-ink bg-paper">
+              <ol className="divide-y divide-ink/25 overflow-hidden border-2 border-ink bg-paper rounded-xl">
                 {ex.points.map((p, i) => {
                   const D = DIR_META[p.dir]
                   return (
@@ -310,7 +310,7 @@ export function ExerciseDrawer({ ex, sessionId, date, onClose }: { ex: Exercise;
           )}
 
           {ex.custom && (
-            <div className="flex items-center justify-between border-2 border-ink px-3 py-2 text-[12px] text-ink/60">
+            <div className="flex items-center justify-between border-2 border-ink px-3 py-2 text-[12px] text-ink/60 rounded-xl">
               {confirmDelete ? (
                 <>
                   <span>Supprimer cet exercice personnalisé ?</span>
@@ -322,7 +322,7 @@ export function ExerciseDrawer({ ex, sessionId, date, onClose }: { ex: Exercise;
                         touch()
                         onClose()
                       }}
-                      className="h-9 border-2 border-ink bg-rose px-3 font-black text-ink"
+                      className="h-9 border-2 border-ink bg-rose px-3 font-black text-ink rounded-xl"
                     >
                       Oui
                     </button>
@@ -351,7 +351,7 @@ export function ExerciseDrawer({ ex, sessionId, date, onClose }: { ex: Exercise;
               onClick={openCoach}
               disabled={!canCoach}
               aria-label="Lancer le coach sonore de la série"
-              className="b-btn flex h-12 shrink-0 items-center gap-1.5 bg-sun px-3 text-[13px] uppercase italic disabled:opacity-40"
+              className="b-btn flex h-12 shrink-0 items-center gap-1.5 bg-sun px-3 text-[13px] uppercase tracking-wide disabled:opacity-40"
             >
               <Play className="h-4 w-4" fill="currentColor" /> Coach
             </button>
@@ -404,7 +404,7 @@ export function ExerciseDrawer({ ex, sessionId, date, onClose }: { ex: Exercise;
 function Callout({ tone, title, children }: { tone: 'orange' | 'cyan'; title: string; children: ReactNode }) {
   const c = tone === 'orange' ? 'border-l-flame text-flame' : 'border-l-sky text-ocean'
   return (
-    <div className={` border-2 border-ink border-l-[6px] ${c.split(' ')[0]} bg-paper px-3 py-2.5`}>
+    <div className={` border-2 border-ink border-l-[6px] rounded-xl ${c.split(' ')[0]} bg-paper px-3 py-2.5`}>
       <p className={`mb-1 flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider ${c.split(' ')[1]}`}>
         {tone === 'cyan' && <ShieldCheck className="h-3.5 w-3.5" />}
         {title}
@@ -447,7 +447,7 @@ export function Stepper({
       <p className="label mb-1">{label}</p>
       <div
         className={`flex h-12 items-center border-2 transition-colors duration-150 ${
-          done ? 'border-leaf bg-leaf/15' : 'border-ink bg-paper focus-within:shadow-[3px_3px_0_#f0773a]'
+          done ? 'border-leaf bg-leaf/15' : 'border-ink bg-paper focus-within:shadow-[0_3px_0_var(--color-flame)]'
         }`}
       >
         <button type="button" onClick={() => bump(-step)} aria-label={`${label} moins ${step}`} className={btn}>
@@ -483,13 +483,13 @@ function TreadmillTracker({ log, write, done }: { log: ExerciseLog; write: (fn: 
         <Stepper label="km/h" value={t.speed} placeholder="5" step={0.1} decimal onChange={(v) => set('speed', v)} compact done={done} />
       </div>
       <div className="mt-2 grid grid-cols-2 gap-2">
-        <div className="border-2 border-ink bg-paper px-3 py-2">
+        <div className="border-2 border-ink bg-paper px-3 py-2 rounded-xl">
           <p className="label flex items-center gap-1">
             <Mountain className="h-3 w-3 text-flame" /> D+ {filled ? '' : 'prévu'}
           </p>
           <p className="font-mono text-xl font-bold text-ink">{stats ? `${stats.dplus} m` : '—'}</p>
         </div>
-        <div className="border-2 border-ink bg-paper px-3 py-2">
+        <div className="border-2 border-ink bg-paper px-3 py-2 rounded-xl">
           <p className="label flex items-center gap-1">
             <Footprints className="h-3 w-3 text-ocean" /> Distance
           </p>
@@ -502,7 +502,7 @@ function TreadmillTracker({ log, write, done }: { log: ExerciseLog; write: (fn: 
             key={m}
             type="button"
             onClick={() => timer.start(m * 60)}
-            className="flex h-12 flex-1 items-center justify-center gap-1.5 border-2 border-ink bg-paper font-mono text-[13px] font-bold text-ink active:scale-95"
+            className="flex h-12 flex-1 items-center justify-center gap-1.5 border-2 border-ink bg-paper font-mono text-[13px] font-bold text-ink active:scale-95 rounded-xl"
           >
             <Play className="h-3.5 w-3.5" fill="currentColor" /> {m}′
           </button>

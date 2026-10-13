@@ -3,7 +3,7 @@ import type { Exercise, SessionId } from '../data/program'
 import { useExerciseLog } from '../lib/useExerciseLog'
 import { Pill, SESSION_META, categoryOf, iconOf, restLabel } from './meta'
 
-// Légères rotations alternées, comme les fiches de classement quelleia.
+// Légères rotations alternées, comme des écussons cousus.
 const TILT = ['-rotate-[0.6deg]', 'rotate-[0.4deg]', '-rotate-[0.3deg]', 'rotate-[0.7deg]']
 const TAB_TILT = ['-rotate-1', 'rotate-[0.5deg]', '-rotate-[1.5deg]', 'rotate-1']
 
@@ -42,7 +42,7 @@ export function ExerciseTile({
       <div className={`b-card relative ${TILT[index % 4]} transition-transform duration-150`}>
         <button type="button" onClick={onOpen} className="block w-full px-4 pb-3 pt-4 text-left" aria-label={`Ouvrir ${ex.name}`}>
           <div className="flex items-center gap-3.5">
-            <span className={`grid h-12 w-12 shrink-0 place-items-center rounded-full border-[2.5px] border-ink bg-sky shadow-[2px_2px_0_var(--color-shadow)]`}>
+            <span className={`grid h-12 w-12 shrink-0 place-items-center rounded-full border-[2.5px] border-ink bg-sky shadow-[0_2px_0_var(--color-shadow)]`}>
               <Icon className="h-5 w-5 text-ink" strokeWidth={2.4} />
             </span>
             <div className="min-w-0 flex-1">
@@ -59,7 +59,7 @@ export function ExerciseTile({
             {prev && (
               <div className="shrink-0 text-right">
                 <p className="text-[30px] font-black italic leading-none tracking-tight text-ink">{prev.value.replace('.', ',')}</p>
-                <p className="text-[10px] font-extrabold uppercase italic text-ink/60">{prev.unit} · préc.</p>
+                <p className="text-[10px] font-extrabold uppercase tracking-wide text-ink/60">{prev.unit} · préc.</p>
                 {suggestion?.kind === 'up' && !done && (
                   <p className="tag mt-1 h-5 bg-mint px-1.5 text-[10px]" title={suggestion.text}>
                     ↑ {String(suggestion.weight).replace('.', ',')}
@@ -85,7 +85,7 @@ export function ExerciseTile({
               sets.map((x, i) => (
                 <span
                   key={i}
-                  className={`h-3 w-3 border-2 border-ink ${
+                  className={`h-3 w-3 border-2 border-ink rounded-xl ${
                     x.done ? 'bg-leaf' : x.L?.done || x.R?.done ? 'bg-[linear-gradient(90deg,var(--color-leaf)_50%,var(--color-paper)_50%)]' : 'bg-paper'
                   }`}
                 />
@@ -99,7 +99,7 @@ export function ExerciseTile({
             id={`check-${tid}`}
             onClick={toggleDone}
             aria-pressed={done}
-            className={`b-btn flex h-10 items-center gap-1.5 px-3 text-[12px] uppercase italic ${done ? 'pop bg-mint' : ''}`}
+            className={`b-btn flex h-10 items-center gap-1.5 px-3 text-[12px] uppercase tracking-wide ${done ? 'pop bg-mint' : ''}`}
           >
             <Check className="h-4 w-4" strokeWidth={3.5} />
             {done ? 'Validé' : 'Valider'}

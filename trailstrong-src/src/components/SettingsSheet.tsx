@@ -69,7 +69,7 @@ export function SettingsSheet({
 
   const sandboxBlock = !inSandbox && (
     <Block title="🧪 Profil de test" desc="Un profil temporaire pour essayer le questionnaire, la génération de programme, le coach… Rien n’est sauvegardé : tout s’efface quand tu le quittes, tes vraies données ne sont pas touchées.">
-      <button type="button" onClick={enterSandbox} className="b-btn flex h-12 w-full items-center justify-center gap-2 bg-lilac text-[13px] uppercase italic">
+      <button type="button" onClick={enterSandbox} className="b-btn flex h-12 w-full items-center justify-center gap-2 bg-lilac text-[13px] uppercase tracking-wide">
         Ouvrir le profil de test
       </button>
     </Block>
@@ -99,7 +99,7 @@ export function SettingsSheet({
                 setAiKey('')
                 setMsg({ ok: true, text: 'Clé Gemini enregistrée sur cet appareil.' })
               }}
-              className="b-btn h-11 px-3 text-[13px] uppercase italic disabled:opacity-40"
+              className="b-btn h-11 px-3 text-[13px] uppercase tracking-wide disabled:opacity-40"
             >
               Enregistrer
             </button>
@@ -115,7 +115,7 @@ export function SettingsSheet({
               className="b-input h-10 min-w-0 flex-1 px-3 font-mono text-[12px]"
             />
             {ai.key && (
-              <button type="button" onClick={() => setAiConfig({ key: '' })} className="b-btn h-10 px-3 text-[12px] uppercase italic">
+              <button type="button" onClick={() => setAiConfig({ key: '' })} className="b-btn h-10 px-3 text-[12px] uppercase tracking-wide">
                 Retirer
               </button>
             )}
@@ -149,7 +149,7 @@ export function SettingsSheet({
   return createPortal(
     <div className="fade-in fixed inset-0 z-50 flex items-end justify-center bg-ink/40 md:items-stretch md:justify-end" onClick={onClose}>
       <div
-        className="sheet pb-safe max-h-[92dvh] w-full max-w-xl overflow-y-auto border-[2.5px] border-b-0 border-ink bg-paper-2 px-4 pt-4 md:max-h-none md:w-[460px] md:border-b-[2.5px] md:border-r-0"
+        className="sheet pb-safe max-h-[92dvh] w-full max-w-xl overflow-y-auto border-[2.5px] border-b-0 border-ink bg-paper-2 px-4 pt-4 md:max-h-none md:w-[460px] md:border-b-[2.5px] md:border-r-0 rounded-t-[26px] md:rounded-none md:rounded-l-[26px]"
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-label="Réglages"
@@ -162,8 +162,8 @@ export function SettingsSheet({
           </button>
         </div>
 
-        {/* Liste façon quelleia : feuille lignée, surtitre + titre italique */}
-        <nav className="lined mb-6 border-[2.5px] border-ink shadow-[6px_6px_0_var(--color-shadow)]">
+        {/* Liste cousue : surtitre + titre */}
+        <nav className="lined mb-6 border-[2.5px] border-ink shadow-[0_6px_0_var(--color-shadow)] rounded-xl">
           {(
             [
               ['all', undefined, '4 séances, 20 exercices', 'Tout le programme'],
@@ -180,7 +180,7 @@ export function SettingsSheet({
               className="flex min-h-[57px] w-full flex-wrap items-center gap-x-3 px-4 py-2 text-left transition-colors hover:bg-sun/60"
             >
               <span className="text-[10px] font-extrabold uppercase tracking-[0.1em] text-ink/70">{over}</span>
-              <span className="text-[19px] font-black uppercase italic leading-tight tracking-tight text-ink">{title}</span>
+              <span className="text-[19px] font-black uppercase tracking-wide leading-tight tracking-tight text-ink">{title}</span>
             </button>
           ))}
           <button
@@ -189,7 +189,7 @@ export function SettingsSheet({
             className="flex min-h-[57px] w-full flex-wrap items-center gap-x-3 px-4 py-2 text-left transition-colors hover:bg-sun/60"
           >
             <span className="text-[10px] font-extrabold uppercase tracking-[0.1em] text-ink/70">Toutes les 4 semaines, G / D</span>
-            <span className="text-[19px] font-black uppercase italic leading-tight tracking-tight text-ink">Tests mensuels</span>
+            <span className="text-[19px] font-black uppercase tracking-wide leading-tight tracking-tight text-ink">Tests mensuels</span>
           </button>
           <button
             type="button"
@@ -200,7 +200,7 @@ export function SettingsSheet({
             className="flex min-h-[57px] w-full flex-wrap items-center gap-x-3 border-t-[2.5px] border-ink bg-sun px-4 py-2 text-left"
           >
             <span className="text-[10px] font-extrabold uppercase tracking-[0.1em] text-ink/70">{cloud ? cloud.email : account ? account.email : 'Session PIN'}</span>
-            <span className="text-[19px] font-black uppercase italic leading-tight tracking-tight">{cloud?.logoutLabel ?? 'Se déconnecter'}</span>
+            <span className="text-[19px] font-black uppercase tracking-wide leading-tight tracking-tight">{cloud?.logoutLabel ?? 'Se déconnecter'}</span>
           </button>
         </nav>
 
@@ -220,7 +220,7 @@ export function SettingsSheet({
                 role="radio"
                 aria-checked={theme === t}
                 onClick={() => setTheme(t)}
-                className={`b-btn h-11 text-[14px] uppercase italic ${theme === t ? 'b-btn-ink' : ''}`}
+                className={`b-btn h-11 text-[14px] uppercase tracking-wide ${theme === t ? 'b-btn-ink' : ''}`}
               >
                 {label}
               </button>
@@ -230,7 +230,7 @@ export function SettingsSheet({
 
         {cloud && (
           <Block title="Mon compte" desc={`${cloud.email} · ${cloud.status}`}>
-            <button type="button" onClick={cloud.onRedoProgram} className="b-btn flex h-12 w-full items-center justify-center gap-2 bg-sun text-[13px] uppercase italic">
+            <button type="button" onClick={cloud.onRedoProgram} className="b-btn flex h-12 w-full items-center justify-center gap-2 bg-sun text-[13px] uppercase tracking-wide">
               ✨ Refaire mon programme (questionnaire)
             </button>
             <p className="mt-2 text-[12px] font-semibold text-ink/65">Tes séances, ton historique et tes réglages sont enregistrés dans ton compte et suivent sur tous tes appareils.</p>
@@ -259,7 +259,7 @@ export function SettingsSheet({
                 type="button"
                 aria-pressed={(data.profile.weightUnit ?? 'kg') === u}
                 onClick={() => updateProfile({ weightUnit: u })}
-                className={`b-btn h-11 w-14 text-[13px] uppercase italic ${(data.profile.weightUnit ?? 'kg') === u ? 'b-btn-ink' : ''}`}
+                className={`b-btn h-11 w-14 text-[13px] uppercase tracking-wide ${(data.profile.weightUnit ?? 'kg') === u ? 'b-btn-ink' : ''}`}
               >
                 {u}
               </button>
@@ -283,7 +283,7 @@ export function SettingsSheet({
                 role="radio"
                 aria-checked={sound.mode === m}
                 onClick={() => setSoundPrefs({ mode: m })}
-                className={`b-btn h-11 text-[13px] uppercase italic ${sound.mode === m ? 'b-btn-ink' : ''}`}
+                className={`b-btn h-11 text-[13px] uppercase tracking-wide ${sound.mode === m ? 'b-btn-ink' : ''}`}
               >
                 {label}
               </button>
@@ -305,7 +305,7 @@ export function SettingsSheet({
                 onClick={() => setSoundPrefs({ speaker: v })}
                 className={`b-btn px-3 py-2 text-left ${sound.speaker === v ? 'b-btn-ink' : ''}`}
               >
-                <span className="block text-[13px] font-black uppercase italic">{label}</span>
+                <span className="block text-[13px] font-black uppercase tracking-wide">{label}</span>
                 <span className={`block text-[12px] font-semibold normal-case not-italic leading-snug ${sound.speaker === v ? 'opacity-80' : 'text-ink/65'}`}>{hint}</span>
               </button>
             ))}
@@ -316,14 +316,14 @@ export function SettingsSheet({
               unlockAudio()
               sfx.test()
             }}
-            className="b-btn mt-2 h-11 w-full text-[13px] uppercase italic"
+            className="b-btn mt-2 h-11 w-full text-[13px] uppercase tracking-wide"
           >
             🔊 Tester le son
           </button>
         </Block>
 
         {msg && (
-          <p className={`mb-3 border-2 border-ink px-3 py-2 text-sm font-bold ${msg.ok ? 'bg-mint' : 'bg-rose'}`}>{msg.text}</p>
+          <p className={`mb-3 border-2 border-ink px-3 py-2 text-sm font-bold rounded-xl ${msg.ok ? 'bg-mint' : 'bg-rose'}`}>{msg.text}</p>
         )}
 
         {cloud ? (
@@ -340,7 +340,7 @@ export function SettingsSheet({
           title="Backup cloud — GitHub Gist"
           desc="Optionnel. Copie chiffrée (AES-256) dans un Gist secret, 20 s après chaque modification. Note la clé de récupération : elle est nécessaire pour restaurer sur un autre appareil."
         >
-          <label className="mb-2 flex h-11 items-center justify-between border-2 border-ink bg-paper px-3 text-[13px] text-ink">
+          <label className="mb-2 flex h-11 items-center justify-between border-2 border-ink bg-paper px-3 text-[13px] text-ink rounded-xl">
             Backup automatique
             <input
               type="checkbox"
@@ -373,7 +373,7 @@ export function SettingsSheet({
             {g.lastBackup ? `Dernier backup : ${new Date(g.lastBackup).toLocaleString('fr-CA')}` : 'Aucun backup cloud pour l’instant.'}
             {g.lastError && <span className="block text-danger">Dernière erreur : {g.lastError}</span>}
           </p>
-          <div className="mt-3 border-2 border-dashed border-ink p-3">
+          <div className="mt-3 border-2 border-dashed border-ink p-3 rounded-xl">
             <p className="label">Clé de récupération</p>
             <p className="mt-1 select-all font-black italic tracking-wide">{getRecoveryKey()}</p>
             <div className="mt-2 flex gap-2">
@@ -442,18 +442,18 @@ export function SettingsSheet({
             <button
               type="button"
               onClick={exitAdmin}
-              className="b-btn b-btn-ink mb-8 mt-1 flex h-12 w-full items-center justify-center gap-2 uppercase italic"
+              className="b-btn b-btn-ink mb-8 mt-1 flex h-12 w-full items-center justify-center gap-2 uppercase tracking-wide"
             >
               <Lock className="h-4 w-4" /> Quitter le mode admin
             </button>
           </>
         ) : (
           <section className="b-card mb-8 p-4">
-            <h3 className="text-[16px] font-black uppercase italic tracking-tight">🔒 Mode admin</h3>
+            <h3 className="text-[16px] font-black uppercase tracking-wide tracking-tight">🔒 Mode admin</h3>
             <p className="mb-3 mt-1 text-[13px] font-semibold leading-snug text-ink/75">
               Sauvegardes, backup cloud et PIN sont protégés par ton code PIN (10 min d’accès).
             </p>
-            <button type="button" onClick={() => setAskPin(true)} className="b-btn flex h-12 w-full items-center justify-center gap-2 bg-sun uppercase italic">
+            <button type="button" onClick={() => setAskPin(true)} className="b-btn flex h-12 w-full items-center justify-center gap-2 bg-sun uppercase tracking-wide">
               <KeyRound className="h-4 w-4" /> Saisir le PIN admin
             </button>
           </section>
@@ -469,7 +469,7 @@ export function SettingsSheet({
 function Block({ title, desc, children }: { title: string; desc: string; children: ReactNode }) {
   return (
     <section className="b-card mb-5 p-4">
-      <h3 className="text-[16px] font-black uppercase italic tracking-tight">{title}</h3>
+      <h3 className="text-[16px] font-black uppercase tracking-wide tracking-tight">{title}</h3>
       <p className="mb-3 mt-1 text-[13px] font-semibold leading-snug text-ink/75">{desc}</p>
       {children}
     </section>
@@ -525,7 +525,7 @@ function Field({
         placeholder={placeholder}
         autoComplete="off"
         onChange={(e) => onChange(e.target.value)}
-        className="mt-1 h-11 w-full border-2 border-ink bg-paper px-3 text-[13px] normal-case tracking-normal text-ink placeholder:text-ink/40 focus:outline-none focus:shadow-[3px_3px_0_#f0773a]"
+        className="mt-1 h-11 w-full border-2 border-ink bg-paper px-3 text-[13px] normal-case tracking-normal text-ink placeholder:text-ink/40 focus:outline-none focus:shadow-[0_3px_0_var(--color-flame)] rounded-xl"
       />
     </label>
   )
