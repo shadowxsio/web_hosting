@@ -115,6 +115,75 @@ function csp(): Plugin {
   }
 }
 
+/**
+ * Aperçu de PR (TS_PREVIEW = n° de PR) : publié sur le même domaine que le vrai
+ * site, il ne doit jamais toucher ses données. Un script chargé avant tout le
+ * reste range localStorage / sessionStorage sous le préfixe « preview: »,
+ * affiche un bandeau, et le service worker n'est pas enregistré (il effacerait
+ * les caches du vrai site).
+ */
+const PREVIEW = process.env.TS_PREVIEW ?? ''
+function preview(): Plugin {
+  const source = `(function () {
+  var P = 'preview:'
+  function wrap(real) {
+    function keys() {
+      var out = []
+      for (var i = 0; i < real.length; i++) {
+        var k = real.key(i)
+        if (k && k.indexOf(P) === 0) out.push(k.slice(P.length))
+      }
+      return out
+    }
+    var api = {
+      getItem: function (k) { return real.getItem(P + k) },
+      setItem: function (k, v) { real.setItem(P + k, String(v)) },
+      removeItem: function (k) { real.removeItem(P + k) },
+      clear: function () { keys().forEach(function (k) { real.removeItem(P + k) }) },
+      key: function (i) { var k = keys()[i]; return k === undefined ? null : k },
+    }
+    return new Proxy(api, {
+      get: function (t, k) {
+        if (k === 'length') return keys().length
+        if (k in t) return t[k]
+        return typeof k === 'string' ? real.getItem(P + k) : undefined
+      },
+      ownKeys: function () { return keys() },
+      getOwnPropertyDescriptor: function (t, k) {
+        var v = real.getItem(P + String(k))
+        return v === null ? undefined : { enumerable: true, configurable: true, value: v }
+      },
+    })
+  }
+  try {
+    var ls = wrap(window.localStorage)
+    var ss = wrap(window.sessionStorage)
+    Object.defineProperty(window, 'localStorage', { value: ls, configurable: true })
+    Object.defineProperty(window, 'sessionStorage', { value: ss, configurable: true })
+    window.__tsPreviewOk = window.localStorage === ls && window.sessionStorage === ss
+  } catch (e) {
+    window.__tsPreviewOk = false
+  }
+  document.addEventListener('DOMContentLoaded', function () {
+    var b = document.createElement('div')
+    b.textContent = 'Aperçu PR #${PREVIEW} · données de test séparées'
+    b.setAttribute('style', 'position:fixed;left:50%;transform:translateX(-50%);top:0;z-index:2147483647;background:#ec7a32;color:#2a1d3d;font:700 10px/1.6 system-ui,sans-serif;white-space:nowrap;padding:1px 10px;border-radius:0 0 8px 8px;pointer-events:none')
+    document.body.appendChild(b)
+  })
+})()
+`
+  return {
+    name: 'trailstrong-preview',
+    apply: 'build',
+    transformIndexHtml(html) {
+      return PREVIEW ? html.replace('<script src="./theme.js"></script>', '<script src="./preview-ns.js"></script>\n    <script src="./theme.js"></script>') : html
+    },
+    generateBundle() {
+      if (PREVIEW) this.emitFile({ type: 'asset', fileName: 'preview-ns.js', source })
+    },
+  }
+}
+
 export default defineConfig({
   // Chemins relatifs : l'app fonctionne sous /web_hosting/trailstrong/ comme sous un domaine perso.
   base: './',
@@ -127,9 +196,10 @@ export default defineConfig({
         .filter(Boolean)
         .map((e) => createHash('sha256').update(e).digest('hex')),
     ),
+    __PREVIEW__: JSON.stringify(PREVIEW),
     __APP_VERSION__: JSON.stringify(`${process.env.npm_package_version ?? '1.0.0'}${process.env.GITHUB_SHA ? `-${process.env.GITHUB_SHA.slice(0, 7)}` : ''}`),
   },
-  plugins: [react(), tailwindcss(), serviceWorker(), csp()],
+  plugins: [react(), tailwindcss(), serviceWorker(), csp(), preview()],
   build: {
     outDir: '../trailstrong',
     emptyOutDir: true,

@@ -1,0 +1,77 @@
+name: TrailStrong PR
+
+# Sur chaque PR qui touche TrailStrong : build d'aperçu + tests e2e (Playwright).
+# Aucun secret ici : le code de la PR tourne avec des droits en lecture seule.
+# La publication de l'aperçu et le commentaire de résultats sont faits ensuite
+# par deploy.yml (déclenché par workflow_run, depuis main).
+on:
+  pull_request:
+    paths:
+      - 'trailstrong-src/**'
+      - '.github/workflows/trailstrong-pr.yml'
+      - '.github/workflows/deploy.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trailstrong-pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: trailstrong-src
+    env:
+      PR: ${{ github.event.pull_request.number }}
+      PREVIEW_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/preview/pr-${{ github.event.pull_request.number }}/
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: trailstrong-src/package-lock.json
+      - run: npm ci
+      - name: Navigateur de test
+        run: npx playwright install --with-deps chromium
+      - name: Build d'aperçu (stockage isolé, sans secrets)
+        env:
+          TS_PREVIEW: ${{ github.event.pull_request.number }}
+        run: npm run build:preview
+      - name: Tests e2e
+        id: e2e
+        continue-on-error: true
+        run: npx playwright test
+      - name: Résumé pour la PR
+        if: always()
+        env:
+          BASE_REF: ${{ github.base_ref }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          node e2e/report.mjs > comment.md
+          cat comment.md >> "$GITHUB_STEP_SUMMARY"
+          # Aperçu publié : le site + le rapport Playwright + les captures.
+          mkdir -p ../pr-preview
+          cp -r dist-preview ../pr-preview/site
+          cp -r playwright-report ../pr-preview/site/rapport
+          mkdir -p ../pr-preview/site/e2e && cp e2e-shots/*.png ../pr-preview/site/e2e/ 2>/dev/null || true
+          cp comment.md ../pr-preview/comment.md
+      - name: Envoi de l'aperçu
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr-preview
+          path: pr-preview
+          retention-days: 7
+          if-no-files-found: ignore
+      - name: Échec si un test a échoué
+        if: steps.e2e.outcome == 'failure'
+        run: |
+          echo "::error::Des tests e2e ont échoué (voir le résumé et le rapport)."
+          exit 1
