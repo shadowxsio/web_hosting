@@ -42,7 +42,7 @@ const DEFAULT: Phase[] = [P('Effort', 1, 'go'), P('Retour', 2, 'back')]
 
 export function cadenceOf(ex: Exercise): Phase[] | null {
   if (ex.mode !== 'strength') return null
-  return CADENCE[ex.id] ?? DEFAULT
+  return ex.cadence?.length ? ex.cadence : (CADENCE[ex.id] ?? DEFAULT)
 }
 
 export const repSeconds = (c: Phase[]) => c.reduce((a, p) => a + p.s, 0)

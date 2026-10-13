@@ -58,6 +58,10 @@ Code source dans `trailstrong-src/` (Vite + React + TypeScript + Tailwind + Luci
 - **Hors-ligne** : service worker généré au build (précache de tous les fichiers) + manifest → « Ajouter à l'écran d'accueil ».
 - **Dev local** :
   ```bash
-  cd trailstrong-src && npm install && npm run dev   # http://localhost:5173 (la connexion Google ne marche que sur shadowxsio.github.io : utilise le PIN en local ; /#schemas : planche des 19 schémas)
+  cd trailstrong-src && npm install && npm run dev   # http://localhost:5173 (la connexion Google ne marche que sur shadowxsio.github.io : utilise le PIN en local ; /#schemas : planche des 35 schémas)
   ```
 - **Photos de démo** : `trailstrong-src/public/demos/` — paires départ/fin issues de [free-exercise-db](https://github.com/yuhonas/free-exercise-db) (domaine public, Unlicense), converties en WebP 480 px.
+- **Ajout d'exercices** (bouton « Ajouter un exercice à cette séance ») :
+  - *Catalogue* : `public/catalog.json` (~800 exercices free-exercise-db, régénérable avec `node scripts/build-catalog.mjs`), recherche en français ou anglais ; les 2 photos sont copiées dans l'exercice (JPEG réduit) pour le hors-ligne ;
+  - *IA* : Gemini appelé directement depuis le navigateur avec la clé API de l'utilisateur, saisie en mode admin et stockée uniquement sur l'appareil (jamais exportée) ; l'IA choisit l'exo du catalogue, traduit, fixe séries / tempo du coach / consignes et le schéma ;
+  - *Manuel* : saisie libre ; dans tous les cas, schéma choisi automatiquement parmi 35 modèles (modifiable).

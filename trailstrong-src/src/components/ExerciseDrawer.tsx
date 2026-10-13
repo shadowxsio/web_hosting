@@ -32,6 +32,8 @@ export function ExerciseDrawer({ ex, sessionId, date, onClose }: { ex: Exercise;
   const fieldDone = uni ? curSideLog.done : curSet.done
   const tipKind = ex.tags.find((t) => t === 'knee' || t === 'ankle') ?? 'knee'
 
+  const diagram = ex.diagram ?? DIAGRAM_OF[ex.id]
+
   // ── Coach sonore ──
   const cadence = cadenceOf(ex)
   const canCoach = ex.mode !== 'treadmill' && !fieldDone
@@ -94,10 +96,10 @@ export function ExerciseDrawer({ ex, sessionId, date, onClose }: { ex: Exercise;
           </div>
 
           {/* Schéma d'exécution (comme la maquette) */}
-          {DIAGRAM_OF[ex.id] && (
+          {diagram && (
             <section className="hero overflow-hidden border-[2.5px] border-ink shadow-[4px_4px_0_var(--color-shadow)]">
               <div className="mx-auto aspect-[5/4] w-full max-w-[340px]">
-                <ExerciseDiagram id={DIAGRAM_OF[ex.id]} />
+                <ExerciseDiagram id={diagram} />
               </div>
               <p className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 border-t-2 border-ink bg-paper px-2 py-1.5 text-[10px] font-extrabold uppercase tracking-wide">
                 <span className="flex items-center gap-1">
@@ -277,7 +279,7 @@ export function ExerciseDrawer({ ex, sessionId, date, onClose }: { ex: Exercise;
 
           {ex.steps.length > 0 && (
             <section>
-              <h3 className="label mb-2">Exécution</h3>
+              <h3 className="label mb-2">Exécution{ex.stepsLang === 'en' && ' · en anglais (catalogue)'}</h3>
               <ol className="space-y-2">
                 {ex.steps.map((step, i) => (
                   <li key={i} className="flex gap-2.5 text-[13px] leading-snug text-ink/85">

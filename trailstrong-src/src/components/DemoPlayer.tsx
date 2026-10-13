@@ -7,7 +7,8 @@ const reduced = () => window.matchMedia?.('(prefers-reduced-motion: reduce)').ma
 
 /** Boucle « GIF » départ ↔ fin à partir de deux photos, + lien vidéo. */
 export function DemoPlayer({ ex }: { ex: Exercise }) {
-  const demo = DEMOS[ex.id]
+  const own = ex.photos?.length === 2 ? ex.photos : null
+  const demo = own ? { photos: true, note: undefined, video: ex.video ?? ex.name } : DEMOS[ex.id]
   const [frame, setFrame] = useState(0)
   const [playing, setPlaying] = useState(!reduced())
 
@@ -17,7 +18,7 @@ export function DemoPlayer({ ex }: { ex: Exercise }) {
     return () => window.clearInterval(id)
   }, [demo, playing])
 
-  const query = demo?.video ?? `${ex.name} exercise`
+  const query = demo?.video ?? ex.video ?? `${ex.name} exercise`
   const base = import.meta.env.BASE_URL
 
   return (
@@ -34,7 +35,7 @@ export function DemoPlayer({ ex }: { ex: Exercise }) {
             {[0, 1].map((i) => (
               <img
                 key={i}
-                src={`${base}demos/${ex.id}-${i}.webp`}
+                src={own ? own[i] : `${base}demos/${ex.id}-${i}.webp`}
                 alt={`${ex.name} — ${i === 0 ? 'position 1' : 'position 2'}`}
                 loading="lazy"
                 className="absolute inset-0 h-full w-full object-cover transition-opacity duration-300"
