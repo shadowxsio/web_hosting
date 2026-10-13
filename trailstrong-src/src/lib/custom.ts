@@ -6,7 +6,9 @@
  * (storage.ts) avec l'id `custom-<timestamp>`, exactement comme un exercice natif.
  */
 import { useMemo, useSyncExternalStore } from 'react'
-import { PROGRAM, type Exercise, type FocusTag, type Session, type SessionId } from '../data/program'
+import type { AnimationId } from '../components/diagram-base'
+import type { Phase } from '../data/cadence'
+import { PROGRAM, type AttentionPoint, type Exercise, type FocusTag, type Session, type SessionId } from '../data/program'
 
 export interface CustomExerciseDef {
   id: string // "custom-" + Date.now()
@@ -17,7 +19,30 @@ export interface CustomExerciseDef {
   startWeight?: string
   tip?: string
   createdAt: number
+  // ── Fiche complète (catalogue / IA) : tous facultatifs, rétrocompatibles ──
+  source?: 'manual' | 'catalog' | 'ai'
+  catalogId?: string
+  tags?: FocusTag[]
+  equipment?: string
+  sets?: number
+  reps?: string
+  defaultReps?: number
+  perSide?: boolean
+  restS?: number
+  mode?: 'strength' | 'timed'
+  cadence?: Phase[]
+  steps?: string[]
+  stepsLang?: 'en'
+  points?: AttentionPoint[]
+  kneeAnkle?: string
+  diagram?: AnimationId
+  /** 2 photos départ / fin, en data URL (dispo hors-ligne, incluses dans les sauvegardes). */
+  photos?: string[]
+  video?: string
 }
+
+/** Exercice prêt à être ajouté (avant attribution de l'id). */
+export type CustomDraft = Omit<CustomExerciseDef, 'id' | 'createdAt'>
 
 const SESSION_IDS = PROGRAM.map((s) => s.id)
 const keyOf = (id: SessionId) => `custom_exercises_${id}`
@@ -61,7 +86,7 @@ export function getAllCustom() {
   return cache
 }
 
-export function addCustom(sessionId: SessionId, def: Omit<CustomExerciseDef, 'id' | 'createdAt'>): string {
+export function addCustom(sessionId: SessionId, def: CustomDraft): string {
   const id = `custom-${Date.now()}`
   write(sessionId, [...cache[sessionId], { ...def, id, createdAt: Date.now() }])
   return id
@@ -134,6 +159,7 @@ export function tagsFromTarget(target?: string): FocusTag[] {
 }
 
 export function toExercise(d: CustomExerciseDef): Exercise {
+  if (d.sets) return toFullExercise(d)
   const p = parseProtocol(d.protocol)
   return {
     id: d.id,
@@ -153,6 +179,37 @@ export function toExercise(d: CustomExerciseDef): Exercise {
     steps: [],
     mode: p.timed ? 'timed' : 'strength',
     startWeight: d.startWeight,
+    diagram: d.diagram,
+  }
+}
+
+function toFullExercise(d: CustomExerciseDef): Exercise {
+  return {
+    id: d.id,
+    trackId: d.id,
+    custom: true,
+    name: d.name,
+    target: d.target || 'Exercice personnalisé',
+    badge: d.target?.split(',')[0] || 'Perso',
+    tags: d.tags ?? tagsFromTarget(d.target),
+    equipment: d.equipment ?? '',
+    sets: d.sets ?? 3,
+    reps: d.reps ?? '10 reps',
+    defaultReps: d.defaultReps,
+    perSide: d.perSide,
+    rest: d.restS ?? 60,
+    cue: d.tip ?? '',
+    kneeAnkle: d.kneeAnkle ?? '',
+    steps: d.steps ?? [],
+    stepsLang: d.stepsLang,
+    points: d.points,
+    mode: d.mode ?? 'strength',
+    startWeight: d.startWeight,
+    bodyweight: /poids du corps/i.test(d.equipment ?? ''),
+    diagram: d.diagram,
+    cadence: d.cadence,
+    photos: d.photos,
+    video: d.video,
   }
 }
 

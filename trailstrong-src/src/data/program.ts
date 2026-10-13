@@ -1,3 +1,5 @@
+import type { AnimationId } from '../components/diagram-base'
+import type { Phase } from './cadence'
 
 export type IconName =
   | 'Footprints'
@@ -58,6 +60,13 @@ export interface Exercise {
   custom?: boolean
   /** Poids optionnel (exercices au poids du corps). */
   bodyweight?: boolean
+  /** Exercices perso (catalogue / IA) : schéma, tempo du coach, photos (data URL), requête vidéo. */
+  diagram?: AnimationId
+  cadence?: Phase[]
+  photos?: string[]
+  video?: string
+  /** Consignes en anglais (catalogue non traduit). */
+  stepsLang?: 'en'
 }
 
 export interface Session {
