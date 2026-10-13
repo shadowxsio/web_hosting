@@ -7,7 +7,7 @@ import { Check, Pause, Play, SkipForward, X } from 'lucide-react'
 import { useEffect, useMemo, useReducer, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { PREP, routineOf, routineSeconds, type Stretch } from '../data/cooldown'
-import type { SessionId } from '../data/program'
+import type { Session } from '../data/program'
 import { say, sfx, unlockAudio } from '../lib/sound'
 import { updateSessionLog } from '../lib/storage'
 import { keepAwake, timerRunning } from '../lib/timer'
@@ -32,8 +32,8 @@ function buildSteps(r: Stretch[]): Step[] {
 
 const mmss = (s: number) => `${Math.floor(s / 60)} min${s % 60 ? ` ${String(s % 60).padStart(2, '0')}` : ''}`
 
-export function CooldownCoach({ sessionId, date, onClose }: { sessionId: SessionId; date: string; onClose: () => void }) {
-  const routine = useMemo(() => routineOf(sessionId), [sessionId])
+export function CooldownCoach({ session, date, onClose }: { session: Session; date: string; onClose: () => void }) {
+  const routine = useMemo(() => routineOf(session), [session])
   const steps = useMemo(() => buildSteps(routine), [routine])
   const [running, setRunning] = useState(false)
 
@@ -45,7 +45,7 @@ export function CooldownCoach({ sessionId, date, onClose }: { sessionId: Session
 
   return createPortal(
     running ? (
-      <Runner steps={steps} onDone={() => updateSessionLog(date, sessionId, { cooldownAt: Date.now() })} onClose={onClose} />
+      <Runner steps={steps} onDone={() => updateSessionLog(date, session.id, { cooldownAt: Date.now() })} onClose={onClose} />
     ) : (
       <div className="fade-in fixed inset-0 z-[60] flex items-end justify-center bg-ink/40" onClick={onClose}>
         <div

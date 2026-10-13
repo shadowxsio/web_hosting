@@ -80,7 +80,7 @@ const RUN_ADVICE: Partial<Record<SessionId, string>> = {
   activation: 'Activation légère : aucune contrainte, tu peux courir juste après.',
 }
 
-export function recoveryTips(o: { profile: Profile; sessionId: SessionId; rpe?: number; runSoon?: boolean; maxPain?: number }): RecoveryTip[] {
+export function recoveryTips(o: { profile: Profile; sessionId: SessionId; runAdvice?: string; rpe?: number; runSoon?: boolean; maxPain?: number }): RecoveryTip[] {
   const kg = o.profile.weightKg
   const tips: RecoveryTip[] = []
 
@@ -112,7 +112,7 @@ export function recoveryTips(o: { profile: Profile; sessionId: SessionId; rpe?: 
       : '500 ml à 1 L d’eau dans l’heure, plus si tu as beaucoup transpiré.',
   })
 
-  const run = RUN_ADVICE[o.sessionId]
+  const run = o.runAdvice ?? RUN_ADVICE[o.sessionId]
   if (run) tips.push({ icon: '🏃', title: 'Course', text: (o.rpe ?? 0) >= 8 ? `${run} Séance dure (${o.rpe}/10) : compte plutôt 48 h avant une séance intense.` : run })
 
   if ((o.maxPain ?? 0) >= 5)

@@ -1,14 +1,16 @@
-/** Thème sombre (défaut) / clair, mémorisé sur l'appareil. */
-import { useState } from 'react'
+/** Thème sombre (défaut) / clair, propre au compte actif. */
+import { useEffect, useState } from 'react'
+import { scoped } from './account'
 
 export type Theme = 'dark' | 'light'
-const KEY = 'trailstrong:theme'
+const KEY = scoped('trailstrong:theme')
+const listeners = new Set<(t: Theme) => void>()
 
 export function currentTheme(): Theme {
   return document.documentElement.dataset.theme === 'light' ? 'light' : 'dark'
 }
 
-export function applyTheme(t: Theme) {
+export function applyTheme(t: Theme, notify = true) {
   document.documentElement.dataset.theme = t
   document.querySelector('meta[name=theme-color]')?.setAttribute('content', t === 'light' ? '#86c5f7' : '#16131c')
   try {
@@ -16,9 +18,23 @@ export function applyTheme(t: Theme) {
   } catch {
     /* navigation privée */
   }
+  if (notify) listeners.forEach((l) => l(t))
+}
+
+/** Changement de thème (synchro du compte). */
+export function onThemeChange(l: (t: Theme) => void) {
+  listeners.add(l)
+  return () => listeners.delete(l)
 }
 
 export function useTheme() {
   const [theme, set] = useState<Theme>(currentTheme)
-  return [theme, (t: Theme) => (applyTheme(t), set(t))] as const
+  useEffect(() => {
+    const l = (t: Theme) => set(t)
+    listeners.add(l)
+    return () => {
+      listeners.delete(l)
+    }
+  }, [])
+  return [theme, (t: Theme) => applyTheme(t)] as const
 }

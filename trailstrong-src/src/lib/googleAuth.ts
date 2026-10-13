@@ -118,7 +118,7 @@ export async function verifyCredential(idToken: string): Promise<GoogleSession> 
 
 /** Affiche le bouton officiel « Se connecter avec Google » dans `el`. */
 export async function renderGoogleButton(el: HTMLElement, onCredential: (token: string) => void) {
-  if (!googleConfigured()) throw new Error('Connexion Google non configurée dans ce build.')
+  if (!CLIENT_ID) throw new Error('Connexion Google non configurée dans ce build.')
   await loadGis()
   const g = (window as GisWindow).google!
   g.accounts.id.initialize({ client_id: CLIENT_ID, callback: (r) => onCredential(r.credential), auto_select: true })

@@ -6,6 +6,7 @@
  * l'indice « Ton record précédent ».
  */
 import { useSyncExternalStore } from 'react'
+import { scoped } from './account'
 import { getAllCustom, mergeCustom } from './custom'
 
 export type Side = 'L' | 'R'
@@ -63,8 +64,15 @@ export interface TestResult {
 
 /** Profil sportif (sert aux repères de récupération). */
 export interface Profile {
+  name?: string
   weightKg?: number
   weightUnit?: 'kg' | 'lbs'
+  /** Réponses du questionnaire (servent à l'IA et au bilan). */
+  sport?: string
+  goals?: string[]
+  pains?: string[]
+  equip?: string
+  level?: string
 }
 
 /** Bilan d'une séance pour une date. */
@@ -92,7 +100,7 @@ export interface AppData {
   updatedAt: number
 }
 
-const KEY = 'trailstrong:v1'
+const KEY = scoped('trailstrong:v1')
 
 const empty = (): AppData => ({
   version: 1,
@@ -125,6 +133,12 @@ function emit() {
 
 export function getData() {
   return state
+}
+
+/** Abonnement brut aux changements (synchro du compte). */
+export function subscribeData(l: () => void) {
+  listeners.add(l)
+  return () => listeners.delete(l)
 }
 
 export function setData(next: AppData, opts: { touch?: boolean } = {}) {

@@ -90,7 +90,8 @@ self.addEventListener('fetch', (event) => {
  * Content-Security-Policy injectée au build uniquement (le serveur de dev de
  * Vite a besoin de scripts inline). N'autorise que : le site lui-même, Google
  * Identity Services (+ clés publiques Google), l'API GitHub (backup Gist),
- * les photos du catalogue (raw.githubusercontent.com), l'API Gemini et Google Fonts.
+ * les photos du catalogue (raw.githubusercontent.com), l'API Gemini, Firebase (Auth + Firestore)
+ * et Google Fonts.
  */
 function csp(): Plugin {
   const policy = [
@@ -99,7 +100,7 @@ function csp(): Plugin {
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://accounts.google.com/gsi/style",
     "font-src 'self' https://fonts.gstatic.com",
     "img-src 'self' data: https://*.googleusercontent.com https://raw.githubusercontent.com",
-    "connect-src 'self' https://accounts.google.com/gsi/ https://www.googleapis.com/oauth2/v3/certs https://api.github.com https://gist.githubusercontent.com https://raw.githubusercontent.com https://generativelanguage.googleapis.com",
+    "connect-src 'self' https://accounts.google.com/gsi/ https://www.googleapis.com/oauth2/v3/certs https://api.github.com https://gist.githubusercontent.com https://raw.githubusercontent.com https://generativelanguage.googleapis.com https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com",
     'frame-src https://accounts.google.com/gsi/',
     "object-src 'none'",
     "base-uri 'self'",

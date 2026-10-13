@@ -4,9 +4,10 @@ import { googleConfigured, renderGoogleButton, verifyCredential } from '../lib/g
 import { PinLock } from './PinLock'
 
 /** Écran d'accès : connexion Google (compte autorisé) ; PIN en secours. */
-export function LoginScreen({ onUnlock }: { onUnlock: () => void }) {
+export function LoginScreen({ onUnlock, onGoogleToken }: { onUnlock: () => void; onGoogleToken?: (token: string) => Promise<void> }) {
   const btn = useRef<HTMLDivElement>(null)
-  const configured = googleConfigured()
+  const cloud = !!onGoogleToken
+  const configured = cloud || googleConfigured()
   const [status, setStatus] = useState<'loading' | 'ready' | 'verifying' | 'offline'>('loading')
   const [error, setError] = useState('')
   const [pinMode, setPinMode] = useState(!configured)
@@ -22,7 +23,8 @@ export function LoginScreen({ onUnlock }: { onUnlock: () => void }) {
       setStatus('verifying')
       setError('')
       try {
-        await verifyCredential(token)
+        if (onGoogleToken) await onGoogleToken(token)
+        else await verifyCredential(token)
         navigator.vibrate?.(20)
         onUnlock()
       } catch (e) {
@@ -40,12 +42,12 @@ export function LoginScreen({ onUnlock }: { onUnlock: () => void }) {
     return () => {
       alive = false
     }
-  }, [pinMode, onUnlock])
+  }, [pinMode, onUnlock, onGoogleToken])
 
   if (pinMode)
     return (
       <PinLock
-        title={configured ? 'Accès admin' : 'Bon retour, Mickael'}
+        title={configured ? 'Accès admin' : 'Bon retour !'}
         subtitle={configured ? 'Accès de secours par PIN (ouvre aussi le mode admin).' : 'Saisis ton code PIN pour ouvrir la session.'}
         onUnlock={onUnlock}
         onCancel={configured ? () => setPinMode(false) : undefined}
@@ -62,10 +64,12 @@ export function LoginScreen({ onUnlock }: { onUnlock: () => void }) {
 
       <div className="b-card w-full max-w-[360px] p-5">
         <span className="tag h-7 -rotate-1 bg-sun px-2 text-[11px]">
-          <Lock className="mr-1 h-3 w-3" strokeWidth={3} /> Accès privé
+          <Lock className="mr-1 h-3 w-3" strokeWidth={3} /> {cloud ? 'Ton espace' : 'Accès privé'}
         </span>
-        <h1 className="headline mt-5 text-[26px] [text-shadow:2px_2px_0_#f0773a]">Bon retour, Mickael</h1>
-        <p className="mt-1 text-[14px] font-semibold text-ink/75">Connecte-toi avec ton compte Google autorisé.</p>
+        <h1 className="headline mt-5 text-[26px] [text-shadow:2px_2px_0_#f0773a]">{cloud ? 'Bienvenue !' : 'Bon retour !'}</h1>
+        <p className="mt-1 text-[14px] font-semibold text-ink/75">
+          {cloud ? 'Connecte-toi avec ton compte Google : ton programme et tes données te suivent sur tous tes appareils.' : 'Connecte-toi avec ton compte Google autorisé.'}
+        </p>
 
         <div className="mt-6 flex min-h-[44px] justify-center">
           <div ref={btn} className={status === 'offline' ? 'hidden' : 'w-full max-w-[300px]'} />
@@ -84,12 +88,14 @@ export function LoginScreen({ onUnlock }: { onUnlock: () => void }) {
         )}
 
         <p className="mt-5 text-[12px] font-semibold leading-snug text-ink/65">
-          Une fois connecté, cet appareil reste autorisé 30 jours, même hors-ligne au gym.
+          {cloud ? 'Ensuite, l’app marche aussi hors-ligne au gym : tout se synchronise au retour du réseau.' : 'Une fois connecté, cet appareil reste autorisé 30 jours, même hors-ligne au gym.'}
         </p>
 
-        <button type="button" onClick={() => setPinMode(true)} className="b-btn mt-4 flex h-11 w-full items-center justify-center gap-2 text-[13px] uppercase italic">
-          <KeyRound className="h-4 w-4" strokeWidth={2.5} /> Accès admin (PIN)
-        </button>
+        {!cloud && (
+          <button type="button" onClick={() => setPinMode(true)} className="b-btn mt-4 flex h-11 w-full items-center justify-center gap-2 text-[13px] uppercase italic">
+            <KeyRound className="h-4 w-4" strokeWidth={2.5} /> Accès admin (PIN)
+          </button>
+        )}
       </div>
     </div>
   )

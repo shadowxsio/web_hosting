@@ -8,6 +8,7 @@ import type { AnimationId } from '../components/diagram-base'
 import type { FocusTag } from '../data/program'
 import { draftFromCatalog, fetchPhotos, loadCatalog, type CatalogEntry } from './catalog'
 import type { CustomDraft } from './custom'
+import { getData } from './storage'
 
 const KEY = 'trailstrong:gemini'
 export const DEFAULT_MODEL = 'gemini-flash-latest'
@@ -86,9 +87,16 @@ export const DIAGRAMS: Record<AnimationId, string> = {
   soleusStretch: 'étirement du soléaire contre un mur, genou arrière fléchi',
 }
 
-const PROFILE = `Profil : Mickael, ultra-traileur, renforcement en salle (ÉconoFitness) pour protéger genoux et chevilles et gagner en force en côte.
-Charges en livres (lbs). Il préfère les exercices unilatéraux (une jambe à la fois) quand c'est pertinent.
+/** Profil de l'utilisateur pour le prompt (questionnaire), sinon profil du programme de base. */
+function profileText() {
+  const p = getData().profile
+  const who = p.sport
+    ? `Profil : ${p.name || 'l’utilisateur'}, sport principal ${p.sport}, objectifs ${(p.goals ?? []).join(', ') || 'renforcement général'}, zones sensibles ${(p.pains ?? []).join(', ') || 'aucune'}, matériel ${p.equip ?? 'salle'}, niveau ${p.level ?? 'intermédiaire'}.`
+    : `Profil : ${p.name || 'l’utilisateur'}, traileur, renforcement en salle pour protéger genoux et chevilles et gagner en force en côte.`
+  return `${who}
+Charges en livres (lbs). Privilégie les exercices unilatéraux (une jambe à la fois) quand c'est pertinent.
 Tout le texte doit être en FRANÇAIS, concis et concret (tutoiement).`
+}
 
 const SCHEMA = {
   type: 'OBJECT',
@@ -221,7 +229,7 @@ function toDraft(r: AiResult, entry: CatalogEntry | undefined): CustomDraft {
 export async function aiCreate(request: string): Promise<CustomDraft> {
   const catalog = await loadCatalog()
   const list = catalog.map((e) => `${e.id}|${e.e || 'body'}`).join('\n')
-  const r = await callGemini(`${PROFILE}
+  const r = await callGemini(`${profileText()}
 
 Demande : « ${request.slice(0, 500)} »
 
@@ -239,7 +247,7 @@ Choisis aussi le schéma (diagram) le plus proche du mouvement parmi : ${Object.
 /** Exercice choisi dans le catalogue → fiche traduite et adaptée. */
 export async function aiAdapt(entry: CatalogEntry): Promise<CustomDraft> {
   const base = draftFromCatalog(entry)
-  const r = await callGemini(`${PROFILE}
+  const r = await callGemini(`${profileText()}
 
 Adapte et traduis cet exercice du catalogue (id ${entry.id}) :
 Nom : ${entry.n} · catégorie ${entry.c} · matériel ${entry.e || 'poids du corps'} · muscles ${[...entry.m, ...entry.s].join(', ')}
