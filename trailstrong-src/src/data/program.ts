@@ -77,6 +77,10 @@ export interface Session {
   duration: string
   goal: string
   exercises: Exercise[]
+  /** Étirements du retour au calme (ids de data/cooldown) — sinon routine par défaut. */
+  cooldown?: string[]
+  /** Conseil course du bilan — sinon conseil par défaut de l'emplacement. */
+  runAdvice?: string
 }
 
 export type SessionId = 'activation' | 'seanceA' | 'seanceB' | 'tapis'

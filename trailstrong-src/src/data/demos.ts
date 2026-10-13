@@ -32,6 +32,21 @@ export const DEMOS: Record<string, Demo> = {
   'copenhagen-plank': { photos: true, note: 'Base : planche latérale. Au Copenhague, le pied du haut est posé sur un banc.', video: 'copenhagen plank adductor' },
   'soleus-raise': { photos: true, video: 'seated soleus raise dumbbell' },
   'sl-calf-raise': { photos: true, note: 'Sur une jambe, main au mur pour l’équilibre.', video: 'single leg calf raise on step' },
+  // Bibliothèque (data/extras.ts)
+  'goblet-squat': { photos: true, video: 'goblet squat form' },
+  'bw-squat': { photos: true, video: 'bodyweight squat form' },
+  'reverse-lunge': { photos: true, video: 'dumbbell reverse lunge' },
+  'step-up': { photos: true, video: 'dumbbell step up knee' },
+  'leg-extension': { photos: true, note: 'Photo à une jambe : alterne les côtés.', video: 'single leg extension machine' },
+  'wall-sit': { photos: false, video: 'wall sit isometric knee' },
+  'jump-squat': { photos: true, video: 'jump squat landing mechanics' },
+  plank: { photos: true, video: 'forearm plank form' },
+  'side-plank': { photos: true, video: 'side plank form' },
+  'dead-bug': { photos: true, video: 'dead bug exercise' },
+  'bird-dog': { photos: false, video: 'bird dog exercise' },
+  'push-up': { photos: true, video: 'push up form' },
+  'db-row': { photos: true, video: 'bent over dumbbell row' },
+  'db-press': { photos: true, video: 'seated dumbbell shoulder press' },
   'power-hike': { photos: true, note: 'Pente 12-15 %, sans tenir les barres.', video: 'incline treadmill power hiking trail' },
 }
 

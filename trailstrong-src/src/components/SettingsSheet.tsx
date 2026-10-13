@@ -17,11 +17,14 @@ export function SettingsSheet({
   onLock,
   onNavigate,
   onTests,
+  cloud,
 }: {
   onClose: () => void
   onLock: () => void
   onNavigate: (view: View, focus?: FocusTag) => void
   onTests: () => void
+  /** Mode comptes (Firebase) : compte, synchro et programme. */
+  cloud?: { email: string; status: string; onRedoProgram: () => void }
 }) {
   const data = useData()
   const g = data.gist
@@ -62,6 +65,77 @@ export function SettingsSheet({
   }
 
   const days = Object.keys(data.logs).length
+
+  const sharedBlocks = (
+    <>
+        <Block
+          title="Assistant IA (Gemini)"
+          desc={ai.key ? `Clé enregistrée sur cet appareil (…${ai.key.slice(-4)}). Elle n’est jamais exportée ni sauvegardée.` : 'Colle ta clé API Gemini (aistudio.google.com → Get API key) pour créer des exercices en décrivant ce que tu veux.'}
+        >
+          <div className="flex gap-2">
+            <input
+              id="gemini-key"
+              type="password"
+              autoComplete="off"
+              value={aiKey}
+              onChange={(e) => setAiKey(e.target.value.trim())}
+              placeholder={ai.key ? 'Remplacer la clé…' : 'AIza…'}
+              className="b-input h-11 min-w-0 flex-1 px-3 font-mono text-[13px]"
+            />
+            <button
+              type="button"
+              disabled={aiKey.length < 20}
+              onClick={() => {
+                setAiConfig({ key: aiKey })
+                setAiKey('')
+                setMsg({ ok: true, text: 'Clé Gemini enregistrée sur cet appareil.' })
+              }}
+              className="b-btn h-11 px-3 text-[13px] uppercase italic disabled:opacity-40"
+            >
+              Enregistrer
+            </button>
+          </div>
+          <div className="mt-2 flex items-center gap-2">
+            <label htmlFor="gemini-model" className="label shrink-0">
+              Modèle
+            </label>
+            <input
+              id="gemini-model"
+              value={ai.model}
+              onChange={(e) => setAiConfig({ model: e.target.value.trim() || DEFAULT_MODEL })}
+              className="b-input h-10 min-w-0 flex-1 px-3 font-mono text-[12px]"
+            />
+            {ai.key && (
+              <button type="button" onClick={() => setAiConfig({ key: '' })} className="b-btn h-10 px-3 text-[12px] uppercase italic">
+                Retirer
+              </button>
+            )}
+          </div>
+        </Block>
+
+        <Block title="Sauvegarde locale" desc={`${days} jour(s) d’entraînement stockés sur cet appareil.`}>
+          <div className="grid grid-cols-2 gap-2">
+            <Btn onClick={download} icon={Download}>
+              Exporter JSON
+            </Btn>
+            <Btn onClick={() => file.current?.click()} icon={Upload}>
+              Importer JSON
+            </Btn>
+          </div>
+          <input
+            ref={file}
+            type="file"
+            accept="application/json,.json"
+            className="hidden"
+            onChange={(e) => {
+              const f = e.target.files?.[0]
+              e.target.value = ''
+              if (f) void run(async () => `${importJson(await f.text())} jour(s) importé(s) et fusionné(s).`)
+            }}
+          />
+        </Block>
+    </>
+  )
 
   return createPortal(
     <div className="fade-in fixed inset-0 z-50 flex items-end justify-center bg-ink/40 md:items-stretch md:justify-end" onClick={onClose}>
@@ -111,12 +185,12 @@ export function SettingsSheet({
           <button
             type="button"
             onClick={() => {
-              lock()
+              if (!cloud) lock()
               onLock()
             }}
             className="flex min-h-[57px] w-full flex-wrap items-center gap-x-3 border-t-[2.5px] border-ink bg-sun px-4 py-2 text-left"
           >
-            <span className="text-[10px] font-extrabold uppercase tracking-[0.1em] text-ink/70">{account ? account.email : 'Session PIN'}</span>
+            <span className="text-[10px] font-extrabold uppercase tracking-[0.1em] text-ink/70">{cloud ? cloud.email : account ? account.email : 'Session PIN'}</span>
             <span className="text-[19px] font-black uppercase italic leading-tight tracking-tight">Se déconnecter</span>
           </button>
         </nav>
@@ -144,6 +218,15 @@ export function SettingsSheet({
             ))}
           </div>
         </Block>
+
+        {cloud && (
+          <Block title="Mon compte" desc={`${cloud.email} · ${cloud.status}`}>
+            <button type="button" onClick={cloud.onRedoProgram} className="b-btn flex h-12 w-full items-center justify-center gap-2 bg-sun text-[13px] uppercase italic">
+              ✨ Refaire mon programme (questionnaire)
+            </button>
+            <p className="mt-2 text-[12px] font-semibold text-ink/65">Tes séances, ton historique et tes réglages sont enregistrés dans ton compte et suivent sur tous tes appareils.</p>
+          </Block>
+        )}
 
         <Block title="Profil" desc="Ton poids sert à doser les protéines, glucides et l’eau dans le bilan de fin de séance.">
           <div className="flex gap-2">
@@ -234,74 +317,11 @@ export function SettingsSheet({
           <p className={`mb-3 border-2 border-ink px-3 py-2 text-sm font-bold ${msg.ok ? 'bg-mint' : 'bg-rose'}`}>{msg.text}</p>
         )}
 
-        {admin ? (
+        {cloud ? (
+          sharedBlocks
+        ) : admin ? (
           <>
-        <Block
-          title="Assistant IA (Gemini)"
-          desc={ai.key ? `Clé enregistrée sur cet appareil (…${ai.key.slice(-4)}). Elle n’est jamais exportée ni sauvegardée.` : 'Colle ta clé API Gemini (aistudio.google.com → Get API key) pour créer des exercices en décrivant ce que tu veux.'}
-        >
-          <div className="flex gap-2">
-            <input
-              id="gemini-key"
-              type="password"
-              autoComplete="off"
-              value={aiKey}
-              onChange={(e) => setAiKey(e.target.value.trim())}
-              placeholder={ai.key ? 'Remplacer la clé…' : 'AIza…'}
-              className="b-input h-11 min-w-0 flex-1 px-3 font-mono text-[13px]"
-            />
-            <button
-              type="button"
-              disabled={aiKey.length < 20}
-              onClick={() => {
-                setAiConfig({ key: aiKey })
-                setAiKey('')
-                setMsg({ ok: true, text: 'Clé Gemini enregistrée sur cet appareil.' })
-              }}
-              className="b-btn h-11 px-3 text-[13px] uppercase italic disabled:opacity-40"
-            >
-              Enregistrer
-            </button>
-          </div>
-          <div className="mt-2 flex items-center gap-2">
-            <label htmlFor="gemini-model" className="label shrink-0">
-              Modèle
-            </label>
-            <input
-              id="gemini-model"
-              value={ai.model}
-              onChange={(e) => setAiConfig({ model: e.target.value.trim() || DEFAULT_MODEL })}
-              className="b-input h-10 min-w-0 flex-1 px-3 font-mono text-[12px]"
-            />
-            {ai.key && (
-              <button type="button" onClick={() => setAiConfig({ key: '' })} className="b-btn h-10 px-3 text-[12px] uppercase italic">
-                Retirer
-              </button>
-            )}
-          </div>
-        </Block>
-
-        <Block title="Sauvegarde locale" desc={`${days} jour(s) d’entraînement stockés sur cet appareil.`}>
-          <div className="grid grid-cols-2 gap-2">
-            <Btn onClick={download} icon={Download}>
-              Exporter JSON
-            </Btn>
-            <Btn onClick={() => file.current?.click()} icon={Upload}>
-              Importer JSON
-            </Btn>
-          </div>
-          <input
-            ref={file}
-            type="file"
-            accept="application/json,.json"
-            className="hidden"
-            onChange={(e) => {
-              const f = e.target.files?.[0]
-              e.target.value = ''
-              if (f) void run(async () => `${importJson(await f.text())} jour(s) importé(s) et fusionné(s).`)
-            }}
-          />
-        </Block>
+        {sharedBlocks}
 
         <Block
           title="Backup cloud — GitHub Gist"
@@ -426,7 +446,7 @@ export function SettingsSheet({
           </section>
         )}
         {askPin && <PinLock overlay onUnlock={() => setAskPin(false)} onCancel={() => setAskPin(false)} />}
-        <p className="mb-6 text-center text-[11px] text-ink/45">TrailStrong 2026 · v{__APP_VERSION__} · données 100 % locales</p>
+        <p className="mb-6 text-center text-[11px] text-ink/45">TrailStrong 2026 · v{__APP_VERSION__} · {cloud ? 'données synchronisées sur ton compte' : 'données 100 % locales'}</p>
       </div>
     </div>,
     document.body,

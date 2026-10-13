@@ -1,36 +1,57 @@
 import { BarChart3, LayoutGrid, Menu, Search } from 'lucide-react'
-import { useEffect, useRef, useState, type TouchEvent } from 'react'
+import { Suspense, lazy, useEffect, useMemo, useRef, useState, type ComponentProps, type TouchEvent } from 'react'
 import { Catalog, type Scope } from './components/Catalog'
 import { SESSION_META } from './components/meta'
 import { LoginScreen } from './components/LoginScreen'
 import { SettingsSheet } from './components/SettingsSheet'
 import { StatsView } from './components/StatsView'
 import { TimerBar } from './components/TimerBar'
-import type { FocusTag } from './data/program'
+import type { FocusTag, Session } from './data/program'
 import { hasValidSession } from './lib/auth'
 import { useAutoBackup } from './lib/backup'
 import { useProgram } from './lib/custom'
+import { firebaseEnabled } from './lib/firebaseConfig'
 import { today } from './lib/storage'
+
+const CloudApp = lazy(() => import('./CloudApp'))
 
 export type View = Scope | 'stats'
 
-/** Onglets : dossiers colorés en haut (desktop) / dock en bas (mobile). */
-export const TABS: { id: View; label: string; short: string; emoji?: string; bg: string }[] = [
-  { id: 'all', label: 'Tout', short: 'Tout', bg: 'bg-paper' },
-  // L'Activation est intégrée en tête de chaque séance : pas d'onglet dédié.
-  ...(Object.entries(SESSION_META) as [View, (typeof SESSION_META)[keyof typeof SESSION_META]][]).filter(([id]) => id !== 'activation').map(([id, m]) => ({
-    id,
-    label: m.label,
-    short: m.short,
-    emoji: m.emoji,
-    bg: m.bg,
-  })),
-  { id: 'stats', label: 'Progression', short: 'Stats', bg: 'bg-sky' },
-]
+type Tab = { id: View; label: string; short: string; emoji?: string; bg: string }
+
+/** Onglets : dossiers colorés en haut (desktop) / dock en bas (mobile), d'après le programme du compte. */
+function tabsOf(program: Session[]): Tab[] {
+  return [
+    { id: 'all', label: 'Tout', short: 'Tout', bg: 'bg-paper' },
+    // L'Activation est intégrée en tête de chaque séance : pas d'onglet dédié.
+    ...program
+      .filter((s) => s.id !== 'activation' && s.exercises.length > 0)
+      .map((s) => ({
+        id: s.id as View,
+        label: s.short,
+        short: s.short.length > 9 ? SESSION_META[s.id].short : s.short,
+        // L'emplacement « tapis » peut accueillir une Séance C (gainage…) dans un programme généré.
+        emoji: s.id === 'tapis' && !/tapis/i.test(s.short) ? '🧱' : SESSION_META[s.id].emoji,
+        bg: SESSION_META[s.id].bg,
+      })),
+    { id: 'stats', label: 'Progression', short: 'Stats', bg: 'bg-sky' },
+  ]
+}
 
 const VIEW_KEY = 'trailstrong:view'
 
 export default function App() {
+  if (firebaseEnabled)
+    return (
+      <Suspense fallback={null}>
+        <CloudApp />
+      </Suspense>
+    )
+  return <LocalApp />
+}
+
+/** Mode local historique : un seul utilisateur, données sur l'appareil. */
+function LocalApp() {
   const [auth, setAuth] = useState<'checking' | 'locked' | 'open'>('checking')
   useEffect(() => {
     void hasValidSession().then((ok) => setAuth(ok ? 'open' : 'locked'))
@@ -40,13 +61,15 @@ export default function App() {
   return <Shell onLock={() => setAuth('locked')} />
 }
 
-function Shell({ onLock }: { onLock: () => void }) {
+export function Shell({ onLock, cloud }: { onLock: () => void; cloud?: ComponentProps<typeof SettingsSheet>['cloud'] }) {
   useAutoBackup()
   const program = useProgram()
-  const [view, setViewState] = useState<View>(() => {
-    const saved = localStorage.getItem(VIEW_KEY) as View | null
-    return saved && TABS.some((t) => t.id === saved) ? saved : 'seanceA'
-  })
+  const TABS = useMemo(() => tabsOf(program), [program])
+  const [view, setViewState] = useState<View>(() => (localStorage.getItem(VIEW_KEY) as View | null) ?? 'seanceA')
+  // Vue mémorisée qui n'existe plus dans ce programme → première séance.
+  useEffect(() => {
+    if (!TABS.some((t) => t.id === view)) setViewState(TABS[1]?.id ?? 'all')
+  }, [TABS, view])
   const [focus, setFocus] = useState<FocusTag | null>(null)
   const [query, setQuery] = useState('')
   const [date, setDate] = useState(today())
@@ -163,7 +186,7 @@ function Shell({ onLock }: { onLock: () => void }) {
 
       {/* ── Dock mobile ── */}
       <nav className="pb-safe fixed inset-x-0 bottom-0 z-40 border-t-[2.5px] border-ink bg-paper md:hidden" aria-label="Onglets" data-noswipe>
-        <ul className="grid grid-cols-5">
+        <ul className="grid" style={{ gridTemplateColumns: `repeat(${TABS.length}, minmax(0, 1fr))` }}>
           {TABS.map((t) => {
             const active = t.id === view
             return (
@@ -193,6 +216,7 @@ function Shell({ onLock }: { onLock: () => void }) {
         <SettingsSheet
           onClose={() => setMenu(false)}
           onLock={onLock}
+          cloud={cloud}
           onNavigate={(v, f) => {
             setView(v)
             if (f) setFocus(f)

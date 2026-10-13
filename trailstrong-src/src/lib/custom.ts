@@ -6,8 +6,10 @@
  * (storage.ts) avec l'id `custom-<timestamp>`, exactement comme un exercice natif.
  */
 import { useMemo, useSyncExternalStore } from 'react'
+import { scoped } from './account'
 import type { AnimationId } from '../components/diagram-base'
 import type { Phase } from '../data/cadence'
+import { buildProgram, useUserProgram } from './userProgram'
 import { PROGRAM, type AttentionPoint, type Exercise, type FocusTag, type Session, type SessionId } from '../data/program'
 
 export interface CustomExerciseDef {
@@ -45,7 +47,7 @@ export interface CustomExerciseDef {
 export type CustomDraft = Omit<CustomExerciseDef, 'id' | 'createdAt'>
 
 const SESSION_IDS = PROGRAM.map((s) => s.id)
-const keyOf = (id: SessionId) => `custom_exercises_${id}`
+const keyOf = (id: SessionId) => scoped(`custom_exercises_${id}`)
 
 function read(id: SessionId): CustomExerciseDef[] {
   try {
@@ -81,6 +83,25 @@ window.addEventListener('storage', (e) => {
     emit()
   }
 })
+
+/** Abonnement aux changements (synchro du compte). */
+export function subscribeCustom(l: () => void) {
+  listeners.add(l)
+  return () => listeners.delete(l)
+}
+
+/** Remplace tout (données reçues du cloud). */
+export function replaceAllCustom(next: Record<SessionId, CustomExerciseDef[]>) {
+  for (const id of SESSION_IDS) {
+    cache = { ...cache, [id]: next[id] ?? [] }
+    try {
+      localStorage.setItem(keyOf(id), JSON.stringify(cache[id]))
+    } catch {
+      /* quota */
+    }
+  }
+  emit()
+}
 
 export function getAllCustom() {
   return cache
@@ -213,8 +234,15 @@ function toFullExercise(d: CustomExerciseDef): Exercise {
   }
 }
 
-/** Programme natif + exercices personnalisés en fin de chaque séance. */
+/** Programme du compte (ou programme de base) + exercices personnalisés en fin de chaque séance. */
 export function useProgram(): Session[] {
   const custom = useCustom()
-  return useMemo(() => PROGRAM.map((s) => ({ ...s, exercises: [...s.exercises, ...custom[s.id].map(toExercise)] })), [custom])
+  const plan = useUserProgram()
+  return useMemo(
+    () =>
+      buildProgram(plan)
+        .map((s) => ({ ...s, exercises: [...s.exercises, ...custom[s.id].map(toExercise)] }))
+        .filter((s) => s.exercises.length > 0 || s.id === 'activation'),
+    [custom, plan],
+  )
 }

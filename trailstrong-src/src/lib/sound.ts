@@ -10,6 +10,7 @@
  *     silencieux, mais iOS met en pause la vidéo / musique de l'autre app.
  */
 import { useSyncExternalStore } from 'react'
+import { scoped } from './account'
 
 export type SoundMode = 'voice' | 'beep' | 'off'
 interface SoundPrefs {
@@ -18,7 +19,7 @@ interface SoundPrefs {
   speaker: boolean
 }
 
-const KEY = 'trailstrong:sound'
+const KEY = scoped('trailstrong:sound')
 const read = (): SoundPrefs => {
   try {
     const raw = JSON.parse(localStorage.getItem(KEY) ?? '{}') as Partial<SoundPrefs> & { v?: number }
@@ -34,6 +35,12 @@ const read = (): SoundPrefs => {
 
 let prefs = read()
 const ls = new Set<() => void>()
+export const getSoundPrefs = () => prefs
+/** Abonnement aux changements (synchro du compte). */
+export function onSoundChange(l: () => void) {
+  ls.add(l)
+  return () => ls.delete(l)
+}
 export function setSoundPrefs(p: Partial<SoundPrefs>) {
   prefs = { ...prefs, ...p }
   localStorage.setItem(KEY, JSON.stringify({ ...prefs, v: 3 }))

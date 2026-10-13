@@ -1,7 +1,7 @@
 import { Check, Clock, Dumbbell, Trophy, X } from 'lucide-react'
 import { useEffect } from 'react'
 import { createPortal } from 'react-dom'
-import { COOLDOWN, routineOf, routineSeconds } from '../data/cooldown'
+import { routineOf, routineSeconds } from '../data/cooldown'
 import type { Session } from '../data/program'
 import { computeRecap, recoveryTips } from '../lib/recap'
 import { updateCheckin, updateSessionLog, useData } from '../lib/storage'
@@ -16,8 +16,8 @@ export function SessionRecap({ session, date, onClose, onCooldown }: { session: 
   const log = data.sessions[date]?.[session.id] ?? {}
   const c = data.checkins[date] ?? {}
   const maxPain = Math.max(c.kneeAfter ?? 0, c.ankleAfter ?? 0)
-  const tips = recoveryTips({ profile: data.profile, sessionId: session.id, rpe: log.rpe, runSoon: log.runSoon, maxPain })
-  const routine = routineOf(session.id)
+  const tips = recoveryTips({ profile: data.profile, sessionId: session.id, runAdvice: session.runAdvice, rpe: log.rpe, runSoon: log.runSoon, maxPain })
+  const routine = routineOf(session)
   const set = (p: Parameters<typeof updateSessionLog>[2]) => updateSessionLog(date, session.id, p)
 
   useEffect(() => {
@@ -132,7 +132,7 @@ export function SessionRecap({ session, date, onClose, onCooldown }: { session: 
           </section>
         </div>
 
-        {COOLDOWN[session.id] && (
+        {routine.length > 0 && (
           <footer className="border-t-[2.5px] border-ink p-3">
             <button type="button" onClick={onCooldown} className="b-btn flex h-12 w-full items-center justify-center gap-2 bg-mint text-[14px] uppercase italic">
               {log.cooldownAt ? '✓ Retour au calme fait · refaire' : `🧘 Retour au calme · ${Math.round(routineSeconds(routine) / 60)} min`}

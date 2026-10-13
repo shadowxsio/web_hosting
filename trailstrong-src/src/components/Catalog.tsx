@@ -55,7 +55,7 @@ export function Catalog({
   const [openEx, setOpenEx] = useState<{ ex: Exercise; sessionId: SessionId } | null>(null)
   const [adding, setAdding] = useState<Session | null>(null)
   const [recap, setRecap] = useState<Session | null>(null)
-  const [cooldown, setCooldown] = useState<SessionId | null>(null)
+  const [cooldown, setCooldown] = useState<Session | null>(null)
 
   // Séance du jour terminée à 100 % → bilan automatique (une seule fois), après la fanfare du coach.
   const doneKey = program.map((s) => s.exercises.every((e) => day[e.id]?.done) && s.exercises.length > 0).join()
@@ -92,7 +92,7 @@ export function Catalog({
   const doneCount = visible.filter((e) => day[e.id]?.done).length
   const pct = visible.length ? Math.round((doneCount / visible.length) * 100) : 0
   const current = scope !== 'all' ? program.find((s) => s.id === scope)! : null
-  const routine = current ? routineOf(current.id) : []
+  const routine = current ? routineOf(current) : []
   const showMobility = !!current && routine.length > 0 && !q && !focus
   const finishedAt = current ? data.sessions[date]?.[current.id]?.recapAt : undefined
   const step = (s: Session) => (scope === 'all' ? null : s.id === 'activation' ? 1 : 2)
@@ -268,7 +268,7 @@ export function Catalog({
             />
             <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
               {routine.map((st) => (
-                <button key={st.id} type="button" onClick={() => setCooldown(current.id)} className="b-card overflow-hidden text-left !shadow-[3px_3px_0_var(--color-shadow)] active:translate-y-px">
+                <button key={st.id} type="button" onClick={() => setCooldown(current)} className="b-card overflow-hidden text-left !shadow-[3px_3px_0_var(--color-shadow)] active:translate-y-px">
                   <div className="hero aspect-[5/4] border-b-2 border-ink !border-t-0">
                     <ExerciseDiagram id={st.diagram} />
                   </div>
@@ -280,7 +280,7 @@ export function Catalog({
                 </button>
               ))}
             </div>
-            <button type="button" onClick={() => setCooldown(current.id)} className="b-btn mt-4 flex h-12 w-full items-center justify-center gap-2 bg-mint text-[14px] uppercase italic">
+            <button type="button" onClick={() => setCooldown(current)} className="b-btn mt-4 flex h-12 w-full items-center justify-center gap-2 bg-mint text-[14px] uppercase italic">
               {data.sessions[date]?.[current.id]?.cooldownAt ? '✓ Étirements faits · refaire' : '▶ Lancer le retour au calme guidé'}
             </button>
           </section>
@@ -302,12 +302,12 @@ export function Catalog({
           date={date}
           onClose={() => setRecap(null)}
           onCooldown={() => {
-            setCooldown(recap.id)
+            setCooldown(program.find((p) => p.id === recap.id) ?? recap)
             setRecap(null)
           }}
         />
       )}
-      {cooldown && <CooldownCoach sessionId={cooldown} date={date} onClose={() => setCooldown(null)} />}
+      {cooldown && <CooldownCoach session={cooldown} date={date} onClose={() => setCooldown(null)} />}
       {adding && (
         <AddExerciseSheet
           session={adding}

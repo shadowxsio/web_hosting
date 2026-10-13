@@ -110,8 +110,8 @@ export const COOLDOWN: Partial<Record<SessionId, string[]>> = {
 /** Temps de mise en place avant chaque maintien (s). */
 export const PREP = 6
 
-export function routineOf(id: SessionId): Stretch[] {
-  return (COOLDOWN[id] ?? []).map((s) => STRETCHES[s])
+export function routineOf(session: { id: SessionId; cooldown?: string[] }): Stretch[] {
+  return (session.cooldown ?? COOLDOWN[session.id] ?? []).filter((s) => STRETCHES[s]).map((s) => STRETCHES[s])
 }
 
 export const routineSeconds = (r: Stretch[]) => r.reduce((a, s) => a + (s.hold + PREP) * (s.perSide ? 2 : 1), 0)
