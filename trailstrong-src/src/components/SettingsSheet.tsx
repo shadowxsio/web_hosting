@@ -145,7 +145,7 @@ export function SettingsSheet({
           </div>
         </Block>
 
-        <Block title="Son du coach" desc="Bips de tempo, départ, stop et repos. La voix compte les reps.">
+        <Block title="Son du coach" desc="Un son différent pour le décompte, le départ, chaque phase, la dernière rep, la fin, le repos et la reprise. La voix (en option) compte les reps.">
           <div className="grid grid-cols-3 gap-2" role="radiogroup" aria-label="Son">
             {(
               [
