@@ -13,6 +13,7 @@ import { nextTestIn } from '../lib/tests'
 import { useCountUp } from '../lib/useCountUp'
 import { haptic } from '../lib/haptics'
 import { Confetti } from './Celebrate'
+import { flushSync } from 'react-dom'
 
 // Écrans ouverts à la demande : chargés au premier usage (précachés pour le hors-ligne).
 const CooldownCoach = lazy(() => import('./CooldownCoach').then((m) => ({ default: m.CooldownCoach })))
@@ -58,8 +59,19 @@ export function Catalog({
 }) {
   const data = useData()
   const day = data.logs[date] ?? {}
-  const [openEx, setOpenEx] = useState<{ ex: Exercise; sessionId: SessionId } | null>(null)
-  const openTile = useCallback((ex: Exercise, sessionId: SessionId) => setOpenEx({ ex, sessionId }), [])
+  const [openEx, setOpenEx] = useState<{ ex: Exercise; sessionId: SessionId; morph?: boolean } | null>(null)
+  // La carte se transforme en fiche (View Transitions : élément partagé « ex-card »).
+  const openTile = useCallback((ex: Exercise, sessionId: SessionId) => {
+    const doc = document as Document & { startViewTransition?: (cb: () => void) => { finished: Promise<void> } }
+    const card = document.querySelector<HTMLElement>(`[data-card="${CSS.escape(ex.id)}"]`)
+    if (!card || !doc.startViewTransition || matchMedia('(prefers-reduced-motion: reduce)').matches) return setOpenEx({ ex, sessionId })
+    card.style.viewTransitionName = 'ex-card'
+    const vt = doc.startViewTransition(() => {
+      card.style.viewTransitionName = ''
+      flushSync(() => setOpenEx({ ex, sessionId, morph: true }))
+    })
+    vt.finished.finally(() => setOpenEx((cur) => (cur?.morph ? { ...cur, morph: false } : cur)))
+  }, [])
   const [adding, setAdding] = useState<Session | null>(null)
   const [recap, setRecap] = useState<Session | null>(null)
   const generated = useUserProgram() !== null
@@ -334,6 +346,7 @@ export function Catalog({
           sessionId={openEx.sessionId}
           date={date}
           onClose={() => setOpenEx(null)}
+          morph={openEx.morph}
         />
       )}
       {party && <Confetti />}
