@@ -1,4 +1,4 @@
-import { CloudUpload, Download, KeyRound, Lock, RotateCcw, Upload, X } from 'lucide-react'
+import { CloudUpload, Download, KeyRound, Lock, RotateCcw, Stethoscope, Upload, X } from 'lucide-react'
 import { useRef, useState, type ComponentType, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { exitAdmin, lock, resetLocalPin, setLocalPin, useAdmin, usingDefaultPin } from '../lib/auth'
@@ -19,6 +19,7 @@ export function SettingsSheet({
   onNavigate,
   onTests,
   cloud,
+  onTour,
 }: {
   onClose: () => void
   onLock: () => void
@@ -26,6 +27,8 @@ export function SettingsSheet({
   onTests: () => void
   /** Mode comptes (Firebase) : compte, synchro et programme. */
   cloud?: { email: string; status: string; onRedoProgram: () => void; logoutLabel?: string; isOwner?: boolean }
+  /** Relance la visite guidée de l'app. */
+  onTour?: () => void
 }) {
   const data = useData()
   const g = data.gist
@@ -183,6 +186,16 @@ export function SettingsSheet({
               <span className="text-[19px] font-black uppercase tracking-wide leading-tight tracking-tight text-ink">{title}</span>
             </button>
           ))}
+          {onTour && (
+            <button
+              type="button"
+              onClick={onTour}
+              className="flex min-h-[57px] w-full flex-wrap items-center gap-x-3 px-4 py-2 text-left transition-colors hover:bg-sun/60"
+            >
+              <span className="text-[10px] font-extrabold uppercase tracking-[0.1em] text-ink/70">1 minute, pas à pas</span>
+              <span className="text-[19px] font-black uppercase tracking-wide leading-tight tracking-tight text-ink">Visite guidée</span>
+            </button>
+          )}
           <button
             type="button"
             onClick={onTests}
@@ -459,6 +472,9 @@ export function SettingsSheet({
           </section>
         )}
         {askPin && <PinLock overlay onUnlock={() => setAskPin(false)} onCancel={() => setAskPin(false)} />}
+        <p className="mb-2 flex items-start justify-center gap-1.5 text-center text-[12px] font-semibold leading-snug text-ink/70">
+          <Stethoscope className="mt-0.5 h-3.5 w-3.5 shrink-0" strokeWidth={2.5} /> Repères d’entraînement, pas un avis médical : en cas de douleur ou de blessure, consulte un physio.
+        </p>
         <p className="mb-6 text-center text-[11px] text-ink/45">TrailStrong 2026 · v{__APP_VERSION__} · {cloud ? 'données synchronisées sur ton compte' : 'données 100 % locales'}</p>
       </div>
     </div>,

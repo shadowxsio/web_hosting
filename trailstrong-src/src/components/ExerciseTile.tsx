@@ -17,12 +17,15 @@ export function ExerciseTile({
   index,
   date,
   onOpen,
+  tour,
 }: {
   ex: Exercise
   sessionId: SessionId
   index: number
   date: string
   onOpen: () => void
+  /** Carte présentée par la visite guidée. */
+  tour?: boolean
 }) {
   const { done, toggleDone, doneSets, sets, prev, maxToday, suggestion } = useExerciseLog(ex, date)
   const Icon = iconOf(ex)
@@ -31,7 +34,7 @@ export function ExerciseTile({
   const kneeFocus = ex.tags.includes('knee')
 
   return (
-    <article className="fade-up relative pt-[26px]">
+    <article className="fade-up relative pt-[26px]" data-tour={tour ? 'exercise' : undefined}>
       {/* Étiquette-onglet */}
       <span
         className={`tag absolute left-4 top-0 z-10 h-7 border-b-0 px-2.5 text-[11px] ${TAB_TILT[index % 4]} ${done ? 'bg-mint' : s.bg}`}
@@ -97,6 +100,7 @@ export function ExerciseTile({
           <button
             type="button"
             id={`check-${tid}`}
+            data-tour={tour ? 'validate' : undefined}
             onClick={toggleDone}
             aria-pressed={done}
             className={`b-btn flex h-10 items-center gap-1.5 px-3 text-[12px] uppercase tracking-wide ${done ? 'pop bg-mint' : ''}`}

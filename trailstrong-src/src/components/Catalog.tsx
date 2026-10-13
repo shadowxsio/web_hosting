@@ -1,8 +1,9 @@
-import { CalendarDays, Plus, Search, X } from 'lucide-react'
+import { CalendarDays, Plus, Search, Stethoscope, X } from 'lucide-react'
 import { useEffect, useState, type ReactNode } from 'react'
 import type { Exercise, FocusTag, Session, SessionId } from '../data/program'
 import { routineOf, routineSeconds } from '../data/cooldown'
 import { today, updateSessionLog, useData } from '../lib/storage'
+import { useUserProgram } from '../lib/userProgram'
 import { CooldownCoach } from './CooldownCoach'
 import { SessionRecap } from './SessionRecap'
 import { AddExerciseSheet } from './AddExerciseSheet'
@@ -55,6 +56,7 @@ export function Catalog({
   const [openEx, setOpenEx] = useState<{ ex: Exercise; sessionId: SessionId } | null>(null)
   const [adding, setAdding] = useState<Session | null>(null)
   const [recap, setRecap] = useState<Session | null>(null)
+  const generated = useUserProgram() !== null
   const [cooldown, setCooldown] = useState<Session | null>(null)
 
   // Séance du jour terminée à 100 % → bilan automatique (une seule fois), après la fanfare du coach.
@@ -133,6 +135,12 @@ export function Catalog({
         {current && <p className="tag mt-5 h-7 bg-paper px-2.5 text-[12px]">{current.subtitle}</p>}
         <h1 className={`headline ${current ? 'mt-3' : 'mt-5'} text-[42px] sm:text-[56px]`}>{headline}</h1>
         {current && <p className="mt-3 max-w-prose text-[15px] font-bold leading-snug text-ink">{current.goal}</p>}
+        {current && generated && (
+          <p className="mt-3 flex max-w-prose items-start gap-2 text-[12px] font-bold leading-snug text-ink/80">
+            <Stethoscope className="mt-0.5 h-4 w-4 shrink-0 text-flame" strokeWidth={2.5} />
+            Programme généré automatiquement à partir de tes réponses : fais-le valider par un physio ou un coach, surtout en cas de douleur.
+          </p>
+        )}
 
         {/* Filtres-boîtes avec compteurs */}
         <div className="mt-5 flex flex-wrap gap-2.5" role="toolbar" aria-label="Filtres">
@@ -167,6 +175,7 @@ export function Catalog({
         {current && current.id !== 'activation' && (
           <button
             type="button"
+            data-tour="finish"
             onClick={() => {
               if (!finishedAt) updateSessionLog(date, current.id, { recapAt: Date.now() })
               setRecap(withWarmup(current))
@@ -225,6 +234,7 @@ export function Catalog({
         {groups.map((g) => (
           <section key={g.session.id}>
             <SectionHeader
+              tour={step(g.session) === 1 ? 'warmup' : undefined}
               n={step(g.session)}
               title={step(g.session) === 1 ? 'Activation' : g.session.short}
               sub={step(g.session) === 1 ? `Échauffement · ${g.session.duration}` : g.session.duration}
@@ -241,7 +251,15 @@ export function Catalog({
             />
             <div className="grid grid-cols-1 gap-x-6 gap-y-5 md:grid-cols-2 xl:grid-cols-3">
               {g.items.map(({ ex, i }) => (
-                <ExerciseTile key={`${date}-${ex.id}`} ex={ex} sessionId={g.session.id} index={i} date={date} onOpen={() => setOpenEx({ ex, sessionId: g.session.id })} />
+                <ExerciseTile
+                  key={`${date}-${ex.id}`}
+                  ex={ex}
+                  sessionId={g.session.id}
+                  index={i}
+                  date={date}
+                  tour={step(g.session) === 2 && ex.id === g.items[0]?.ex.id}
+                  onOpen={() => setOpenEx({ ex, sessionId: g.session.id })}
+                />
               ))}
               {canAdd && (
                 <button
@@ -259,6 +277,7 @@ export function Catalog({
         {showMobility && current && (
           <section>
             <SectionHeader
+              tour="mobility"
               n={3}
               title="Mobilité"
               sub={`Étirements · ≈ ${Math.round(routineSeconds(routine) / 60)} min`}
@@ -323,9 +342,10 @@ export function Catalog({
 }
 
 /** Bandeau de section : n° d'étape, titre, compteur. */
-function SectionHeader({ n, title, sub, bg, done, total, action }: { n: number | null; title: string; sub: string; bg: string; done: number; total: number; action?: ReactNode }) {
+function SectionHeader({ n, title, sub, bg, done, total, action, tour }: { n: number | null; title: string; sub: string; bg: string; done: number; total: number; action?: ReactNode; tour?: string }) {
   return (
     <div
+      data-tour={tour}
       className={`mb-4 flex items-center gap-3 rounded-full border-2 border-ink ${bg} py-1.5 pl-1.5 pr-4 shadow-[0_4px_0_var(--color-shadow)] outline-[1.5px] outline-dashed -outline-offset-[6px] outline-[#2a1d3d]/45`}
     >
       {n && <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full border-2 border-ink bg-[#fff7ea] font-display text-[17px]">{n}</span>}
