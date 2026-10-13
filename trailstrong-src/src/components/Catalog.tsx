@@ -108,10 +108,10 @@ export function Catalog({
       {/* ── Bandeau bleu ── */}
       <section className="hero -mx-3 px-4 pb-6 pt-5 md:-mx-6 md:px-8">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="b-box inline-flex h-8 items-center px-3 text-[13px] font-bold shadow-[3px_3px_0_var(--color-shadow)]">
+          <span className="b-box inline-flex h-8 items-center px-3 text-[13px] font-bold shadow-[0_3px_0_var(--color-shadow)]">
             {longDate(date)} · {doneCount}/{visible.length} validés · <span className="ml-1 font-black italic text-flame">{pct} %</span>
           </span>
-          <label className="b-box relative inline-flex h-8 items-center gap-1 px-2 text-[12px] font-bold shadow-[3px_3px_0_var(--color-shadow)]" title="Changer la date">
+          <label className="b-box relative inline-flex h-8 items-center gap-1 px-2 text-[12px] font-bold shadow-[0_3px_0_var(--color-shadow)]" title="Changer la date">
             <CalendarDays className="h-4 w-4" />
             <span className="hidden sm:inline">{date === today() ? 'Aujourd’hui' : date}</span>
             <input
@@ -160,7 +160,7 @@ export function Catalog({
         </div>
 
         {/* Progression du jour */}
-        <div className="mt-5 h-4 border-[2.5px] border-ink bg-paper" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100}>
+        <div className="mt-5 h-4 border-[2.5px] border-ink bg-paper rounded-xl" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100}>
           <div className={`h-full transition-all duration-500 ${pct === 100 ? 'bg-mint' : 'bg-flame'}`} style={{ width: `${pct}%` }} />
         </div>
 
@@ -171,7 +171,7 @@ export function Catalog({
               if (!finishedAt) updateSessionLog(date, current.id, { recapAt: Date.now() })
               setRecap(withWarmup(current))
             }}
-            className={`b-btn mt-4 flex h-12 w-full items-center justify-center gap-2 text-[14px] uppercase italic ${finishedAt ? 'bg-mint' : 'bg-sun'}`}
+            className={`b-btn mt-4 flex h-12 w-full items-center justify-center gap-2 text-[14px] uppercase tracking-wide ${finishedAt ? 'bg-mint' : 'bg-sun'}`}
           >
             {finishedAt ? '✓ Séance terminée · bilan & récup' : '🏁 Terminer la séance · bilan & récup'}
           </button>
@@ -181,7 +181,7 @@ export function Catalog({
         {nextTestIn(data, today()) <= 0 && (
           <button type="button" onClick={onTests} className="b-btn mt-3 flex min-h-11 w-full items-center gap-2 bg-lilac px-3 py-2 text-left text-[13px]">
             <span className="text-[16px]">🧪</span>
-            <span className="uppercase italic">Test mensuel à faire</span>
+            <span className="uppercase tracking-wide">Test mensuel à faire</span>
             <span className="ml-auto text-[12px] font-extrabold">4 tests · 15 min →</span>
           </button>
         )}
@@ -233,7 +233,7 @@ export function Catalog({
               total={g.items.length}
               action={
                 scope === 'all' && g.session.id !== 'activation' && startedIn(g.session) ? (
-                  <button type="button" onClick={() => setRecap(withWarmup(g.session))} className="b-btn h-8 bg-paper px-2 text-[11px] uppercase italic">
+                  <button type="button" onClick={() => setRecap(withWarmup(g.session))} className="b-btn h-8 bg-paper px-2 text-[11px] uppercase tracking-wide">
                     Bilan
                   </button>
                 ) : null
@@ -247,7 +247,7 @@ export function Catalog({
                 <button
                   type="button"
                   onClick={() => setAdding(g.session)}
-                  className="mt-[26px] flex min-h-[72px] items-center justify-center gap-2 border-[2.5px] border-dashed border-ink/50 bg-paper/50 px-3 text-[14px] font-extrabold uppercase italic text-ink/60 transition duration-150 hover:border-flame hover:text-ink active:border-flame"
+                  className="mt-[26px] flex min-h-[72px] items-center justify-center gap-2 border-[2.5px] border-dashed border-ink/50 bg-paper/50 px-3 text-[14px] font-extrabold uppercase tracking-wide text-ink/60 transition duration-150 hover:border-flame hover:text-ink active:border-flame rounded-xl"
                 >
                   <Plus className="h-5 w-5" strokeWidth={3} /> Ajouter un exercice à cette séance
                 </button>
@@ -268,8 +268,8 @@ export function Catalog({
             />
             <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
               {routine.map((st) => (
-                <button key={st.id} type="button" onClick={() => setCooldown(current)} className="b-card overflow-hidden text-left !shadow-[3px_3px_0_var(--color-shadow)] active:translate-y-px">
-                  <div className="hero aspect-[5/4] border-b-2 border-ink !border-t-0">
+                <button key={st.id} type="button" onClick={() => setCooldown(current)} className="b-card overflow-hidden text-left !shadow-[0_3px_0_var(--color-shadow)] active:translate-y-px">
+                  <div className="diagram-bg aspect-[5/4] border-b-2 border-ink !border-t-0">
                     <ExerciseDiagram id={st.diagram} />
                   </div>
                   <p className="px-2 pt-1.5 text-[10px] font-extrabold uppercase text-ink/60">{st.target}</p>
@@ -280,7 +280,7 @@ export function Catalog({
                 </button>
               ))}
             </div>
-            <button type="button" onClick={() => setCooldown(current)} className="b-btn mt-4 flex h-12 w-full items-center justify-center gap-2 bg-mint text-[14px] uppercase italic">
+            <button type="button" onClick={() => setCooldown(current)} className="b-btn mt-4 flex h-12 w-full items-center justify-center gap-2 bg-mint text-[14px] uppercase tracking-wide">
               {data.sessions[date]?.[current.id]?.cooldownAt ? '✓ Étirements faits · refaire' : '▶ Lancer le retour au calme guidé'}
             </button>
           </section>
@@ -325,13 +325,15 @@ export function Catalog({
 /** Bandeau de section : n° d'étape, titre, compteur. */
 function SectionHeader({ n, title, sub, bg, done, total, action }: { n: number | null; title: string; sub: string; bg: string; done: number; total: number; action?: ReactNode }) {
   return (
-    <div className={`mb-4 flex items-center gap-3 border-[2.5px] border-ink ${bg} px-3 py-2 shadow-[4px_4px_0_var(--color-shadow)]`}>
-      {n && <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full border-[2.5px] border-ink bg-[#fbf3e4] text-[17px] font-black italic">{n}</span>}
-      <span className="min-w-0 flex-1">
-        <span className="block text-[20px] font-black uppercase italic leading-tight">{title}</span>
+    <div
+      className={`mb-4 flex items-center gap-3 rounded-full border-2 border-ink ${bg} py-1.5 pl-1.5 pr-4 shadow-[0_4px_0_var(--color-shadow)] outline-[1.5px] outline-dashed -outline-offset-[6px] outline-[#2a1d3d]/45`}
+    >
+      {n && <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full border-2 border-ink bg-[#fff7ea] font-display text-[17px]">{n}</span>}
+      <span className="min-w-0 flex-1 py-0.5">
+        <span className="block font-display text-[19px] leading-tight">{title}</span>
         <span className="block text-[12px] font-bold">{sub}</span>
       </span>
-      <span className="text-[14px] font-black italic">
+      <span className="text-[14px] font-black tabular-nums">
         {done}/{total}
       </span>
       {action}

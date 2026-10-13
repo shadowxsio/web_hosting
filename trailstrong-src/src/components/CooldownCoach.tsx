@@ -49,7 +49,7 @@ export function CooldownCoach({ session, date, onClose }: { session: Session; da
     ) : (
       <div className="fade-in fixed inset-0 z-[60] flex items-end justify-center bg-ink/40" onClick={onClose}>
         <div
-          className="sheet pb-safe flex max-h-[94dvh] w-full max-w-xl flex-col border-[2.5px] border-b-0 border-ink bg-paper-2"
+          className="sheet pb-safe flex max-h-[94dvh] w-full max-w-xl flex-col border-[2.5px] border-b-0 border-ink bg-paper-2 rounded-t-[26px] md:rounded-none md:rounded-l-[26px]"
           onClick={(e) => e.stopPropagation()}
           role="dialog"
           aria-label="Retour au calme"
@@ -58,7 +58,7 @@ export function CooldownCoach({ session, date, onClose }: { session: Session; da
           <header className="flex items-start justify-between px-4 pt-4">
             <div>
               <p className="tag h-6 -rotate-1 bg-mint px-2 text-[10px]">Étirements & mobilité · ≈ {mmss(routineSeconds(routine))}</p>
-              <h2 className="headline mt-2 text-[26px] [text-shadow:2px_2px_0_#f0773a]">Retour au calme</h2>
+              <h2 className="headline mt-2 text-[26px]">Retour au calme</h2>
             </div>
             <button type="button" onClick={onClose} className="b-btn grid h-11 w-11 place-items-center rounded-full" aria-label="Fermer">
               <X className="h-5 w-5" strokeWidth={3} />
@@ -67,8 +67,8 @@ export function CooldownCoach({ session, date, onClose }: { session: Session; da
           <p className="px-4 pt-2 text-[13px] font-semibold text-ink/75">Le coach enchaîne tout seul : {PREP} s pour te placer, puis le maintien, côté gauche puis droit.</p>
           <ol className="flex-1 space-y-3 overflow-y-auto px-4 py-4">
             {routine.map((s, i) => (
-              <li key={s.id} className="b-card flex gap-3 p-2 !shadow-[3px_3px_0_var(--color-shadow)]">
-                <div className="hero h-[88px] w-[88px] shrink-0 border-2 border-ink">
+              <li key={s.id} className="b-card flex gap-3 p-2 !shadow-[0_3px_0_var(--color-shadow)]">
+                <div className="diagram-bg h-[88px] w-[88px] shrink-0 border-2 border-ink rounded-xl">
                   <ExerciseDiagram id={s.diagram} />
                 </div>
                 <div className="min-w-0 flex-1 py-0.5">
@@ -91,7 +91,7 @@ export function CooldownCoach({ session, date, onClose }: { session: Session; da
                 unlockAudio()
                 setRunning(true)
               }}
-              className="b-btn flex h-12 w-full items-center justify-center gap-2 bg-mint text-[14px] uppercase italic"
+              className="b-btn flex h-12 w-full items-center justify-center gap-2 bg-mint text-[14px] uppercase tracking-wide"
             >
               <Play className="h-4 w-4" fill="currentColor" /> Lancer le retour au calme
             </button>
@@ -212,14 +212,14 @@ function Runner({ steps, onDone, onClose }: { steps: Step[]; onDone: () => void;
           <>
             <Check className="h-20 w-20" strokeWidth={3} />
             <p className="headline mt-3 text-[40px]">Bien joué</p>
-            <p className="mt-2 text-[16px] font-black uppercase italic">Retour au calme terminé</p>
+            <p className="mt-2 text-[16px] font-black uppercase tracking-wide">Retour au calme terminé</p>
           </>
         ) : (
           <>
-            <div className="hero aspect-[5/4] w-full max-w-[260px] border-[2.5px] border-ink shadow-[4px_4px_0_var(--color-shadow)]">
+            <div className="diagram-bg aspect-[5/4] w-full max-w-[260px] border-[2.5px] border-ink shadow-[0_4px_0_var(--color-shadow)] rounded-xl">
               <ExerciseDiagram id={st.stretch.diagram} />
             </div>
-            <p className="mt-4 text-[14px] font-black uppercase italic">
+            <p className="mt-4 text-[14px] font-black uppercase tracking-wide">
               {st.kind === 'prep' ? 'Mets-toi en place' : 'Tiens, respire'}
               {st.side && ` · côté ${st.side}`}
             </p>
@@ -243,16 +243,16 @@ function Runner({ steps, onDone, onClose }: { steps: Step[]; onDone: () => void;
 
       <footer className="flex gap-2 bg-paper p-3">
         {e.finished ? (
-          <button type="button" onClick={onClose} className="b-btn flex h-14 flex-1 items-center justify-center gap-2 bg-mint text-[15px] uppercase italic">
+          <button type="button" onClick={onClose} className="b-btn flex h-14 flex-1 items-center justify-center gap-2 bg-mint text-[15px] uppercase tracking-wide">
             <Check className="h-5 w-5" strokeWidth={3} /> Terminer
           </button>
         ) : (
           <>
-            <button type="button" onClick={togglePause} className="b-btn flex h-14 flex-1 items-center justify-center gap-2 text-[15px] uppercase italic">
+            <button type="button" onClick={togglePause} className="b-btn flex h-14 flex-1 items-center justify-center gap-2 text-[15px] uppercase tracking-wide">
               {paused ? <Play className="h-5 w-5" fill="currentColor" /> : <Pause className="h-5 w-5" fill="currentColor" />}
               {paused ? 'Reprendre' : 'Pause'}
             </button>
-            <button type="button" onClick={skip} className="b-btn flex h-14 flex-1 items-center justify-center gap-2 bg-sun text-[15px] uppercase italic">
+            <button type="button" onClick={skip} className="b-btn flex h-14 flex-1 items-center justify-center gap-2 bg-sun text-[15px] uppercase tracking-wide">
               <SkipForward className="h-5 w-5" strokeWidth={2.5} /> Passer
             </button>
           </>

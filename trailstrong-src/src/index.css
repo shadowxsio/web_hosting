@@ -1,39 +1,48 @@
 @import "tailwindcss";
 
-/* ── Style « quelleia » : néo-brutalisme papier, contours encre, ombres dures ── */
+/* ── Style « Écusson » : patchs brodés & autocollants outdoor des années 70 ──
+   Coutures en pointillés, formes arrondies, bandes coucher de soleil
+   (moutarde, orange, rouille, sarcelle), titres rétro arrondis. */
 @theme {
-  /* Valeurs du thème sombre (défaut) ; le thème clair les redéfinit plus bas. */
-  --color-ink: #f1e8d8; /* texte, contours */
-  --color-paper: #231f2c; /* surfaces (cartes, boutons) */
-  --color-paper-2: #16131c; /* fond de page */
-  --color-shadow: #000000; /* ombres dures */
-  --color-hero: #1d3150; /* bandeau « ciel » de nuit */
-  --color-sky: #86c5f7;
-  --color-sun: #f8d95b;
-  --color-mint: #9fe7a4;
-  --color-peach: #f4b183;
-  --color-lilac: #d4a6f7;
-  --color-rose: #ffb4a8;
-  --color-flame: #f0773a;
-  --color-ocean: #67d4f0;
-  --color-leaf: #5fe08a;
-  --color-danger: #ff8a7a;
-  --color-on: #15121b; /* texte sur les aplats colorés */
-  --font-sans: "Montserrat", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --font-display: "Montserrat", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "Montserrat", ui-sans-serif, system-ui, sans-serif;
+  /* Thème sombre « feu de camp » (défaut) ; le thème clair « ciel d'été » le redéfinit plus bas. */
+  --color-ink: #f7e8d0; /* texte, contours, coutures */
+  --color-paper: #2a2343; /* surfaces (écussons, boutons) */
+  --color-paper-2: #1d1830; /* fond de page */
+  --color-shadow: #0d0a17; /* ombre portée sous les écussons */
+  --color-hero: #2f2650; /* bandeau du haut */
+  --color-sky: #8fd0cf;
+  --color-sun: #f2b33d; /* moutarde */
+  --color-mint: #93d2b2;
+  --color-peach: #f4ab7a;
+  --color-lilac: #b9a3e3;
+  --color-rose: #ec8c74;
+  --color-flame: #ec7a32; /* orange */
+  --color-rust: #c4452f; /* rouille */
+  --color-teal: #3a9a8f; /* sarcelle */
+  --color-ocean: #6ccbc2; /* sarcelle claire (texte / flèches sur fond sombre) */
+  --color-leaf: #84d6a6;
+  --color-danger: #ff8f7a;
+  --color-on: #2a1d3d; /* texte sur les aplats colorés */
+  --font-sans: "Karla", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Shrikhand", "Cooper Black", Georgia, serif;
+  --font-mono: "Karla", ui-sans-serif, system-ui, sans-serif;
 }
 
-/* Thème clair « papier » (identique à quelleia), activable depuis le Menu. */
+/* Thème clair « ciel d'été », activable depuis le Menu. */
 :root[data-theme="light"] {
-  --color-ink: #1b1424;
-  --color-paper: #fdf6e8;
-  --color-paper-2: #f3ead9;
-  --color-shadow: #1b1424;
-  --color-hero: #86c5f7;
-  --color-ocean: #0e7490;
-  --color-leaf: #047857;
-  --color-danger: #b91c1c;
+  --color-ink: #2a1d3d;
+  --color-paper: #fff7ea;
+  --color-paper-2: #cfe7e3;
+  --color-shadow: #2a1d3d;
+  --color-hero: #fbe2bd;
+  --color-sky: #8fd0cf;
+  --color-sun: #f0aa2b;
+  --color-flame: #e46a24;
+  --color-rust: #b63c27;
+  --color-teal: #2c8378;
+  --color-ocean: #1f6f68;
+  --color-leaf: #1e7a55;
+  --color-danger: #b3261e;
   color-scheme: light;
 }
 
@@ -51,63 +60,125 @@ body {
 body {
   min-height: 100dvh;
   overflow-x: clip;
+  font-family: var(--font-sans);
   font-weight: 500;
   font-feature-settings: "tnum" 1;
   background-color: var(--color-paper-2);
-  background-image: radial-gradient(color-mix(in srgb, var(--color-ink) 9%, transparent) 1.2px, transparent 1.4px);
-  background-size: 14px 14px;
+  /* Soleil qui se lève derrière le bandeau. */
+  background-image: radial-gradient(circle at 50% -40px, color-mix(in srgb, var(--color-sun) 16%, transparent) 0 220px, transparent 221px);
+  background-repeat: no-repeat;
 }
 
-/* Bandeau bleu ciel à pois. */
+/* Bandeau : soleil couchant + 4 bandes (moutarde, orange, rouille, sarcelle) en pied. */
 .hero {
   background-color: var(--color-hero);
-  background-image: radial-gradient(color-mix(in srgb, var(--color-ink) 16%, transparent) 1.3px, transparent 1.5px);
-  background-size: 12px 12px;
-  border-top: 2.5px solid var(--color-ink);
-  border-bottom: 2.5px solid var(--color-ink);
+  background-image:
+    linear-gradient(
+      to bottom,
+      transparent calc(100% - 18px),
+      var(--color-sun) calc(100% - 18px) calc(100% - 13.5px),
+      var(--color-flame) calc(100% - 13.5px) calc(100% - 9px),
+      var(--color-rust) calc(100% - 9px) calc(100% - 4.5px),
+      var(--color-teal) calc(100% - 4.5px)
+    ),
+    radial-gradient(circle at 88% 100%, color-mix(in srgb, var(--color-sun) 45%, transparent) 0 70px, transparent 71px),
+    radial-gradient(circle at 88% 100%, color-mix(in srgb, var(--color-flame) 25%, transparent) 0 105px, transparent 106px);
+  border-top: 2px solid var(--color-ink);
+  border-bottom: 2px solid var(--color-ink);
+  padding-bottom: max(1.5rem, 34px);
 }
 
-/* Titre affiche : italique 900 + ombre décalée orange. */
+/* Fond des schémas d'exercice : écusson clair avec petit soleil. */
+.diagram-bg {
+  background-color: color-mix(in srgb, var(--color-sky) 14%, var(--color-paper));
+  background-image:
+    radial-gradient(circle at 84% 20%, color-mix(in srgb, var(--color-sun) 34%, transparent) 0 9%, transparent 9.5%),
+    radial-gradient(color-mix(in srgb, var(--color-ink) 8%, transparent) 1px, transparent 1.3px);
+  background-size: auto, 12px 12px;
+}
+
+/* Titre rétro : arrondi, ombre rouille décalée. */
 .headline {
   font-family: var(--font-display);
-  font-style: italic;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: -0.02em;
-  line-height: 0.95;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1;
   color: var(--color-ink);
-  text-shadow: 3px 3px 0 var(--color-flame);
+  /* Ombre proportionnelle à la taille : nette sur les petits titres comme sur les grands. */
+  text-shadow: 0.06em 0.06em 0 var(--color-rust);
 }
-.headline-sun {
-  text-shadow: 2px 2px 0 var(--color-sun);
+:root[data-theme="light"] .headline {
+  text-shadow: 0.06em 0.06em 0 color-mix(in srgb, var(--color-sun) 90%, transparent);
+}
+.headline-sun,
+:root[data-theme="light"] .headline-sun {
+  color: var(--color-sun);
+  text-shadow: 0.06em 0.06em 0 var(--color-rust);
 }
 
-/* Lignes de cahier (menu). */
+/* Logo « écusson » (en-tête, connexion). */
+.logo-patch {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  border: 2px solid var(--color-ink);
+  background: var(--color-paper);
+  outline: 1.5px dashed color-mix(in srgb, var(--color-ink) 55%, transparent);
+  outline-offset: -6px;
+  box-shadow: 0 3px 0 var(--color-shadow);
+  padding: 0.35em 1em 0.45em;
+}
+.logo-patch > span {
+  font-family: var(--font-display);
+  color: var(--color-sun);
+  text-shadow: 2px 2px 0 var(--color-rust);
+  line-height: 1;
+}
+
+/* Bandes coucher de soleil, en filet décoratif. */
+.stripes {
+  height: 12px;
+  background: linear-gradient(
+    to bottom,
+    var(--color-sun) 0 25%,
+    var(--color-flame) 25% 50%,
+    var(--color-rust) 50% 75%,
+    var(--color-teal) 75%
+  );
+}
+
+/* Menu : liste cousue. */
 .lined {
   background-color: var(--color-paper);
-  background-image: repeating-linear-gradient(to bottom, transparent 0 55px, rgba(134, 197, 247, 0.55) 55px 57px);
+  background-image: repeating-linear-gradient(to bottom, transparent 0 55px, color-mix(in srgb, var(--color-teal) 55%, transparent) 55px 57px);
 }
 
 @layer components {
+  /* Écusson : arrondi, contour encre, couture en pointillés à l'intérieur. */
   .b-card {
     background: var(--color-paper);
-    border: 2.5px solid var(--color-ink);
-    box-shadow: 5px 5px 0 var(--color-shadow);
+    border: 2px solid var(--color-ink);
+    border-radius: 18px;
+    outline: 1.5px dashed color-mix(in srgb, var(--color-ink) 45%, transparent);
+    outline-offset: -7px;
+    box-shadow: 0 4px 0 var(--color-shadow);
   }
   .b-box {
     background: var(--color-paper);
     border: 2px solid var(--color-ink);
+    border-radius: 12px;
   }
   .b-btn {
     background: var(--color-paper);
-    border: 2.5px solid var(--color-ink);
-    box-shadow: 3px 3px 0 var(--color-shadow);
+    border: 2px solid var(--color-ink);
+    border-radius: 14px;
+    box-shadow: 0 3px 0 var(--color-shadow);
     font-weight: 800;
     transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease;
   }
   .b-btn:active {
-    transform: translate(2px, 2px);
-    box-shadow: 1px 1px 0 var(--color-shadow);
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 var(--color-shadow);
   }
   .b-btn-ink {
     background: var(--color-ink);
@@ -115,27 +186,28 @@ body {
   }
   .b-input {
     background: var(--color-paper);
-    border: 2.5px solid var(--color-ink);
-    box-shadow: 4px 4px 0 var(--color-shadow);
+    border: 2px solid var(--color-ink);
+    border-radius: 14px;
+    box-shadow: 0 3px 0 var(--color-shadow);
     font-weight: 600;
   }
   .b-input:focus {
     outline: none;
-    box-shadow: 4px 4px 0 var(--color-flame);
+    box-shadow: 0 3px 0 var(--color-flame);
   }
   .tag {
     display: inline-flex;
     align-items: center;
     border: 2px solid var(--color-ink);
-    font-style: italic;
-    font-weight: 900;
+    border-radius: 999px;
+    font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 0.01em;
+    letter-spacing: 0.05em;
   }
   .label {
     font-size: 10px;
     font-weight: 800;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     color: color-mix(in srgb, var(--color-ink) 62%, transparent);
   }

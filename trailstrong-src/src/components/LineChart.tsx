@@ -98,7 +98,7 @@ export function LineChart({ points, unit, kind = 'line' }: { points: Point[]; un
       </svg>
       {h && hover != null && (
         <div
-          className="pointer-events-none absolute top-0 -translate-x-1/2 border-2 border-ink bg-paper px-2.5 py-1.5 text-xs shadow-[3px_3px_0_var(--color-shadow)]"
+          className="pointer-events-none absolute top-0 -translate-x-1/2 border-2 border-ink bg-paper px-2.5 py-1.5 text-xs shadow-[0_3px_0_var(--color-shadow)] rounded-xl"
           style={{ left: `${Math.min(85, Math.max(15, (x(hover) / W) * 100))}%` }}
         >
           <p className="text-ink/70">{h.label}</p>

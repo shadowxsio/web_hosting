@@ -25,8 +25,8 @@ export default function SandboxApp() {
     <>
       <div className="sticky top-0 z-[45] flex items-center gap-2 border-b-[2.5px] border-ink bg-lilac px-3 py-1.5 pt-safe" role="status">
         <FlaskConical className="h-4 w-4 shrink-0" strokeWidth={2.5} />
-        <p className="min-w-0 flex-1 text-[12px] font-black uppercase italic leading-tight">Profil de test · rien n’est sauvegardé</p>
-        <button type="button" onClick={exitSandbox} className="flex h-8 shrink-0 items-center gap-1 border-2 border-ink bg-[#fbf3e4] px-2 text-[11px] font-black uppercase italic">
+        <p className="min-w-0 flex-1 text-[12px] font-black uppercase tracking-wide leading-tight">Profil de test · rien n’est sauvegardé</p>
+        <button type="button" onClick={exitSandbox} className="flex h-8 shrink-0 items-center gap-1 border-2 border-ink bg-[#fbf3e4] px-2 text-[11px] font-black uppercase tracking-wide rounded-xl">
           <LogOut className="h-3.5 w-3.5" strokeWidth={2.5} /> Quitter
         </button>
       </div>

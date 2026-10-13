@@ -25,7 +25,7 @@ export function DemoPlayer({ ex }: { ex: Exercise }) {
     <section>
       <h3 className="label mb-2">Photo réelle</h3>
       {demo?.photos ? (
-        <div className="b-card overflow-hidden !shadow-[4px_4px_0_var(--color-shadow)]">
+        <div className="b-card overflow-hidden !shadow-[0_4px_0_var(--color-shadow)]">
           <button
             type="button"
             onClick={() => setPlaying((p) => !p)}
@@ -50,7 +50,7 @@ export function DemoPlayer({ ex }: { ex: Exercise }) {
           {demo.note && <p className="border-t-2 border-ink px-3 py-2 text-[12px] font-semibold leading-snug">{demo.note}</p>}
         </div>
       ) : (
-        <p className="flex items-center gap-2 border-2 border-dashed border-ink/50 px-3 py-3 text-[12px] font-semibold text-ink/75">
+        <p className="flex items-center gap-2 border-2 border-dashed border-ink/50 px-3 py-3 text-[12px] font-semibold text-ink/75 rounded-xl">
           <ImageOff className="h-4 w-4 shrink-0" /> Pas de photo libre de droits pour cet exercice : le schéma ci-dessus et la vidéo montrent le mouvement.
         </p>
       )}
@@ -58,7 +58,7 @@ export function DemoPlayer({ ex }: { ex: Exercise }) {
         href={videoUrl(query)}
         target="_blank"
         rel="noopener noreferrer"
-        className="b-btn mt-3 flex h-11 items-center justify-center gap-2 text-[13px] uppercase italic"
+        className="b-btn mt-3 flex h-11 items-center justify-center gap-2 text-[13px] uppercase tracking-wide"
       >
         <Video className="h-4 w-4" /> Voir une démo vidéo
       </a>

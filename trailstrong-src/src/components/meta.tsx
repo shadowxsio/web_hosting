@@ -27,7 +27,7 @@ export const TAG_META: Record<FocusTag, { label: string; emoji: string }> = {
   glutes: { label: 'Fessiers', emoji: '🍑' },
 }
 
-/** Couleur d'étiquette par séance (onglets façon quelleia). */
+/** Couleur d'étiquette par séance (onglets et bandeaux de section). */
 export const SESSION_META: Record<SessionId, { label: string; short: string; emoji: string; bg: string }> = {
   activation: { label: 'Activation', short: 'Activ.', emoji: '🔥', bg: 'bg-sun' },
   seanceA: { label: 'Séance A', short: 'Séance A', emoji: '🦵', bg: 'bg-peach' },
@@ -80,6 +80,6 @@ export const DIR_META: Record<Direction, { icon: LucideIcon; label: string }> = 
 export function Pill({ children, tone = 'paper' }: { children: ReactNode; tone?: 'paper' | 'sun' | 'sky' }) {
   const bg = tone === 'sun' ? 'bg-sun' : tone === 'sky' ? 'bg-sky' : 'bg-paper'
   return (
-    <span className={`inline-flex h-6 items-center whitespace-nowrap border-2 border-ink px-2 text-[11px] font-bold text-ink ${bg}`}>{children}</span>
+    <span className={`inline-flex h-6 items-center whitespace-nowrap border-2 border-ink px-2 text-[11px] font-bold text-ink rounded-xl ${bg}`}>{children}</span>
   )
 }

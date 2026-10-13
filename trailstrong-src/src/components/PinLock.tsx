@@ -94,15 +94,13 @@ export function PinLock({
       data-noswipe
     >
       {onCancel && (
-        <button type="button" onClick={onCancel} className="b-btn absolute left-4 top-4 flex h-11 items-center gap-1.5 px-3 text-[13px] uppercase italic">
+        <button type="button" onClick={onCancel} className="b-btn absolute left-4 top-4 flex h-11 items-center gap-1.5 px-3 text-[13px] uppercase tracking-wide">
           <ArrowLeft className="h-4 w-4" strokeWidth={3} /> Retour
         </button>
       )}
-      <div className="mb-7 -rotate-2 border-[2.5px] border-ink bg-paper p-1 shadow-[5px_5px_0_var(--color-shadow)]">
-        <span className="block border-2 border-dashed border-ink px-4 py-2">
-          <span className="headline block text-[30px]">TrailStrong</span>
-        </span>
-      </div>
+      <div className="mb-7 -rotate-2 logo-patch text-[28px]">
+          <span>TrailStrong</span>
+        </div>
 
       <div className="b-card w-full max-w-[340px] p-5">
         <div className="flex items-center justify-between gap-2">
@@ -112,7 +110,7 @@ export function PinLock({
           <span className="tag h-7 rotate-1 bg-mint px-2 text-[11px]">chiffré</span>
         </div>
 
-        <h1 className="headline mt-5 text-[26px] [text-shadow:2px_2px_0_#f0773a]">{title}</h1>
+        <h1 className="headline mt-5 text-[26px]">{title}</h1>
         <p className="mt-1 text-[14px] font-semibold text-ink/75">{subtitle}</p>
 
         <div className={`my-6 flex justify-center gap-3.5 ${error ? 'shake' : ''}`} aria-live="polite">
@@ -148,12 +146,12 @@ export function PinLock({
           type="button"
           disabled={pin.length < 4 || wait > 0}
           onClick={() => void attempt(pin, true)}
-          className="b-btn mt-4 h-12 w-full bg-sun text-[15px] uppercase italic disabled:bg-paper-2 disabled:text-ink/45"
+          className="b-btn mt-4 h-12 w-full bg-sun text-[15px] uppercase tracking-wide disabled:bg-paper-2 disabled:text-ink/45"
         >
           {wait > 0 ? `Bloqué · ${wait} s` : 'Déverrouiller'}
         </button>
         {(hint || wait > 0) && (
-          <p className="mt-3 border-2 border-ink bg-rose px-3 py-2 text-center text-[12px] font-bold" role="alert">
+          <p className="mt-3 border-2 border-ink bg-rose px-3 py-2 text-center text-[12px] font-bold rounded-xl" role="alert">
             {wait > 0 ? `Trop d’essais : réessaie dans ${wait} s.` : hint}
           </p>
         )}

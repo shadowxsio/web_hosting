@@ -113,11 +113,11 @@ export function StatsView({ testsOpen = false, setTestsOpen = () => {} }: { test
       <AsymmetryPanel exercises={ALL_EXERCISES} />
 
       <div className="b-card p-4">
-        <h3 className="text-[16px] font-black uppercase italic tracking-tight">Douleur genou / cheville</h3>
+        <h3 className="text-[16px] font-black uppercase tracking-wide tracking-tight">Douleur genou / cheville</h3>
         <p className="mb-3 mt-1 text-[12px] font-semibold text-ink/70">Max du jour (avant / après), sur 10. Objectif : rester sous 3.</p>
         {(['knee', 'ankle'] as const).map((j) => (
           <div key={j} className="mb-2">
-            <p className="text-[12px] font-black uppercase italic">{j === 'knee' ? '🩹 Genou' : '⚓ Cheville'}</p>
+            <p className="text-[12px] font-black uppercase tracking-wide">{j === 'knee' ? '🩹 Genou' : '⚓ Cheville'}</p>
             <LineChart unit="/10" points={painSeries(data, j).slice(-20).map((x) => ({ label: shortDate(x.date), value: x.value }))} />
           </div>
         ))}
@@ -139,7 +139,7 @@ export function StatsView({ testsOpen = false, setTestsOpen = () => {} }: { test
         <select
           value={exId}
           onChange={(e) => setExId(e.target.value)}
-          className="mb-3 w-full h-11 border-2 border-ink bg-paper px-3 text-[13px] text-ink"
+          className="mb-3 w-full h-11 border-2 border-ink bg-paper px-3 text-[13px] text-ink rounded-xl"
         >
           {PROGRAM.map((sess) => {
             const exs = weighted.filter((e) => e.sessionId === sess.id)
@@ -211,7 +211,7 @@ export function StatsView({ testsOpen = false, setTestsOpen = () => {} }: { test
                     </span>
                     <span className="flex flex-wrap justify-end gap-1">
                       {sessions.map((p) => (
-                        <span key={p.id} className="border-2 border-ink bg-sun px-1.5 py-0.5 text-[10px] font-black uppercase italic">
+                        <span key={p.id} className="border-2 border-ink bg-sun px-1.5 py-0.5 text-[10px] font-black uppercase tracking-wide rounded-xl">
                           {p.short}
                         </span>
                       ))}

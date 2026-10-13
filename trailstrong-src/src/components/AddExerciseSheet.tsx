@@ -55,7 +55,7 @@ export function AddExerciseSheet({ session, onClose, onAdded }: { session: Sessi
   return createPortal(
     <div className="fade-in fixed inset-0 z-50 flex items-end justify-center bg-ink/40" onClick={onClose}>
       <div
-        className="sheet pb-safe flex max-h-[94dvh] w-full max-w-xl flex-col border-[2.5px] border-b-0 border-ink bg-paper-2"
+        className="sheet pb-safe flex max-h-[94dvh] w-full max-w-xl flex-col border-[2.5px] border-b-0 border-ink bg-paper-2 rounded-t-[26px] md:rounded-none md:rounded-l-[26px]"
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-label="Ajouter un exercice"
@@ -65,7 +65,7 @@ export function AddExerciseSheet({ session, onClose, onAdded }: { session: Sessi
           <div className="flex items-center justify-between">
             <div>
               <p className="tag h-6 -rotate-1 bg-sun px-2 text-[10px]">Nouvel exercice · {session.short}</p>
-              <h2 className="headline mt-2 text-[26px] [text-shadow:2px_2px_0_#f0773a]">{draft ? 'Vérifie & ajoute' : 'Ajouter un exercice'}</h2>
+              <h2 className="headline mt-2 text-[26px]">{draft ? 'Vérifie & ajoute' : 'Ajouter un exercice'}</h2>
             </div>
             <button type="button" onClick={onClose} className="b-btn grid h-11 w-11 place-items-center rounded-full" aria-label="Fermer">
               <X className="h-5 w-5" strokeWidth={3} />
@@ -89,7 +89,7 @@ export function AddExerciseSheet({ session, onClose, onAdded }: { session: Sessi
                     setTab(id)
                     setError('')
                   }}
-                  className={`b-btn flex h-11 items-center justify-center gap-1.5 text-[13px] uppercase italic ${tab === id ? 'b-btn-ink' : ''}`}
+                  className={`b-btn flex h-11 items-center justify-center gap-1.5 text-[13px] uppercase tracking-wide ${tab === id ? 'b-btn-ink' : ''}`}
                 >
                   <Icon className="h-4 w-4" strokeWidth={2.5} /> {label}
                 </button>
@@ -100,7 +100,7 @@ export function AddExerciseSheet({ session, onClose, onAdded }: { session: Sessi
 
         <div className="flex-1 overflow-y-auto px-4 pb-6 pt-4">
           {error && (
-            <p className="mb-3 border-2 border-ink bg-rose px-3 py-2 text-[13px] font-bold" role="alert">
+            <p className="mb-3 border-2 border-ink bg-rose px-3 py-2 text-[13px] font-bold rounded-xl" role="alert">
               {error}
             </p>
           )}
@@ -141,13 +141,13 @@ function AiTab({ busy, onAsk }: { busy: string | null; onAsk: (q: string) => voi
   if (!aiReady())
     return (
       <div className="b-card p-4">
-        <p className="flex items-center gap-2 text-[15px] font-black uppercase italic">
+        <p className="flex items-center gap-2 text-[15px] font-black uppercase tracking-wide">
           <Sparkles className="h-4 w-4 text-flame" /> Assistant IA
         </p>
         <p className="mt-2 text-[13px] font-semibold leading-snug text-ink/80">
           Décris l’exercice que tu veux, l’IA choisit le mouvement, les séries, le tempo du coach, les consignes en français, les photos et le schéma.
         </p>
-        <p className="mt-3 border-2 border-dashed border-ink/50 px-3 py-2 text-[12px] font-bold leading-snug">
+        <p className="mt-3 border-2 border-dashed border-ink/50 px-3 py-2 text-[12px] font-bold leading-snug rounded-xl">
           À activer une fois : Menu → déverrouille les réglages (PIN) → « Assistant IA (Gemini) » → colle ta clé (aistudio.google.com → Get API key).
         </p>
       </div>
@@ -179,7 +179,7 @@ function AiTab({ busy, onAsk }: { busy: string | null; onAsk: (q: string) => voi
       <button
         type="submit"
         disabled={!!busy || q.trim().length < 3}
-        className="b-btn mt-4 flex h-12 w-full items-center justify-center gap-2 bg-flame text-[14px] uppercase italic disabled:opacity-50"
+        className="b-btn mt-4 flex h-12 w-full items-center justify-center gap-2 bg-flame text-[14px] uppercase tracking-wide disabled:opacity-50"
       >
         {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" strokeWidth={2.5} />}
         {busy ?? 'Créer la fiche'}
@@ -228,7 +228,7 @@ function CatalogTab({ onPick }: { onPick: (e: CatalogEntry) => void }) {
       <ul className="mt-3 space-y-2">
         {results.map((e) => (
           <li key={e.id}>
-            <button type="button" onClick={() => onPick(e)} className="b-card flex w-full items-center gap-3 p-2 text-left !shadow-[3px_3px_0_var(--color-shadow)] active:translate-y-px">
+            <button type="button" onClick={() => onPick(e)} className="b-card flex w-full items-center gap-3 p-2 text-left !shadow-[0_3px_0_var(--color-shadow)] active:translate-y-px">
               <Thumb src={imgUrl(e.img[0])} />
               <span className="min-w-0 flex-1">
                 <span className="block truncate text-[14px] font-black">{e.n}</span>
@@ -248,9 +248,9 @@ function CatalogTab({ onPick }: { onPick: (e: CatalogEntry) => void }) {
 function Thumb({ src }: { src: string }) {
   const [ok, setOk] = useState(true)
   return ok ? (
-    <img src={src} alt="" loading="lazy" onError={() => setOk(false)} className="h-14 w-14 shrink-0 border-2 border-ink object-cover" />
+    <img src={src} alt="" loading="lazy" onError={() => setOk(false)} className="h-14 w-14 shrink-0 border-2 border-ink object-cover rounded-xl" />
   ) : (
-    <span className="grid h-14 w-14 shrink-0 place-items-center border-2 border-ink">
+    <span className="grid h-14 w-14 shrink-0 place-items-center border-2 border-ink rounded-xl">
       <ImageOff className="h-4 w-4 text-ink/50" />
     </span>
   )
@@ -333,7 +333,7 @@ function ManualTab({ onSave }: { onSave: (d: CustomDraft) => void }) {
         <DiagramPicker value={diagram ?? guessDiagram(name)} onChange={setDiagram} />
       </Field>
 
-      <button type="submit" className="b-btn mt-4 flex h-12 w-full items-center justify-center gap-1.5 bg-flame text-[14px] uppercase italic">
+      <button type="submit" className="b-btn mt-4 flex h-12 w-full items-center justify-center gap-1.5 bg-flame text-[14px] uppercase tracking-wide">
         <Plus className="h-4 w-4" strokeWidth={2.5} /> Ajouter l’exercice
       </button>
     </form>
@@ -370,7 +370,7 @@ function Preview({
 
   return (
     <div>
-      <section className="hero overflow-hidden border-[2.5px] border-ink shadow-[4px_4px_0_var(--color-shadow)]">
+      <section className="diagram-bg overflow-hidden border-[2.5px] border-ink shadow-[0_4px_0_var(--color-shadow)] rounded-xl">
         <div className="mx-auto aspect-[5/4] w-full max-w-[300px]">
           <ExerciseDiagram id={d.diagram ?? 'squat'} />
         </div>
@@ -380,9 +380,9 @@ function Preview({
 
       <div className="mt-3 grid grid-cols-2 gap-2">
         {d.photos ? (
-          d.photos.map((src, i) => <img key={i} src={src} alt={`Position ${i + 1}`} className="aspect-[4/3] w-full border-2 border-ink object-cover" />)
+          d.photos.map((src, i) => <img key={i} src={src} alt={`Position ${i + 1}`} className="aspect-[4/3] w-full border-2 border-ink object-cover rounded-xl" />)
         ) : d.catalogId ? (
-          <p className="col-span-2 flex items-center gap-2 border-2 border-dashed border-ink/50 px-3 py-2 text-[12px] font-bold text-ink/70">
+          <p className="col-span-2 flex items-center gap-2 border-2 border-dashed border-ink/50 px-3 py-2 text-[12px] font-bold text-ink/70 rounded-xl">
             <Loader2 className="h-4 w-4 animate-spin" /> Téléchargement des photos…
           </p>
         ) : null}
@@ -407,14 +407,14 @@ function Preview({
         </Field>
       </div>
       <div className="mb-3 grid grid-cols-2 gap-2">
-        <button type="button" onClick={() => set({ perSide: !d.perSide }, true)} className={`b-btn h-11 text-[13px] uppercase italic ${d.perSide ? 'b-btn-ink' : ''}`}>
+        <button type="button" onClick={() => set({ perSide: !d.perSide }, true)} className={`b-btn h-11 text-[13px] uppercase tracking-wide ${d.perSide ? 'b-btn-ink' : ''}`}>
           {d.perSide ? '✓ Unilatéral G/D' : 'Bilatéral'}
         </button>
-        <button type="button" onClick={() => set({ mode: timed ? 'strength' : 'timed' }, true)} className={`b-btn h-11 text-[13px] uppercase italic ${timed ? 'b-btn-ink' : ''}`}>
+        <button type="button" onClick={() => set({ mode: timed ? 'strength' : 'timed' }, true)} className={`b-btn h-11 text-[13px] uppercase tracking-wide ${timed ? 'b-btn-ink' : ''}`}>
           {timed ? '⏱ Maintien chrono' : '🏋️ Répétitions'}
         </button>
       </div>
-      <p className="mb-3 border-2 border-ink bg-paper px-3 py-2 text-[13px] font-bold leading-snug">
+      <p className="mb-3 border-2 border-ink bg-paper px-3 py-2 text-[13px] font-bold leading-snug rounded-xl">
         {d.sets} × {d.reps} · repos {d.restS ?? 0} s
         {d.cadence?.length ? <span className="block text-[12px] text-ink/70">Tempo coach : {d.cadence.map((p) => `${p.label} ${p.s} s`).join(' → ')}</span> : null}
       </p>
@@ -422,8 +422,8 @@ function Preview({
       {d.tip && <p className="mb-2 text-[13px] leading-snug"><b>Consigne :</b> {d.tip}</p>}
       {d.kneeAnkle && <p className="mb-2 text-[13px] leading-snug"><b>Genou / cheville :</b> {d.kneeAnkle}</p>}
       {d.steps && d.steps.length > 0 && (
-        <details className="mb-3 border-2 border-ink bg-paper px-3 py-2 text-[13px]">
-          <summary className="cursor-pointer font-black uppercase italic">Exécution ({d.steps.length} étapes{d.stepsLang === 'en' ? ', en anglais' : ''})</summary>
+        <details className="mb-3 border-2 border-ink bg-paper px-3 py-2 text-[13px] rounded-xl">
+          <summary className="cursor-pointer font-black uppercase tracking-wide">Exécution ({d.steps.length} étapes{d.stepsLang === 'en' ? ', en anglais' : ''})</summary>
           <ol className="mt-2 list-decimal space-y-1 pl-5 leading-snug">
             {d.steps.map((s, i) => (
               <li key={i}>{s}</li>
@@ -433,16 +433,16 @@ function Preview({
       )}
 
       {onAdapt && (
-        <button type="button" onClick={onAdapt} disabled={!!busy} className="b-btn mb-2 flex h-12 w-full items-center justify-center gap-2 bg-lilac text-[13px] uppercase italic disabled:opacity-50">
+        <button type="button" onClick={onAdapt} disabled={!!busy} className="b-btn mb-2 flex h-12 w-full items-center justify-center gap-2 bg-lilac text-[13px] uppercase tracking-wide disabled:opacity-50">
           {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" strokeWidth={2.5} />}
           {busy ?? 'Traduire & adapter avec l’IA'}
         </button>
       )}
       <div className="grid grid-cols-[1fr_1.6fr] gap-3">
-        <button type="button" onClick={onBack} className="b-btn flex h-12 items-center justify-center gap-1.5 text-[14px] uppercase italic">
+        <button type="button" onClick={onBack} className="b-btn flex h-12 items-center justify-center gap-1.5 text-[14px] uppercase tracking-wide">
           <ArrowLeft className="h-4 w-4" strokeWidth={2.5} /> Retour
         </button>
-        <button type="button" onClick={onSave} disabled={!d.name.trim() || !!busy} className="b-btn flex h-12 items-center justify-center gap-1.5 bg-flame text-[14px] uppercase italic disabled:opacity-50">
+        <button type="button" onClick={onSave} disabled={!d.name.trim() || !!busy} className="b-btn flex h-12 items-center justify-center gap-1.5 bg-flame text-[14px] uppercase tracking-wide disabled:opacity-50">
           <Plus className="h-4 w-4" strokeWidth={2.5} /> Ajouter
         </button>
       </div>
@@ -467,7 +467,7 @@ function DiagramPicker({ value, onChange }: { value: AnimationId; onChange: (id:
           aria-checked={id === value}
           aria-label={id}
           onClick={() => onChange(id)}
-          className={`hero h-[72px] w-[72px] shrink-0 border-2 ${id === value ? 'border-flame shadow-[3px_3px_0_var(--color-shadow)]' : 'border-ink opacity-70'}`}
+          className={`diagram-bg h-[72px] w-[72px] shrink-0 border-2 ${id === value ? 'border-flame shadow-[0_3px_0_var(--color-shadow)]' : 'border-ink opacity-70'}`}
         >
           <ExerciseDiagram id={id} />
         </button>
