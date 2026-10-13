@@ -15,11 +15,14 @@ export interface Stretch {
   perSide: boolean
   steps: string[]
   cue: string
+  /** Photos départ / fin dans public/demos/stretch-{id}-0/1.webp. */
+  photos?: boolean
 }
 
 export const STRETCHES: Record<string, Stretch> = {
   hamstring: {
     id: 'hamstring',
+    photos: true,
     name: 'Ischios couché',
     target: 'Ischios-jambiers',
     diagram: 'hamstringStretch',
@@ -30,6 +33,7 @@ export const STRETCHES: Record<string, Stretch> = {
   },
   hipFlexor: {
     id: 'hipFlexor',
+    photos: true,
     name: 'Fléchisseurs de hanche',
     target: 'Psoas, quadriceps',
     diagram: 'kneelingStretch',
@@ -40,6 +44,7 @@ export const STRETCHES: Record<string, Stretch> = {
   },
   figure4: {
     id: 'figure4',
+    photos: true,
     name: 'Fessiers en figure 4',
     target: 'Fessiers, piriforme',
     diagram: 'figure4',
@@ -50,6 +55,7 @@ export const STRETCHES: Record<string, Stretch> = {
   },
   calf: {
     id: 'calf',
+    photos: true,
     name: 'Mollets au mur',
     target: 'Gastrocnémiens',
     diagram: 'calfStretch',
@@ -60,6 +66,7 @@ export const STRETCHES: Record<string, Stretch> = {
   },
   soleus: {
     id: 'soleus',
+    photos: true,
     name: 'Soléaire au mur',
     target: 'Soléaire, tendon d’Achille',
     diagram: 'soleusStretch',

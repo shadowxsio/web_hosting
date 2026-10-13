@@ -21,7 +21,7 @@ export const DIAGRAM_OF: Record<string, AnimationId> = {
   'leg-curl': 'legCurl',
   'nordic-curl': 'nordic',
   'hip-abduction': 'abduction',
-  'standing-calf': 'singleCalf',
+  'standing-calf': 'singleCalfWeighted',
   'sl-rdl': 'singleLegRdl',
   'hip-thrust': 'hipThrust',
   'leg-press-high': 'legPress',

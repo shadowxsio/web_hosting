@@ -22,7 +22,7 @@ export const DEMOS: Record<string, Demo> = {
   'db-rdl': { photos: true, note: 'Photo à la barre ; même mouvement aux haltères.', video: 'dumbbell romanian deadlift form' },
   bulgarian: { photos: true, note: 'Photo à la barre ; aux haltères, buste incliné ~20°.', video: 'bulgarian split squat glute focus forward lean' },
   'leg-curl': { photos: true, note: 'Photo à deux jambes ; fais-le une jambe à la fois.', video: 'single leg seated leg curl' },
-  'nordic-curl': { photos: false, video: 'nordic hamstring curl beginner' },
+  'nordic-curl': { photos: true, note: 'Photo : « glute-ham raise » au poids du corps, même mouvement. Descends le plus lentement possible, hanches tendues.', video: 'nordic hamstring curl beginner' },
   'hip-abduction': { photos: true, video: 'hip abduction machine glute medius' },
   'standing-calf': { photos: true, note: 'Photo à deux jambes ; fais-le sur une jambe, haltère côté travail.', video: 'single leg standing calf raise dumbbell' },
   'sl-rdl': { photos: true, note: 'Photo au kettlebell ; même mouvement à l’haltère.', video: 'single leg romanian deadlift dumbbell' },

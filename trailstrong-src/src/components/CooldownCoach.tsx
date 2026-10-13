@@ -12,6 +12,7 @@ import { say, sfx, unlockAudio } from '../lib/sound'
 import { updateSessionLog } from '../lib/storage'
 import { keepAwake, timerRunning } from '../lib/timer'
 import { ExerciseDiagram } from './ExerciseDiagram'
+import { PhotoPair, stretchPhotos } from './PhotoPair'
 
 interface Step {
   kind: 'prep' | 'hold'
@@ -68,8 +69,11 @@ export function CooldownCoach({ session, date, onClose }: { session: Session; da
           <ol className="flex-1 space-y-3 overflow-y-auto px-4 py-4">
             {routine.map((s, i) => (
               <li key={s.id} className="b-card flex gap-3 p-2 !shadow-[0_3px_0_var(--color-shadow)]">
-                <div className="diagram-bg h-[88px] w-[88px] shrink-0 border-2 border-ink rounded-xl">
-                  <ExerciseDiagram id={s.diagram} />
+                <div className="flex shrink-0 flex-col gap-1.5">
+                  <div className="diagram-bg h-[88px] w-[88px] rounded-xl border-2 border-ink">
+                    <ExerciseDiagram id={s.diagram} />
+                  </div>
+                  {s.photos && <PhotoPair srcs={stretchPhotos(s.id)} alt={s.name} className="h-[66px] w-[88px] rounded-xl border-2 border-ink" />}
                 </div>
                 <div className="min-w-0 flex-1 py-0.5">
                   <p className="text-[11px] font-extrabold uppercase text-ink/60">
@@ -216,8 +220,13 @@ function Runner({ steps, onDone, onClose }: { steps: Step[]; onDone: () => void;
           </>
         ) : (
           <>
-            <div className="diagram-bg aspect-[5/4] w-full max-w-[260px] border-[2.5px] border-ink shadow-[0_4px_0_var(--color-shadow)] rounded-xl">
-              <ExerciseDiagram id={st.stretch.diagram} />
+            <div className={`grid w-full gap-2 ${st.stretch.photos ? 'max-w-[360px] grid-cols-2' : 'max-w-[260px]'}`}>
+              <div className="diagram-bg aspect-[5/4] w-full rounded-xl border-2 border-ink shadow-[0_4px_0_var(--color-shadow)]">
+                <ExerciseDiagram id={st.stretch.diagram} />
+              </div>
+              {st.stretch.photos && (
+                <PhotoPair srcs={stretchPhotos(st.stretch.id)} alt={st.stretch.name} className="aspect-[5/4] w-full rounded-xl border-2 border-ink shadow-[0_4px_0_var(--color-shadow)]" />
+              )}
             </div>
             <p className="mt-4 text-[14px] font-black uppercase tracking-wide">
               {st.kind === 'prep' ? 'Mets-toi en place' : 'Tiens, respire'}

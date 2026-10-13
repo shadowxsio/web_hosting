@@ -51,6 +51,9 @@ export type AnimationId =
   | 'figure4'
   | 'kneeToWall'
   | 'soleusStretch'
+  // Variantes dédiées
+  | 'bodySquat'
+  | 'singleCalfWeighted'
 
 export type JointName = 'hip' | 'sh' | 'head' | 'k1' | 'a1' | 't1' | 'k2' | 'a2' | 't2' | 'e1' | 'h1' | 'e2' | 'h2'
 
@@ -239,6 +242,20 @@ export const FIGURES: Record<AnimationId, FigureDef> = {
         <rect x={150} y={36} width={8} height={130} style={{ fill: C.prop }} rx={2} />
       </g>
     ),
+    focus: ['sh1'],
+    arrows: [{ joint: 'a1', color: 'sky' }],
+  },
+  singleCalfWeighted: {
+    start: { ...stand, anchor: { joint: 't1', at: [120, 166] }, ft1: -25, th2: 100, sh2: 160, ft2: 80, ua1: 30, fa1: -10, ua2: 92, fa2: 90 },
+    end: { ...stand, anchor: { joint: 't1', at: [120, 166] }, ft1: 50, th2: 100, sh2: 160, ft2: 80, ua1: 30, fa1: -10, ua2: 92, fa2: 90 },
+    props: () => (
+      <g>
+        <Ground />
+        <rect x={108} y={166} width={60} height={GROUND - 166} style={{ fill: C.prop }} rx={3} />
+        <rect x={150} y={36} width={8} height={130} style={{ fill: C.prop }} rx={2} />
+      </g>
+    ),
+    over: (j) => <Dumbbell at={j.h2} />,
     focus: ['sh1'],
     arrows: [{ joint: 'a1', color: 'sky' }],
   },
@@ -470,6 +487,13 @@ export const FIGURES: Record<AnimationId, FigureDef> = {
     over: (j) => <Dumbbell at={[j.h1[0], j.h1[1] + 2]} />,
     focus: ['th1', 'glute'],
     arrows: [{ joint: 'hip', color: 'flame' }, { joint: 'k1', color: 'sky' }],
+  },
+  bodySquat: {
+    start: { ...stand, anchor: { joint: 'a1', at: [100, GROUND - 3] }, ua1: 92, fa1: 90 },
+    end: { ...stand, anchor: { joint: 'a1', at: [100, GROUND - 3] }, trunk: -60, th1: 14, sh1: 112, th2: 18, sh2: 110, ua1: -6, fa1: -4, ua2: -2, fa2: 0 },
+    props: () => <Ground />,
+    focus: ['th1', 'glute'],
+    arrows: [{ joint: 'hip', color: 'flame' }, { joint: 'h1', color: 'sky' }],
   },
   lunge: {
     start: { ...stand, anchor: { joint: 'a1', at: [124, GROUND - 3] } },
