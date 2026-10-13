@@ -9,7 +9,7 @@ import { DEFAULT_MODEL, setAiConfig, useAiConfig } from '../lib/ai'
 import { setSoundPrefs, sfx, unlockAudio, useSoundPrefs } from '../lib/sound'
 import { backupNow, getRecoveryKey, restoreFromGist, setRecoveryKey } from '../lib/backup'
 import type { FocusTag } from '../data/program'
-import { exportJson, importJson, today, updateGist, useData } from '../lib/storage'
+import { exportJson, importJson, today, updateGist, updateProfile, useData } from '../lib/storage'
 import type { View } from '../App'
 
 export function SettingsSheet({
@@ -143,6 +143,37 @@ export function SettingsSheet({
               </button>
             ))}
           </div>
+        </Block>
+
+        <Block title="Profil" desc="Ton poids sert à doser les protéines, glucides et l’eau dans le bilan de fin de séance.">
+          <div className="flex gap-2">
+            <input
+              id="profile-weight"
+              inputMode="decimal"
+              defaultValue={data.profile.weightKg ? String(Math.round((data.profile.weightUnit === 'lbs' ? data.profile.weightKg * 2.20462 : data.profile.weightKg) * 10) / 10) : ''}
+              key={data.profile.weightUnit ?? 'kg'}
+              onChange={(e) => {
+                const v = parseFloat(e.target.value.replace(',', '.'))
+                const unit = data.profile.weightUnit ?? 'kg'
+                updateProfile({ weightKg: Number.isFinite(v) && v > 0 ? Math.round((unit === 'lbs' ? v / 2.20462 : v) * 10) / 10 : undefined })
+              }}
+              placeholder="Poids"
+              aria-label="Poids"
+              className="b-input h-11 min-w-0 flex-1 px-3 font-mono text-[15px]"
+            />
+            {(['kg', 'lbs'] as const).map((u) => (
+              <button
+                key={u}
+                type="button"
+                aria-pressed={(data.profile.weightUnit ?? 'kg') === u}
+                onClick={() => updateProfile({ weightUnit: u })}
+                className={`b-btn h-11 w-14 text-[13px] uppercase italic ${(data.profile.weightUnit ?? 'kg') === u ? 'b-btn-ink' : ''}`}
+              >
+                {u}
+              </button>
+            ))}
+          </div>
+          {data.profile.weightKg && <p className="mt-2 text-[12px] font-semibold text-ink/65">Enregistré : {data.profile.weightKg} kg · repère protéines {Math.round((data.profile.weightKg * 0.3) / 5) * 5}-{Math.round((data.profile.weightKg * 0.4) / 5) * 5} g après la séance.</p>}
         </Block>
 
         <Block title="Son du coach" desc="Un son différent pour le décompte, le départ, chaque phase, la dernière rep, la fin, le repos et la reprise. La voix (en option) compte les reps.">

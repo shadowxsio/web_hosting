@@ -61,12 +61,33 @@ export interface TestResult {
   R?: number
 }
 
+/** Profil sportif (sert aux repères de récupération). */
+export interface Profile {
+  weightKg?: number
+  weightUnit?: 'kg' | 'lbs'
+}
+
+/** Bilan d'une séance pour une date. */
+export interface SessionLog {
+  /** Difficulté ressentie 1-10. */
+  rpe?: number
+  /** Course prévue dans les 24 h. */
+  runSoon?: boolean
+  /** Bilan déjà affiché automatiquement. */
+  recapAt?: number
+  /** Retour au calme terminé. */
+  cooldownAt?: number
+}
+
 export interface AppData {
   version: 1
   logs: Record<string, Record<string, ExerciseLog>>
   checkins: Record<string, Checkin>
   /** tests[date][testId] */
   tests: Record<string, Record<string, TestResult>>
+  /** sessions[date][sessionId] */
+  sessions: Record<string, Record<string, SessionLog>>
+  profile: Profile
   gist: GistSettings
   updatedAt: number
 }
@@ -78,6 +99,8 @@ const empty = (): AppData => ({
   logs: {},
   checkins: {},
   tests: {},
+  sessions: {},
+  profile: {},
   gist: { enabled: false, token: '', gistId: '' },
   updatedAt: 0,
 })
@@ -262,7 +285,10 @@ export function importJson(text: string): number {
   const checkins = { ...state.checkins, ...(parsed.checkins ?? {}) }
   const tests = { ...state.tests }
   for (const [date, day] of Object.entries(parsed.tests ?? {})) tests[date] = { ...(tests[date] ?? {}), ...day }
-  setData({ ...state, logs, checkins, tests })
+  const sessions = { ...state.sessions }
+  for (const [date, day] of Object.entries(parsed.sessions ?? {})) sessions[date] = { ...(sessions[date] ?? {}), ...day }
+  const profile = { ...(parsed.profile ?? {}), ...state.profile }
+  setData({ ...state, logs, checkins, tests, sessions, profile })
   return Object.keys(parsed.logs).length
 }
 
@@ -273,6 +299,15 @@ export function updateCheckin(date: string, patch: Partial<Checkin>) {
 export function updateTest(date: string, testId: string, patch: TestResult) {
   const day = state.tests[date] ?? {}
   setData({ ...state, tests: { ...state.tests, [date]: { ...day, [testId]: { ...(day[testId] ?? {}), ...patch } } } })
+}
+
+export function updateSessionLog(date: string, sessionId: string, patch: Partial<SessionLog>) {
+  const day = state.sessions[date] ?? {}
+  setData({ ...state, sessions: { ...state.sessions, [date]: { ...day, [sessionId]: { ...(day[sessionId] ?? {}), ...patch } } } })
+}
+
+export function updateProfile(patch: Partial<Profile>) {
+  setData({ ...state, profile: { ...state.profile, ...patch } })
 }
 
 /** Marque les données comme modifiées (déclenche le backup auto). */

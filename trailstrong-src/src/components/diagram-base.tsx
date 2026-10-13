@@ -45,6 +45,12 @@ export type AnimationId =
   | 'jump'
   | 'kneelingStretch'
   | 'calfStretch'
+  // Étirements / mobilité (retour au calme)
+  | 'hamstringStretch'
+  | 'quadStretch'
+  | 'figure4'
+  | 'kneeToWall'
+  | 'soleusStretch'
 
 export type JointName = 'hip' | 'sh' | 'head' | 'k1' | 'a1' | 't1' | 'k2' | 'a2' | 't2' | 'e1' | 'h1' | 'e2' | 'h2'
 
@@ -604,5 +610,58 @@ export const FIGURES: Record<AnimationId, FigureDef> = {
     ),
     focus: ['sh2'],
     arrows: [{ joint: 'hip', color: 'flame' }],
+  },
+
+  // ── Étirements / mobilité ─────────────────────────────────────────────
+  hamstringStretch: {
+    start: { anchor: { joint: 'sh', at: [150, GROUND - 10] }, trunk: 0, ua1: -130, fa1: -120, ua2: -130, fa2: -120, th1: -140, sh1: -140, ft1: -50, th2: 180, sh2: 180, ft2: -90 },
+    end: { anchor: { joint: 'sh', at: [150, GROUND - 10] }, trunk: 0, ua1: -115, fa1: -100, ua2: -115, fa2: -100, th1: -84, sh1: -84, ft1: 6, th2: 180, sh2: 180, ft2: -90 },
+    props: () => <Ground />,
+    over: (j) => <line x1={j.h1[0]} y1={j.h1[1]} x2={j.t1[0]} y2={j.t1[1]} style={{ stroke: C.ok }} strokeWidth={3} strokeLinecap="round" opacity={0.9} />,
+    focus: ['th1'],
+    arrows: [{ joint: 'a1', color: 'sky' }],
+  },
+  quadStretch: {
+    start: { ...stand, anchor: { joint: 'a1', at: [100, GROUND - 3] }, ua1: -8, fa1: -8, ua2: 95, fa2: 92 },
+    end: { ...stand, anchor: { joint: 'a1', at: [100, GROUND - 3] }, ua1: -8, fa1: -8, th2: 104, sh2: -104, ft2: -170, ua2: 122, fa2: 70 },
+    props: () => (
+      <g>
+        <Ground />
+        <rect x={170} y={30} width={9} height={GROUND - 30} style={{ fill: C.prop }} rx={2} />
+      </g>
+    ),
+    focus: ['th2'],
+    arrows: [{ joint: 'a2', color: 'sky', bend: 0.5 }],
+  },
+  figure4: {
+    start: { anchor: { joint: 'sh', at: [150, GROUND - 10] }, trunk: 0, ua1: -150, fa1: -150, ua2: -150, fa2: -150, th2: -135, sh2: 118, ft2: 180, tgt1: [72, 136], bend1: 1, ft1: -90 },
+    end: { anchor: { joint: 'sh', at: [150, GROUND - 10] }, trunk: 0, ua1: -135, fa1: -150, ua2: -135, fa2: -150, th2: -72, sh2: 180, ft2: -90, tgt1: [110, 126], bend1: 1, ft1: -90 },
+    props: () => <Ground />,
+    focus: ['glute'],
+    arrows: [{ joint: 'k2', color: 'flame' }],
+  },
+  kneeToWall: {
+    start: { ...stand, anchor: { joint: 'a1', at: [140, GROUND - 3] }, trunk: -88, th1: 6, sh1: 90, th2: 92, sh2: 180, ft2: 180, ua1: -6, fa1: -6, ua2: 0, fa2: -6 },
+    end: { ...stand, anchor: { joint: 'a1', at: [140, GROUND - 3] }, trunk: -84, th1: 2, sh1: 116, th2: 96, sh2: 180, ft2: 180, ua1: -6, fa1: -6, ua2: 0, fa2: -6 },
+    props: () => (
+      <g>
+        <Ground />
+        <rect x={176} y={30} width={9} height={GROUND - 30} style={{ fill: C.prop }} rx={2} />
+      </g>
+    ),
+    focus: ['sh1', 'ft1'],
+    arrows: [{ joint: 'k1', color: 'sky' }],
+  },
+  soleusStretch: {
+    start: { ...stand, anchor: { joint: 'a2', at: [70, GROUND - 3] }, trunk: -80, th1: 60, sh1: 100, th2: 115, sh2: 115, ua1: -10, fa1: -10 },
+    end: { ...stand, anchor: { joint: 'a2', at: [70, GROUND - 3] }, trunk: -78, th1: 52, sh1: 96, th2: 92, sh2: 122, ua1: -14, fa1: -14 },
+    props: () => (
+      <g>
+        <Ground />
+        <rect x={170} y={20} width={9} height={GROUND - 20} style={{ fill: C.prop }} rx={2} />
+      </g>
+    ),
+    focus: ['sh2'],
+    arrows: [{ joint: 'k2', color: 'sky' }],
   },
 }
