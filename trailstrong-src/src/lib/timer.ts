@@ -4,6 +4,7 @@
  * l'onglet passe en arrière-plan.
  */
 import { useEffect, useState, useSyncExternalStore } from 'react'
+import { say, sfx, unlockAudio } from './sound'
 
 interface TimerState {
   duration: number // s
@@ -21,36 +22,8 @@ const set = (p: Partial<TimerState>) => {
   ls.forEach((l) => l())
 }
 
-let ctx: AudioContext | null = null
-/** À appeler dans un geste utilisateur (iOS exige un déverrouillage audio). */
-export function unlockAudio() {
-  try {
-    ctx ??= new AudioContext()
-    if (ctx.state === 'suspended') void ctx.resume()
-  } catch {
-    /* pas d'audio */
-  }
-}
-
-export function beep(pattern: number[] = [0, 0.28, 0.56], freq = 880) {
-  if (!ctx) return
-  const t0 = ctx.currentTime + 0.02
-  pattern.forEach((offset, i) => {
-    const osc = ctx!.createOscillator()
-    const gain = ctx!.createGain()
-    osc.type = 'square'
-    osc.frequency.value = i === pattern.length - 1 ? freq * 1.5 : freq
-    gain.gain.setValueAtTime(0.0001, t0 + offset)
-    gain.gain.exponentialRampToValueAtTime(0.25, t0 + offset + 0.01)
-    gain.gain.exponentialRampToValueAtTime(0.0001, t0 + offset + 0.2)
-    osc.connect(gain).connect(ctx!.destination)
-    osc.start(t0 + offset)
-    osc.stop(t0 + offset + 0.22)
-  })
-}
-
 let wakeLock: WakeLockSentinel | null = null
-async function keepAwake(on: boolean) {
+export async function keepAwake(on: boolean) {
   try {
     if (on && !wakeLock && 'wakeLock' in navigator) {
       wakeLock = await navigator.wakeLock.request('screen')
@@ -108,8 +81,10 @@ export const timer = {
 }
 
 function finish() {
+  const label = st.label
   set({ endAt: null, pausedLeft: null, finishedAt: Date.now() })
-  beep()
+  sfx.done()
+  say(label?.startsWith('Change') ? 'Go' : 'C’est reparti')
   try {
     navigator.vibrate?.([250, 120, 250, 120, 500])
   } catch {
@@ -130,12 +105,22 @@ export function useTimer() {
   const [, setTick] = useState(0)
   useEffect(() => {
     if (!s.endAt) return
+    let lastSec = Infinity
     const id = window.setInterval(() => {
-      if (st.endAt && Date.now() >= st.endAt) finish()
-      else setTick((x) => x + 1)
-    }, 200)
+      if (!st.endAt) return
+      const left = (st.endAt - Date.now()) / 1000
+      if (left <= 0) return finish()
+      // Bip aux 3 dernières secondes.
+      const sec = Math.ceil(left)
+      if (sec <= 3 && sec < lastSec && st.duration > 5) sfx.tick()
+      lastSec = sec
+      setTick((x) => x + 1)
+    }, 100)
     return () => window.clearInterval(id)
   }, [s.endAt])
   const left = s.endAt ? Math.max(0, (s.endAt - Date.now()) / 1000) : (s.pausedLeft ?? (s.finishedAt ? 0 : s.duration))
   return { ...s, left, running: s.endAt != null }
 }
+
+/** Le chrono tourne-t-il (hors React) ? */
+export const timerRunning = () => st.endAt != null

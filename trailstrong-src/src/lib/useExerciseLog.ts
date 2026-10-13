@@ -42,9 +42,9 @@ export function useExerciseLog(ex: Exercise, date: string) {
       return { ...l, sets: next }
     })
 
-  /** Valide / annule une série. Sans saisie, reprend la suggestion. Lance le repos. */
-  const validate = (i: number) => {
-    const s = sets[i]
+  /** Valide / annule une série. Sans saisie, reprend la suggestion (`reps` : reps faites, venant du coach). Lance le repos. */
+  const validate = (i: number, reps?: string) => {
+    const s = reps ? { ...sets[i], r: reps } : sets[i]
     const willBeDone = !s.done
     write((l) => {
       const next = l.sets.length >= sets.length ? [...l.sets] : [...sets]
@@ -88,8 +88,8 @@ export function useExerciseLog(ex: Exercise, date: string) {
     })
 
   /** Valide / annule un côté d'une série. G validée → décompte « change de jambe » ; les deux → repos. */
-  const validateSide = (i: number, side: Side) => {
-    const cur = sideOf(i, side)
+  const validateSide = (i: number, side: Side, reps?: string) => {
+    const cur = reps ? { ...sideOf(i, side), r: reps } : sideOf(i, side)
     const willBeDone = !cur.done
     const otherDone = sideOf(i, other(side)).done
     write((l) => {
