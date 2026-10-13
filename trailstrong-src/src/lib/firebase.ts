@@ -23,7 +23,8 @@ import {
 } from 'firebase/auth'
 import { connectFirestoreEmulator, initializeFirestore, persistentLocalCache, persistentMultipleTabManager, type Firestore } from 'firebase/firestore'
 
-import { config, firebaseEnabled } from './firebaseConfig'
+import { initializeAppCheck, ReCaptchaEnterpriseProvider } from 'firebase/app-check'
+import { config, firebaseEnabled, recaptchaSiteKey } from './firebaseConfig'
 
 export { firebaseEnabled }
 
@@ -33,7 +34,15 @@ let db: Firestore | null = null
 
 export function fb() {
   if (!firebaseEnabled) throw new Error('Firebase non configuré.')
-  app ??= initializeApp(config)
+  if (!app) {
+    app = initializeApp(config)
+    // App Check : Firebase n'accepte que les requêtes venant vraiment de ce site
+    // (pas d'un script ou d'un bot qui réutiliserait la config publique).
+    // Invisible pour l'utilisateur ; à « appliquer » ensuite dans la console Firebase.
+    if (recaptchaSiteKey && !(import.meta.env.DEV && import.meta.env.VITE_FIREBASE_EMULATOR)) {
+      initializeAppCheck(app, { provider: new ReCaptchaEnterpriseProvider(recaptchaSiteKey), isTokenAutoRefreshEnabled: true })
+    }
+  }
   // Sans popupRedirectResolver : aucun iframe / script Google supplémentaire.
   auth ??= initializeAuth(app, { persistence: [indexedDBLocalPersistence, browserLocalPersistence] })
   // Cache local persistant : l'app marche hors-ligne au gym, la synchro reprend ensuite.

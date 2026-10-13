@@ -53,7 +53,7 @@ Code source dans `trailstrong-src/` (Vite + React + TypeScript + Tailwind + Luci
   ```
   Sans secret, le PIN par défaut est `2026`.
   ⚠️ Le site est statique : le contrôle d'accès protège l'interface, pas le code (public sur GitHub Pages). Les données restent sur l'appareil.
-- **Sécurité** : Content-Security-Policy stricte injectée au build, Dependabot (npm + actions), audit `npm audit` hebdomadaire (`security.yml`).
+- **Sécurité** : Content-Security-Policy stricte injectée au build, anti-clickjacking (`theme.js`), `noindex` pour les moteurs de recherche, Dependabot (npm + actions), audit `npm audit` hebdomadaire (`security.yml`), analyse CodeQL (`codeql.yml`). En mode comptes : App Check (reCAPTCHA Enterprise, variable `RECAPTCHA_SITE_KEY`) et règles Firestore strictes (`firestore.rules` : propriétaire uniquement, formes de documents et tailles contrôlées, tout le reste refusé).
 - **Données** : 100 % `localStorage` sur l'appareil. Export/Import JSON, et backup optionnel chiffré (AES-256, clé de récupération propre à l'appareil, à noter) vers un Gist secret — token GitHub avec le seul scope `gist`.
 - **Hors-ligne** : service worker généré au build (précache de tous les fichiers) + manifest → « Ajouter à l'écran d'accueil ».
 - **Dev local** :
