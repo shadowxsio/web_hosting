@@ -21,7 +21,7 @@ export interface CustomExerciseDef {
   startWeight?: string
   tip?: string
   createdAt: number
-  // ── Fiche complète (catalogue / IA) : tous facultatifs, rétrocompatibles ──
+  // ── Fiche du catalogue : tous facultatifs, rétrocompatibles ('ai' : ancien assistant IA, retiré) ──
   source?: 'manual' | 'catalog' | 'ai'
   catalogId?: string
   tags?: FocusTag[]
@@ -199,6 +199,7 @@ export function toExercise(d: CustomExerciseDef): Exercise {
     kneeAnkle: '',
     steps: [],
     mode: p.timed ? 'timed' : 'strength',
+    source: 'manual',
     startWeight: d.startWeight,
     diagram: d.diagram,
   }
@@ -223,6 +224,7 @@ function toFullExercise(d: CustomExerciseDef): Exercise {
     kneeAnkle: d.kneeAnkle ?? '',
     steps: d.steps ?? [],
     stepsLang: d.stepsLang,
+    source: d.source === 'manual' ? 'manual' : 'catalog',
     points: d.points,
     mode: d.mode ?? 'strength',
     startWeight: d.startWeight,

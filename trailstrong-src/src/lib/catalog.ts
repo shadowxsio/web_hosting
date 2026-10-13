@@ -1,7 +1,8 @@
 /**
  * Catalogue d'exercices intégré (free-exercise-db, domaine public — Unlicense) :
- * ~800 exercices avec 2 photos, muscles, matériel et consignes (en anglais).
- * public/catalog.json est précaché par le service worker (recherche hors-ligne) ;
+ * ~800 exercices avec 2 photos, muscles, matériel et consignes. Les 100 plus
+ * utiles sont traduits (nom + consignes en français, scripts/catalog-fr.json),
+ * les autres restent en anglais. public/catalog.json est précaché par le service worker (recherche hors-ligne) ;
  * les photos viennent de GitHub et sont copiées dans l'exercice à l'ajout.
  */
 import type { AnimationId } from '../components/diagram-base'
@@ -19,9 +20,13 @@ export interface CatalogEntry {
   l: string // niveau
   f: string // force : push / pull / static
   x: string // compound / isolation
-  t: string[] // consignes (anglais)
+  t: string[] // consignes (en français si `fr` est présent, sinon en anglais)
   img: string[]
+  fr?: string // nom français : fiche traduite
 }
+
+/** Nom affiché : français si la fiche est traduite. */
+export const nameOf = (e: CatalogEntry) => e.fr ?? e.n
 
 const IMG_BASE = 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/'
 export const imgUrl = (path: string) => IMG_BASE + path
@@ -87,7 +92,7 @@ export const equipFr = (e: CatalogEntry) => EQUIP_FR[e.e] ?? e.e
 export const catFr = (e: CatalogEntry) => CAT_FR[e.c] ?? e.c
 
 // ── Recherche (français ou anglais) ──────────────────────────────────────
-const norm = (s: string) =>
+export const norm = (s: string) =>
   s
     .toLowerCase()
     .normalize('NFD')
@@ -193,7 +198,7 @@ export function searchCatalog(list: CatalogEntry[], query: string, limit = 40): 
   if (!words.length) return []
   const scored: [number, CatalogEntry][] = []
   for (const e of list) {
-    const name = norm(e.n)
+    const name = norm(e.fr ? `${e.n} ${e.fr}` : e.n)
     const rest = norm(`${e.m.join(' ')} ${e.s.join(' ')} ${e.e} ${e.c} ${musclesFr(e).join(' ')} ${equipFr(e)}`)
     let score = 0
     let all = true
@@ -203,7 +208,8 @@ export function searchCatalog(list: CatalogEntry[], query: string, limit = 40): 
       else if (alts.some((a) => rest.includes(a))) score += 1
       else all = false
     }
-    if (score > 0) scored.push([score + (all ? 4 : 0) - e.n.length / 100, e])
+    // À score égal, les fiches traduites passent devant.
+    if (score > 0) scored.push([score + (all ? 4 : 0) + (e.fr ? 0.5 : 0) - e.n.length / 100, e])
   }
   return scored
     .sort((a, b) => b[0] - a[0])
@@ -213,6 +219,25 @@ export function searchCatalog(list: CatalogEntry[], query: string, limit = 40): 
 
 // ── Schéma auto ──────────────────────────────────────────────────────────
 const RULES: [RegExp, AnimationId][] = [
+  [/pallof|anti.?rotation/, 'pallof'],
+  [/farmer|suitcase carry/, 'farmerWalk'],
+  [/mountain climber/, 'mountainClimber'],
+  [/rope jump|jumping rope|jump rope|skipping/, 'jumpRope'],
+  [/box jump/, 'boxJump'],
+  [/lateral bound|skater|lateral hop/, 'skater'],
+  [/\bswings?\b/, 'swing'],
+  [/hyperextension|back extension/, 'backExt'],
+  [/ball leg curl|ball.*hamstring curl/, 'ballCurl'],
+  [/walking lunge/, 'walkingLunge'],
+  [/thigh adductor|adductor machine/, 'adductMachine'],
+  [/knee.*raise.*(parallel|chair)|captain|hanging.*(knee|leg)/, 'kneeRaise'],
+  [/superman|locust/, 'superman'],
+  [/kickback.*(glute|quadruped)|glute kickback|donkey kick/, 'kickback'],
+  [/hip flexion|knee drive/, 'hipFlexBand'],
+  [/leg swing|front leg raise|side leg raise/, 'legSwing'],
+  [/pulldown|pull.?up|chin.?up/, 'pulldown'],
+  [/inverted row/, 'invertedRow'],
+  [/bench press|chest press|floor press/, 'benchPress'],
   [/seated calf|soleus/, 'soleusRaise'],
   [/(single|one).?leg.*calf|calf.*(single|one).?leg/, 'singleCalf'],
   [/tibialis|toe raise|dorsi/, 'tibialis'],
@@ -224,7 +249,8 @@ const RULES: [RegExp, AnimationId][] = [
   [/leg extension/, 'legExtension'],
   [/leg press|hack squat|sled press/, 'legPress'],
   [/hip thrust/, 'hipThrust'],
-  [/bridge/, 'gluteBridge'],
+  [/(single|one).?leg.*bridge/, 'gluteBridge'],
+  [/bridge|hip raise/, 'bridge'],
   [/(single|one).?leg.*(deadlift|rdl)|(deadlift|rdl).*(single|one).?leg/, 'singleLegRdl'],
   [/romanian|deadlift|good morning|stiff.?leg|hinge|swing|pull.?through|rdl/, 'rdl'],
   [/step.?down/, 'stepDown'],
@@ -293,7 +319,7 @@ export function tagsFromMuscles(muscles: string[]): FocusTag[] {
   return [...t]
 }
 
-/** Brouillon d'exercice perso prêt à ajouter, sans IA. */
+/** Brouillon d'exercice perso prêt à ajouter (fiche simplifiée). */
 export function draftFromCatalog(e: CatalogEntry): CustomDraft {
   const n = e.n.toLowerCase()
   const diagram = guessDiagram(e.n, e.m, e.c)
@@ -307,7 +333,7 @@ export function draftFromCatalog(e: CatalogEntry): CustomDraft {
   return {
     source: 'catalog',
     catalogId: e.id,
-    name: e.n,
+    name: nameOf(e),
     target: musclesFr(e).join(', ') || catFr(e),
     tags: tagsFromMuscles([...e.m, ...e.s]),
     equipment: equipFr(e),
@@ -319,7 +345,7 @@ export function draftFromCatalog(e: CatalogEntry): CustomDraft {
     mode: timed ? 'timed' : 'strength',
     cadence: timed ? undefined : defaultCadence(diagram, plyo),
     steps: e.t,
-    stepsLang: 'en',
+    ...(e.fr ? {} : { stepsLang: 'en' as const }),
     diagram,
     video: e.n,
   }
@@ -340,4 +366,16 @@ export async function fetchPhotos(paths: string[], width = 420): Promise<string[
     out.push(canvas.toDataURL('image/jpeg', 0.72))
   }
   return out
+}
+
+/** Ajoute au brouillon les 2 photos de sa fiche du catalogue (hors-ligne ensuite). */
+export async function withPhotos(d: CustomDraft): Promise<CustomDraft> {
+  if (!d.catalogId) return d
+  const entry = (await loadCatalog()).find((e) => e.id === d.catalogId)
+  if (!entry) return d
+  try {
+    return { ...d, photos: await fetchPhotos(entry.img) }
+  } catch {
+    return d
+  }
 }

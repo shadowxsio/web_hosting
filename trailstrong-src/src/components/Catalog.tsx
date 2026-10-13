@@ -264,6 +264,7 @@ export function Catalog({
               {canAdd && (
                 <button
                   type="button"
+                  data-tour={step(g.session) === 2 ? 'add' : undefined}
                   onClick={() => setAdding(g.session)}
                   className="mt-[26px] flex min-h-[72px] items-center justify-center gap-2 border-[2.5px] border-dashed border-ink/50 bg-paper/50 px-3 text-[14px] font-extrabold uppercase tracking-wide text-ink/60 transition duration-150 hover:border-flame hover:text-ink active:border-flame rounded-xl"
                 >

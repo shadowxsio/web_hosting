@@ -8,6 +8,7 @@
 import { useSyncExternalStore } from 'react'
 import { scoped } from './account'
 import { getAllCustom, mergeCustom } from './custom'
+import { getUserProgram, setUserProgram, type UserProgram } from './userProgram'
 
 export type Side = 'L' | 'R'
 
@@ -67,7 +68,7 @@ export interface Profile {
   name?: string
   weightKg?: number
   weightUnit?: 'kg' | 'lbs'
-  /** Réponses du questionnaire (servent à l'IA et au bilan). */
+  /** Réponses du questionnaire (servent au bilan). */
   sport?: string
   goals?: string[]
   pains?: string[]
@@ -284,11 +285,11 @@ export function treadmillStats(t?: TreadmillLog) {
 export function exportJson(): string {
   const { gist, ...rest } = state
   // Le token GitHub ne quitte jamais l'appareil via un export.
-  return JSON.stringify({ ...rest, gist: { ...gist, token: '' }, customExercises: getAllCustom(), exportedAt: new Date().toISOString() }, null, 2)
+  return JSON.stringify({ ...rest, gist: { ...gist, token: '' }, customExercises: getAllCustom(), program: getUserProgram(), exportedAt: new Date().toISOString() }, null, 2)
 }
 
 export function importJson(text: string): number {
-  const parsed = JSON.parse(text) as Partial<AppData> & { customExercises?: unknown }
+  const parsed = JSON.parse(text) as Partial<AppData> & { customExercises?: unknown; program?: UserProgram | null }
   if (!parsed || typeof parsed !== 'object' || typeof parsed.logs !== 'object' || parsed.logs === null) {
     throw new Error('Fichier invalide : champ « logs » manquant.')
   }
@@ -299,6 +300,8 @@ export function importJson(text: string): number {
     logs[date] = { ...(logs[date] ?? {}), ...day }
   }
   mergeCustom(parsed.customExercises)
+  // Programme modifié (exercices ajoutés / retirés) : repris tel quel s'il est valide.
+  if (parsed.program && parsed.program.version === 1 && typeof parsed.program.sessions === 'object') setUserProgram(parsed.program)
   const checkins = { ...state.checkins, ...(parsed.checkins ?? {}) }
   const tests = { ...state.tests }
   for (const [date, day] of Object.entries(parsed.tests ?? {})) tests[date] = { ...(tests[date] ?? {}), ...day }

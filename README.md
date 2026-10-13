@@ -58,13 +58,13 @@ Code source dans `trailstrong-src/` (Vite + React + TypeScript + Tailwind + Luci
 - **Hors-ligne** : service worker généré au build (précache de tous les fichiers) + manifest → « Ajouter à l'écran d'accueil ».
 - **Dev local** :
   ```bash
-  cd trailstrong-src && npm install && npm run dev   # http://localhost:5173 (la connexion Google ne marche que sur shadowxsio.github.io : utilise le PIN en local ; /#schemas : planche des 35 schémas)
+  cd trailstrong-src && npm install && npm run dev   # http://localhost:5173 (la connexion Google ne marche que sur shadowxsio.github.io : utilise le PIN en local ; /#schemas : planche des 62 schémas)
   ```
 - **Photos de démo** : `trailstrong-src/public/demos/` — paires départ/fin issues de [free-exercise-db](https://github.com/yuhonas/free-exercise-db) (domaine public, Unlicense), converties en WebP 480 px.
-- **Ajout d'exercices** (bouton « Ajouter un exercice à cette séance ») :
-  - *Catalogue* : `public/catalog.json` (~800 exercices free-exercise-db, régénérable avec `node scripts/build-catalog.mjs`), recherche en français ou anglais ; les 2 photos sont copiées dans l'exercice (JPEG réduit) pour le hors-ligne ;
-  - *IA* : Gemini appelé directement depuis le navigateur avec la clé API de l'utilisateur, saisie en mode admin et stockée uniquement sur l'appareil (jamais exportée) ; l'IA choisit l'exo du catalogue, traduit, fixe séries / tempo du coach / consignes et le schéma ;
-  - *Manuel* : saisie libre ; dans tous les cas, schéma choisi automatiquement parmi 35 modèles (modifiable).
+- **Ajout / retrait d'exercices** (bouton « Ajouter un exercice à cette séance » ; « Retirer » dans la fiche d'un exercice) :
+  - *Bibliothèque* : les 55 exercices à fiche complète (programme de base + `src/data/extras.ts`) — schéma dédié, photos, consignes en français, tempo du coach, conseils genou / cheville ; l'ajout modifie le programme du compte (`src/lib/userProgram.ts`) ;
+  - *Catalogue* : `public/catalog.json` (~800 exercices free-exercise-db en fiche simplifiée, régénérable avec `node scripts/build-catalog.mjs`) ; les 100 plus utiles sont traduits (`scripts/catalog-fr.json` : nom + consignes en français), les autres restent en anglais ; un exercice qui existe en fiche complète renvoie vers la bibliothèque ; les 2 photos sont copiées dans l'exercice (JPEG réduit) pour le hors-ligne ;
+  - *Manuel* : saisie libre ; schéma choisi automatiquement parmi les modèles (modifiable).
 - **Fin de séance** : bilan automatique quand la séance est à 100 % (ou bouton « Bilan & récup ») — volume, records, écart G/D, difficulté ressentie, douleur après, repères de récupération dosés selon le poids du Profil (Menu → Profil). « Retour au calme » : étirements et mobilité propres à chaque séance (`src/data/cooldown.ts`), enchaînés par le coach avec schéma.
 - **Comptes multi-utilisateurs (Firebase)** : activés dès que les variables `FIREBASE_API_KEY`, `FIREBASE_AUTH_DOMAIN`, `FIREBASE_PROJECT_ID`, `FIREBASE_APP_ID` existent (sinon : mode local historique, inchangé).
   - Connexion Google (bouton GIS → `signInWithCredential`), inscription ouverte ; données par compte dans Firestore (`users/{uid}`, `days/{date}`, `custom/{id}`), cache hors-ligne, synchro entre appareils.

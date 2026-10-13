@@ -3,6 +3,13 @@ import { createRoot } from 'react-dom/client'
 import App from './App'
 import './index.css'
 
+// L'assistant IA a été retiré : on efface une éventuelle clé Gemini restée sur l'appareil.
+try {
+  localStorage.removeItem('trailstrong:gemini')
+} catch {
+  /* stockage indisponible */
+}
+
 const root = createRoot(document.getElementById('root')!)
 if (import.meta.env.DEV && location.hash === '#schemas') {
   void import('./components/DiagramGallery').then(({ DiagramGallery }) => root.render(<DiagramGallery />))

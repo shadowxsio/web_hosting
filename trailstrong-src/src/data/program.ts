@@ -60,13 +60,15 @@ export interface Exercise {
   custom?: boolean
   /** Poids optionnel (exercices au poids du corps). */
   bodyweight?: boolean
-  /** Exercices perso (catalogue / IA) : schéma, tempo du coach, photos (data URL), requête vidéo. */
+  /** Exercices perso (catalogue / manuels) : schéma, tempo du coach, photos (data URL), requête vidéo. */
   diagram?: AnimationId
   cadence?: Phase[]
   photos?: string[]
   video?: string
   /** Consignes en anglais (catalogue non traduit). */
   stepsLang?: 'en'
+  /** Exercice perso : fiche simplifiée du catalogue ou saisie manuelle. */
+  source?: 'catalog' | 'manual'
 }
 
 export interface Session {

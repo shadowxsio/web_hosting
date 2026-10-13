@@ -4,6 +4,7 @@
  * et leurs étirements viennent du plan du compte. Sans plan : programme de base.
  */
 import { useSyncExternalStore } from 'react'
+import { COOLDOWN } from '../data/cooldown'
 import { EXTRAS } from '../data/extras'
 import { PROGRAM, type Exercise, type Session, type SessionId } from '../data/program'
 import { scoped } from './account'
@@ -93,4 +94,43 @@ export function buildProgram(p: UserProgram | null): Session[] {
       })
     return { ...base, title: sp.title, short: sp.short, subtitle: sp.subtitle, goal: sp.goal, duration: sp.duration, exercises, cooldown: sp.cooldown, runAdvice: sp.runAdvice }
   })
+}
+
+/** Plan modifiable : celui du compte, ou une copie du programme de base. */
+function editablePlan(): UserProgram {
+  if (plan) return JSON.parse(JSON.stringify(plan)) as UserProgram
+  const sessions: Partial<Record<SessionId, SessionPlan>> = {}
+  for (const s of PROGRAM)
+    sessions[s.id] = {
+      title: s.title,
+      short: s.short,
+      subtitle: s.subtitle,
+      goal: s.goal,
+      duration: s.duration,
+      items: s.exercises.map((e) => ({ id: e.id })),
+      cooldown: s.cooldown ?? COOLDOWN[s.id] ?? [],
+      ...(s.runAdvice ? { runAdvice: s.runAdvice } : {}),
+    }
+  return { version: 1, createdAt: Date.now(), sessions }
+}
+
+/** Ajoute un exercice de la bibliothèque (fiche complète) à une séance. */
+export function addToSession(sid: SessionId, exId: string) {
+  if (!LIBRARY[exId]) return
+  const p = editablePlan()
+  const base = PROGRAM.find((s) => s.id === sid)!
+  const sp = p.sessions[sid] ?? { title: base.title, short: base.short, subtitle: base.subtitle, goal: base.goal, duration: base.duration, items: [], cooldown: COOLDOWN[sid] ?? [] }
+  if (sp.items.some((it) => it.id === exId)) return
+  sp.items = [...sp.items, { id: exId }]
+  p.sessions[sid] = sp
+  setUserProgram(p)
+}
+
+/** Retire un exercice du programme d'une séance (l'historique est conservé). */
+export function removeFromSession(sid: SessionId, exId: string) {
+  const p = editablePlan()
+  const sp = p.sessions[sid]
+  if (!sp) return
+  sp.items = sp.items.filter((it) => it.id !== exId)
+  setUserProgram(p)
 }
