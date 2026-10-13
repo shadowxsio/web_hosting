@@ -43,6 +43,9 @@ export const timer = {
     const d = seconds ?? st.duration
     set({ duration: d, endAt: Date.now() + d * 1000, pausedLeft: null, finishedAt: null, label })
     void keepAwake(true)
+    // Signal de début (après la fanfare de fin de série du coach).
+    if (label?.startsWith('Change')) window.setTimeout(sfx.switch, 900)
+    else if (d >= 15) window.setTimeout(sfx.rest, 900)
   },
   toggle() {
     unlockAudio()
@@ -83,7 +86,8 @@ export const timer = {
 function finish() {
   const label = st.label
   set({ endAt: null, pausedLeft: null, finishedAt: Date.now() })
-  sfx.done()
+  if (label?.startsWith('Change')) sfx.start()
+  else sfx.restEnd()
   say(label?.startsWith('Change') ? 'Go' : 'C’est reparti')
   try {
     navigator.vibrate?.([250, 120, 250, 120, 500])
@@ -110,9 +114,9 @@ export function useTimer() {
       if (!st.endAt) return
       const left = (st.endAt - Date.now()) / 1000
       if (left <= 0) return finish()
-      // Bip aux 3 dernières secondes.
+      // Tic de plus en plus aigu sur les 5 dernières secondes (3 pour les chronos courts).
       const sec = Math.ceil(left)
-      if (sec <= 3 && sec < lastSec && st.duration > 5) sfx.tick()
+      if (sec <= (st.duration > 20 ? 5 : 3) && sec < lastSec && st.duration > 5) sfx.restTick(sec)
       lastSec = sec
       setTick((x) => x + 1)
     }, 100)

@@ -72,7 +72,7 @@ export function SetCoach({ name, cadence, sides, target, setLabel, rest, onSideD
   const finishSide = (done: number) => {
     const e = eng.current
     const sd = sides[e.sideIdx] ?? null
-    sfx.stop()
+    sfx.end()
     e.doneCount = done
     if (done > 0) cb.current.onSideDone(sd, done)
     if (done > 0 && e.sideIdx < sides.length - 1) {
@@ -83,10 +83,8 @@ export function SetCoach({ name, cadence, sides, target, setLabel, rest, onSideD
     }
     e.stage = 'end'
     e.t0 = Date.now()
-    if (done > 0 && rest > 0) {
-      window.setTimeout(sfx.rest, 750)
-      say('Stop. Repos')
-    } else say('Stop')
+    // Le son « repos » est joué par le chrono global au lancement du repos.
+    say(done > 0 && rest > 0 ? 'Stop. Repos' : 'Stop')
   }
 
   useEffect(() => {
@@ -107,8 +105,11 @@ export function SetCoach({ name, cadence, sides, target, setLabel, rest, onSideD
         if (el >= COUNTDOWN) {
           e.stage = 'work'
           e.t0 += COUNTDOWN * 1000
-          key('r0p0', sfx.go)
-        } else key(`c${Math.ceil(COUNTDOWN - el)}`, sfx.tick)
+          key('r0p0', sfx.start)
+        } else {
+          const n = Math.ceil(COUNTDOWN - el)
+          key(`c${n}`, () => sfx.count(n))
+        }
       } else if (e.stage === 'work') {
         const curSide = sides[e.sideIdx] ?? null
         const goalNow = cb.current.target(curSide)
@@ -118,19 +119,23 @@ export function SetCoach({ name, cadence, sides, target, setLabel, rest, onSideD
           let t = el - rep * D
           let p = 0
           while (p < cadence.length - 1 && t >= cadence[p].s) t -= cadence[p++].s
+          const prog = rep / Math.max(1, goalNow - 1)
           key(`r${rep}p${p}`, () => {
             if (p === 0 && rep > 0) say(String(rep))
-            sfx.phase(cadence[p].kind)
+            if (p === 0 && rep === goalNow - 1 && goalNow > 1) sfx.last()
+            sfx.phase(cadence[p].kind, prog)
           })
-          // Métronome : 1 bip par seconde dans les phases lentes.
-          if (cadence[p].s >= 2 && t >= 1) key(`r${rep}p${p}s${Math.floor(t)}`, sfx.beat)
+          // Métronome : 1 clic par seconde dans les phases lentes, plus aigu vers la fin.
+          if (cadence[p].s >= 2 && t >= 1) key(`r${rep}p${p}s${Math.floor(t)}`, () => sfx.beat(prog))
         } else {
           const left = goalNow - el
           if (left <= 0) return finishSide(goalNow)
+          // Maintien : clic chaque seconde, de plus en plus aigu ; alerte à 5 s ; tics finaux.
           const sec = Math.ceil(left)
-          if (sec <= 3) key(`t${sec}`, sfx.tick)
-          else if (sec === 10 && goalNow > 15) key('t10', () => say('10 secondes'))
-          else if (sec % 10 === 0 && sec !== goalNow) key(`t${sec}`, sfx.beat)
+          if (sec <= 3) key(`t${sec}`, () => sfx.restTick(sec))
+          else if (sec === 5 && goalNow > 8) key('t5', sfx.last)
+          else if (sec !== goalNow) key(`t${sec}`, () => sfx.beat(el / goalNow))
+          if (sec === 10 && goalNow > 15) key('v10', () => say('10 secondes'))
         }
       } else if (e.stage === 'switch') {
         // Le chrono global (TimerBar) bippe le décompte et annonce « Go ».
@@ -139,7 +144,8 @@ export function SetCoach({ name, cadence, sides, target, setLabel, rest, onSideD
           e.stage = 'work'
           e.sideIdx += 1
           e.t0 = Date.now()
-          if (cadence) key('r0p0', () => sfx.phase(cadence[0].kind))
+          // « Go » joué par le chrono global (fin du changement de jambe).
+          key('r0p0', () => {})
         }
       } else if (e.stage === 'end' && el >= 1.6) {
         window.clearInterval(id)
