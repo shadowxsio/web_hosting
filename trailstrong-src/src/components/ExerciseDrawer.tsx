@@ -1,5 +1,5 @@
 import { AudioLines, Check, Footprints, Mountain, Play, Plus, ShieldCheck, Trash2, Trophy, X } from 'lucide-react'
-import { useEffect, useState, type ReactNode } from 'react'
+import { Suspense, lazy, startTransition, useEffect, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { cadenceOf, repSeconds } from '../data/cadence'
 import type { Exercise, SessionId } from '../data/program'
@@ -11,14 +11,21 @@ import { timer } from '../lib/timer'
 import { SIDE_LABEL, num, useExerciseLog } from '../lib/useExerciseLog'
 import { DemoPlayer } from './DemoPlayer'
 import { DIAGRAM_OF, ExerciseDiagram } from './ExerciseDiagram'
-import { SetCoach } from './SetCoach'
 import { DIR_META, Pill, SESSION_META, ZONE_META, categoryOf, iconOf, restLabel } from './meta'
+
+const SetCoach = lazy(() => import('./SetCoach').then((m) => ({ default: m.SetCoach })))
 
 /** Tiroir de détail : bas de l'écran sur mobile, à droite sur desktop. */
 export function ExerciseDrawer({ ex, sessionId, date, onClose }: { ex: Exercise; sessionId: SessionId; date: string; onClose: () => void }) {
   const L = useExerciseLog(ex, date)
   const [sel, setSel] = useState<number | null>(null)
   const [confirmDelete, setConfirmDelete] = useState(false)
+  // Le bas de la fiche (photos, consignes…) est rendu après l'animation d'ouverture : le tiroir glisse sans à-coup.
+  const [full, setFull] = useState(false)
+  useEffect(() => {
+    const id = window.setTimeout(() => startTransition(() => setFull(true)), 240)
+    return () => window.clearTimeout(id)
+  }, [])
   // Un exercice du programme peut être retiré, tant qu'il en reste au moins un dans la séance.
   const sessionSize = useProgram().find((x) => x.id === sessionId)?.exercises.length ?? 0
   const canRemove = !ex.custom && sessionSize > 1
@@ -257,100 +264,104 @@ export function ExerciseDrawer({ ex, sessionId, date, onClose }: { ex: Exercise;
             />
           </section>
 
-          <DemoPlayer ex={ex} />
+          {full && (
+            <>
+              <DemoPlayer ex={ex} />
 
-          {/* Points d'attention : zone colorée + direction du mouvement */}
-          {ex.points && ex.points.length > 0 && (
-            <section>
-              <h3 className="label mb-2">Points d’attention</h3>
-              <ol className="divide-y divide-ink/25 overflow-hidden border-2 border-ink bg-paper rounded-xl">
-                {ex.points.map((p, i) => {
-                  const D = DIR_META[p.dir]
-                  return (
-                    <li key={i} className="flex items-center gap-3 px-3 py-2.5">
-                      <span className="w-4 font-mono text-[11px] text-ink/45">{i + 1}</span>
-                      <span className={`inline-flex h-6 w-[74px] shrink-0 items-center justify-center gap-1 border-2 text-[11px] font-medium ${ZONE_META[p.zone].cls}`}>
-                        <D.icon className="h-3 w-3" aria-label={D.label} />
-                        {ZONE_META[p.zone].label}
-                      </span>
-                      <span className="text-[13px] leading-snug text-ink/85">{p.text}</span>
-                    </li>
-                  )
-                })}
-              </ol>
-            </section>
-          )}
-
-          {ex.steps.length > 0 && (
-            <section>
-              <h3 className="label mb-2">Exécution{ex.stepsLang === 'en' && ' · en anglais (catalogue)'}</h3>
-              <ol className="space-y-2">
-                {ex.steps.map((step, i) => (
-                  <li key={i} className="flex gap-2.5 text-[13px] leading-snug text-ink/85">
-                    <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full border-2 border-ink font-mono text-[10px] text-ink/60">{i + 1}</span>
-                    {step}
-                  </li>
-                ))}
-              </ol>
-            </section>
-          )}
-
-          {ex.cue && (
-            <Callout tone="orange" title={ex.custom ? 'Consigne' : 'Cue'}>
-              {ex.cue}
-            </Callout>
-          )}
-          {ex.kneeAnkle && (
-            <Callout tone="cyan" title={tipKind === 'ankle' ? 'Protection cheville' : 'Protection genou'}>
-              {ex.kneeAnkle}
-            </Callout>
-          )}
-
-          {(L.pr > 0 || L.newPr) && (
-            <p className="flex items-center gap-1.5 text-[12px] text-ink/70">
-              <Trophy className="h-3.5 w-3.5 text-flame" /> Record : <span className="font-mono text-ink">{L.pr} lbs</span>
-              {L.newPr && <span className="font-bold text-leaf">· nouveau record</span>}
-            </p>
-          )}
-
-          {ex.source === 'catalog' && (
-            <p className="rounded-xl border-2 border-dashed border-ink/50 px-3 py-2 text-[12px] font-semibold leading-snug text-ink/75">
-              Fiche simplifiée (catalogue) : schéma approchant, tempo standard, pas de conseils genou / cheville{ex.stepsLang === 'en' ? ', consignes en anglais' : ''}. Pour une fiche complète, choisis un exercice de l’onglet Bibliothèque.
-            </p>
-          )}
-
-          {(ex.custom || canRemove) && (
-            <div className="flex items-center justify-between border-2 border-ink px-3 py-2 text-[12px] text-ink/60 rounded-xl">
-              {confirmDelete ? (
-                <>
-                  <span>{ex.custom ? 'Supprimer cet exercice personnalisé ?' : 'Retirer de la séance ? Ton historique est gardé.'}</span>
-                  <span className="flex gap-1.5">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (ex.custom) removeCustom(sessionId, ex.id)
-                        else removeFromSession(sessionId, ex.id)
-                        touch()
-                        onClose()
-                      }}
-                      className="h-9 border-2 border-ink bg-rose px-3 font-black text-ink rounded-xl"
-                    >
-                      Oui
-                    </button>
-                    <button type="button" onClick={() => setConfirmDelete(false)} className="h-9 bg-paper px-3 text-ink/85">
-                      Non
-                    </button>
-                  </span>
-                </>
-              ) : (
-                <>
-                  <span>{ex.custom ? (ex.source === 'catalog' ? 'Ajouté depuis le catalogue' : 'Exercice ajouté à la main') : 'Exercice de ton programme'}</span>
-                  <button type="button" onClick={() => setConfirmDelete(true)} className="flex h-9 items-center gap-1.5 px-2 text-ink/70 hover:text-danger">
-                    <Trash2 className="h-4 w-4" /> {ex.custom ? 'Supprimer' : 'Retirer'}
-                  </button>
-                </>
+              {/* Points d'attention : zone colorée + direction du mouvement */}
+              {ex.points && ex.points.length > 0 && (
+                <section>
+                  <h3 className="label mb-2">Points d’attention</h3>
+                  <ol className="divide-y divide-ink/25 overflow-hidden border-2 border-ink bg-paper rounded-xl">
+                    {ex.points.map((p, i) => {
+                      const D = DIR_META[p.dir]
+                      return (
+                        <li key={i} className="flex items-center gap-3 px-3 py-2.5">
+                          <span className="w-4 font-mono text-[11px] text-ink/45">{i + 1}</span>
+                          <span className={`inline-flex h-6 w-[74px] shrink-0 items-center justify-center gap-1 border-2 text-[11px] font-medium ${ZONE_META[p.zone].cls}`}>
+                            <D.icon className="h-3 w-3" aria-label={D.label} />
+                            {ZONE_META[p.zone].label}
+                          </span>
+                          <span className="text-[13px] leading-snug text-ink/85">{p.text}</span>
+                        </li>
+                      )
+                    })}
+                  </ol>
+                </section>
               )}
-            </div>
+
+              {ex.steps.length > 0 && (
+                <section>
+                  <h3 className="label mb-2">Exécution{ex.stepsLang === 'en' && ' · en anglais (catalogue)'}</h3>
+                  <ol className="space-y-2">
+                    {ex.steps.map((step, i) => (
+                      <li key={i} className="flex gap-2.5 text-[13px] leading-snug text-ink/85">
+                        <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full border-2 border-ink font-mono text-[10px] text-ink/60">{i + 1}</span>
+                        {step}
+                      </li>
+                    ))}
+                  </ol>
+                </section>
+              )}
+
+              {ex.cue && (
+                <Callout tone="orange" title={ex.custom ? 'Consigne' : 'Cue'}>
+                  {ex.cue}
+                </Callout>
+              )}
+              {ex.kneeAnkle && (
+                <Callout tone="cyan" title={tipKind === 'ankle' ? 'Protection cheville' : 'Protection genou'}>
+                  {ex.kneeAnkle}
+                </Callout>
+              )}
+
+              {(L.pr > 0 || L.newPr) && (
+                <p className="flex items-center gap-1.5 text-[12px] text-ink/70">
+                  <Trophy className="h-3.5 w-3.5 text-flame" /> Record : <span className="font-mono text-ink">{L.pr} lbs</span>
+                  {L.newPr && <span className="font-bold text-leaf">· nouveau record</span>}
+                </p>
+              )}
+
+              {ex.source === 'catalog' && (
+                <p className="rounded-xl border-2 border-dashed border-ink/50 px-3 py-2 text-[12px] font-semibold leading-snug text-ink/75">
+                  Fiche simplifiée (catalogue) : schéma approchant, tempo standard, pas de conseils genou / cheville{ex.stepsLang === 'en' ? ', consignes en anglais' : ''}. Pour une fiche complète, choisis un exercice de l’onglet Bibliothèque.
+                </p>
+              )}
+
+              {(ex.custom || canRemove) && (
+                <div className="flex items-center justify-between border-2 border-ink px-3 py-2 text-[12px] text-ink/60 rounded-xl">
+                  {confirmDelete ? (
+                    <>
+                      <span>{ex.custom ? 'Supprimer cet exercice personnalisé ?' : 'Retirer de la séance ? Ton historique est gardé.'}</span>
+                      <span className="flex gap-1.5">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (ex.custom) removeCustom(sessionId, ex.id)
+                            else removeFromSession(sessionId, ex.id)
+                            touch()
+                            onClose()
+                          }}
+                          className="h-9 border-2 border-ink bg-rose px-3 font-black text-ink rounded-xl"
+                        >
+                          Oui
+                        </button>
+                        <button type="button" onClick={() => setConfirmDelete(false)} className="h-9 bg-paper px-3 text-ink/85">
+                          Non
+                        </button>
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <span>{ex.custom ? (ex.source === 'catalog' ? 'Ajouté depuis le catalogue' : 'Exercice ajouté à la main') : 'Exercice de ton programme'}</span>
+                      <button type="button" onClick={() => setConfirmDelete(true)} className="flex h-9 items-center gap-1.5 px-2 text-ink/70 hover:text-danger">
+                        <Trash2 className="h-4 w-4" /> {ex.custom ? 'Supprimer' : 'Retirer'}
+                      </button>
+                    </>
+                  )}
+                </div>
+              )}
+            </>
           )}
         </div>
 
@@ -391,21 +402,23 @@ export function ExerciseDrawer({ ex, sessionId, date, onClose }: { ex: Exercise;
         )}
       </aside>
       {coach && (
-        <SetCoach
-          name={ex.name}
-          cadence={cadence}
-          sides={coach.sides}
-          target={(sd) => coach.goals[coach.sides.indexOf(sd)] ?? targetOf(coach.set, sd)}
-          setLabel={`Série ${coach.set + 1} sur ${L.sets.length}`}
-          rest={coach.rest}
-          onSideDone={(sd, done) => {
-            if (sd) L.validateSide(coach.set, sd, String(done))
-            else L.validate(coach.set, String(done))
-            setSel(null)
-            setSelSide(null)
-          }}
-          onClose={() => setCoach(null)}
-        />
+        <Suspense fallback={null}>
+          <SetCoach
+            name={ex.name}
+            cadence={cadence}
+            sides={coach.sides}
+            target={(sd) => coach.goals[coach.sides.indexOf(sd)] ?? targetOf(coach.set, sd)}
+            setLabel={`Série ${coach.set + 1} sur ${L.sets.length}`}
+            rest={coach.rest}
+            onSideDone={(sd, done) => {
+              if (sd) L.validateSide(coach.set, sd, String(done))
+              else L.validate(coach.set, String(done))
+              setSel(null)
+              setSelSide(null)
+            }}
+            onClose={() => setCoach(null)}
+          />
+        </Suspense>
       )}
     </div>,
     document.body,

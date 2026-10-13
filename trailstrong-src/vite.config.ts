@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto'
-import { readdirSync } from 'node:fs'
+import { readFileSync, readdirSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { defineConfig, type Plugin } from 'vite'
@@ -7,81 +7,74 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
 /**
- * Génère dist/sw.js au build : précache de TOUS les fichiers émis
- * (index.html, JS/CSS hashés, icônes, manifest) pour un usage 100 % hors-ligne
- * au sous-sol du gym. La version du cache dérive du contenu → chaque déploiement
- * invalide proprement l'ancien cache.
+ * Génère sw.js après l'écriture du build, à partir de TOUS les fichiers produits
+ * (index.html, JS/CSS hashés, polices, icônes, photos, catalogue) :
+ * - précache complet pour un usage 100 % hors-ligne au sous-sol du gym ;
+ * - chaque fichier porte une révision (empreinte de son contenu) : une mise à jour
+ *   ne retélécharge que les fichiers modifiés, pas les 3-4 Mo du cache ;
+ * - l'app s'ouvre depuis le cache, tout de suite, même avec un réseau qui traîne ;
+ *   la nouvelle version s'installe en arrière-plan (bandeau « Mettre à jour »).
  */
 function serviceWorker(): Plugin {
+  let outDir = ''
   return {
     name: 'trailstrong-sw',
     apply: 'build',
-    generateBundle(_, bundle) {
-      const files = Object.keys(bundle).filter((f) => !f.endsWith('.map'))
-      // Tout public/ (icônes, manifest, photos de démo) est précaché pour le hors-ligne.
+    configResolved(c) {
+      outDir = c.build.outDir.startsWith('/') ? c.build.outDir : join(c.root, c.build.outDir)
+    },
+    writeBundle() {
       const walk = (dir: string, rel = ''): string[] =>
         readdirSync(dir, { withFileTypes: true }).flatMap((e) =>
           e.isDirectory() ? walk(join(dir, e.name), `${rel}${e.name}/`) : [`${rel}${e.name}`],
         )
-      const publicFiles = walk(fileURLToPath(new URL('./public', import.meta.url)))
-      const urls = ['./', ...new Set([...files, ...publicFiles])].map((f) => (f === './' ? f : `./${f}`))
-      const version = createHash('sha256').update(urls.join('|')).digest('hex').slice(0, 12)
+      const files = walk(outDir).filter((f) => f !== 'sw.js' && !f.endsWith('.map'))
+      const rev = (f: string) => createHash('sha256').update(readFileSync(join(outDir, f))).digest('hex').slice(0, 10)
+      const assets: Record<string, string> = { './': rev('index.html') }
+      for (const f of files) if (f !== 'index.html') assets[`./${f}`] = rev(f)
       const source = `/* TrailStrong 2026 — service worker généré au build */
-const CACHE = 'trailstrong-${version}';
-const PRECACHE = ${JSON.stringify(urls)};
+const CACHE = 'trailstrong-files';
+const ASSETS = ${JSON.stringify(assets)};
+const SCOPE = new URL(self.registration.scope);
+// Clé de cache = URL + révision du contenu : un fichier inchangé n'est jamais retéléchargé.
+const keyOf = (u) => new URL(u + '?rev=' + ASSETS[u], SCOPE).href;
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE)
-      .then((cache) => Promise.allSettled(PRECACHE.map((u) => cache.add(u))))
-      .then(() => self.skipWaiting())
-  );
+  event.waitUntil((async () => {
+    const cache = await caches.open(CACHE);
+    await Promise.allSettled(Object.keys(ASSETS).map(async (u) => {
+      if (await cache.match(keyOf(u))) return;
+      const res = await fetch(new URL(u, SCOPE), { cache: 'no-cache' });
+      if (res.ok) await cache.put(keyOf(u), res);
+    }));
+    await self.skipWaiting();
+  })());
 });
 
 self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    caches.keys()
-      .then((keys) => Promise.all(keys.filter((k) => k.startsWith('trailstrong-') && k !== CACHE).map((k) => caches.delete(k))))
-      .then(() => self.clients.claim())
-  );
+  event.waitUntil((async () => {
+    // Anciens caches (une version = un cache) et fichiers qui ne font plus partie de l'app.
+    for (const k of await caches.keys()) if (k.startsWith('trailstrong-') && k !== CACHE) await caches.delete(k);
+    const cache = await caches.open(CACHE);
+    const keep = new Set(Object.keys(ASSETS).map(keyOf));
+    for (const req of await cache.keys()) if (!keep.has(req.url)) await cache.delete(req);
+    await self.clients.claim();
+  })());
 });
 
 self.addEventListener('fetch', (event) => {
   const req = event.request;
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
-  // Backups Gist (api.github.com) et autres origines : jamais interceptés.
-  if (url.origin !== self.location.origin) return;
-
-  if (req.mode === 'navigate') {
-    // Réseau d'abord (pour récupérer les nouvelles versions), cache en secours.
-    event.respondWith(
-      fetch(req)
-        .then((res) => {
-          const copy = res.clone();
-          caches.open(CACHE).then((c) => c.put('./', copy));
-          return res;
-        })
-        .catch(() => caches.match('./', { ignoreSearch: true }).then((r) => r || caches.match('./index.html')))
-    );
-    return;
-  }
-
-  // Assets hashés : cache d'abord.
-  event.respondWith(
-    caches.match(req, { ignoreSearch: true }).then((hit) =>
-      hit || fetch(req).then((res) => {
-        if (res.ok) {
-          const copy = res.clone();
-          caches.open(CACHE).then((c) => c.put(req, copy));
-        }
-        return res;
-      })
-    )
-  );
+  // Backups Gist (api.github.com), photos du catalogue et autres origines : jamais interceptés.
+  if (url.origin !== SCOPE.origin || !url.pathname.startsWith(SCOPE.pathname)) return;
+  const rel = req.mode === 'navigate' ? './' : './' + decodeURIComponent(url.pathname.slice(SCOPE.pathname.length));
+  if (!ASSETS[rel]) return;
+  // Cache d'abord (ouverture instantanée), réseau si le fichier manque.
+  event.respondWith(caches.open(CACHE).then((c) => c.match(keyOf(rel))).then((hit) => hit || fetch(req)));
 });
 `
-      this.emitFile({ type: 'asset', fileName: 'sw.js', source })
+      writeFileSync(join(outDir, 'sw.js'), source)
     },
   }
 }
@@ -91,14 +84,14 @@ self.addEventListener('fetch', (event) => {
  * Vite a besoin de scripts inline). N'autorise que : le site lui-même, Google
  * Identity Services (+ clés publiques Google), l'API GitHub (backup Gist),
  * les photos du catalogue (raw.githubusercontent.com), Firebase (Auth + Firestore
- * + App Check / reCAPTCHA) et Google Fonts.
+ * + App Check / reCAPTCHA). Les polices sont embarquées.
  */
 function csp(): Plugin {
   const policy = [
     "default-src 'self'",
     "script-src 'self' https://accounts.google.com/gsi/client https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/",
-    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://accounts.google.com/gsi/style",
-    "font-src 'self' https://fonts.gstatic.com",
+    "style-src 'self' 'unsafe-inline' https://accounts.google.com/gsi/style",
+    "font-src 'self'",
     "img-src 'self' data: https://*.googleusercontent.com https://raw.githubusercontent.com",
     "connect-src 'self' https://accounts.google.com/gsi/ https://www.googleapis.com/oauth2/v3/certs https://api.github.com https://gist.githubusercontent.com https://raw.githubusercontent.com https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://content-firebaseappcheck.googleapis.com https://www.google.com/recaptcha/",
     'frame-src https://accounts.google.com/gsi/ https://www.google.com/recaptcha/ https://recaptcha.google.com/recaptcha/',

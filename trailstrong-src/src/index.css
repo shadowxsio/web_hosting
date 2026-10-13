@@ -1,5 +1,28 @@
 @import "tailwindcss";
 
+/* Polices embarquées (SIL Open Font License) : sous-ensemble latin de Google Fonts. */
+@font-face {
+  font-family: "Karla";
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url("./assets/fonts/karla.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Karla";
+  font-style: italic;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url("./assets/fonts/karla-italic.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Shrikhand";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("./assets/fonts/shrikhand.woff2") format("woff2");
+}
+
 /* ── Style « Écusson » : patchs brodés & autocollants outdoor des années 70 ──
    Coutures en pointillés, formes arrondies, bandes coucher de soleil
    (moutarde, orange, rouille, sarcelle), titres rétro arrondis. */
@@ -219,6 +242,12 @@ body {
   color: var(--color-on);
 }
 
+.cv-row {
+  /* Lignes hors écran non dessinées : listes longues fluides au défilement. */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 76px;
+}
+
 .no-scrollbar {
   scrollbar-width: none;
 }
@@ -246,6 +275,11 @@ body {
   100% { transform: scale(1); }
 }
 .pop { animation: pop 0.18s ease-out; }
+
+@keyframes timer-drain {
+  from { transform: scaleX(1); }
+  to { transform: scaleX(0); }
+}
 
 @keyframes fade-up {
   from { opacity: 0; transform: translateY(6px); }

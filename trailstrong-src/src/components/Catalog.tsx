@@ -1,18 +1,20 @@
 import { CalendarDays, Plus, Search, Stethoscope, X } from 'lucide-react'
-import { useEffect, useState, type ReactNode } from 'react'
+import { Suspense, lazy, useCallback, useEffect, useState, type ReactNode } from 'react'
 import type { Exercise, FocusTag, Session, SessionId } from '../data/program'
 import { routineOf, routineSeconds } from '../data/cooldown'
 import { today, updateSessionLog, useData } from '../lib/storage'
 import { useUserProgram } from '../lib/userProgram'
-import { CooldownCoach } from './CooldownCoach'
-import { SessionRecap } from './SessionRecap'
-import { AddExerciseSheet } from './AddExerciseSheet'
 import { ExerciseDrawer } from './ExerciseDrawer'
 import { ExerciseTile } from './ExerciseTile'
 import { ExerciseDiagram } from './ExerciseDiagram'
 import { SESSION_META, TAG_META } from './meta'
 import { PainCheckin } from './PainCheckin'
 import { nextTestIn } from '../lib/tests'
+
+// Écrans ouverts à la demande : chargés au premier usage (précachés pour le hors-ligne).
+const CooldownCoach = lazy(() => import('./CooldownCoach').then((m) => ({ default: m.CooldownCoach })))
+const SessionRecap = lazy(() => import('./SessionRecap').then((m) => ({ default: m.SessionRecap })))
+const AddExerciseSheet = lazy(() => import('./AddExerciseSheet').then((m) => ({ default: m.AddExerciseSheet })))
 
 export type Scope = 'all' | SessionId
 
@@ -54,6 +56,7 @@ export function Catalog({
   const data = useData()
   const day = data.logs[date] ?? {}
   const [openEx, setOpenEx] = useState<{ ex: Exercise; sessionId: SessionId } | null>(null)
+  const openTile = useCallback((ex: Exercise, sessionId: SessionId) => setOpenEx({ ex, sessionId }), [])
   const [adding, setAdding] = useState<Session | null>(null)
   const [recap, setRecap] = useState<Session | null>(null)
   const generated = useUserProgram() !== null
@@ -258,7 +261,7 @@ export function Catalog({
                   index={i}
                   date={date}
                   tour={step(g.session) === 2 && ex.id === g.items[0]?.ex.id}
-                  onOpen={() => setOpenEx({ ex, sessionId: g.session.id })}
+                  onOpen={openTile}
                 />
               ))}
               {canAdd && (
@@ -316,28 +319,30 @@ export function Catalog({
           onClose={() => setOpenEx(null)}
         />
       )}
-      {recap && (
-        <SessionRecap
-          session={recap}
-          date={date}
-          onClose={() => setRecap(null)}
-          onCooldown={() => {
-            setCooldown(program.find((p) => p.id === recap.id) ?? recap)
-            setRecap(null)
-          }}
-        />
-      )}
-      {cooldown && <CooldownCoach session={cooldown} date={date} onClose={() => setCooldown(null)} />}
-      {adding && (
-        <AddExerciseSheet
-          session={adding}
-          onClose={() => setAdding(null)}
-          onAdded={(id) => {
-            setAdding(null)
-            window.setTimeout(() => document.getElementById(`check-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 60)
-          }}
-        />
-      )}
+      <Suspense fallback={null}>
+        {recap && (
+          <SessionRecap
+            session={recap}
+            date={date}
+            onClose={() => setRecap(null)}
+            onCooldown={() => {
+              setCooldown(program.find((p) => p.id === recap.id) ?? recap)
+              setRecap(null)
+            }}
+          />
+        )}
+        {cooldown && <CooldownCoach session={cooldown} date={date} onClose={() => setCooldown(null)} />}
+        {adding && (
+          <AddExerciseSheet
+            session={adding}
+            onClose={() => setAdding(null)}
+            onAdded={(id) => {
+              setAdding(null)
+              window.setTimeout(() => document.getElementById(`check-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 60)
+            }}
+          />
+        )}
+      </Suspense>
     </>
   )
 }

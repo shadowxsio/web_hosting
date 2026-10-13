@@ -12,10 +12,9 @@
     <meta name="theme-color" content="#1d1830" />
     <!-- Thème appliqué avant le premier rendu (fichier externe : compatible CSP) -->
     <script src="./theme.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <!-- Polices en ligne uniquement : hors-ligne, repli sur la police système. -->
-    <link href="https://fonts.googleapis.com/css2?family=Karla:ital,wght@0,400..800;1,400..800&family=Shrikhand&display=swap" rel="stylesheet" />
+    <!-- Polices embarquées (pas d'appel à Google, disponibles hors-ligne) : préchargées pour le 1er affichage. -->
+    <link rel="preload" href="/src/assets/fonts/karla.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/src/assets/fonts/shrikhand.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="manifest" href="./manifest.webmanifest" />
     <link rel="icon" type="image/svg+xml" href="./icon.svg" />
     <link rel="apple-touch-icon" href="./icon-192.png" />

@@ -5,7 +5,7 @@
  * donne gratuitement l'historique semaine après semaine pour les stats et
  * l'indice « Ton record précédent ».
  */
-import { useSyncExternalStore } from 'react'
+import { useRef, useSyncExternalStore } from 'react'
 import { scoped } from './account'
 import { getAllCustom, mergeCustom } from './custom'
 import { getUserProgram, setUserProgram, type UserProgram } from './userProgram'
@@ -155,14 +155,41 @@ export function setData(next: AppData, opts: { touch?: boolean } = {}) {
   emit()
 }
 
+const subscribe = (l: () => void) => {
+  listeners.add(l)
+  return () => {
+    listeners.delete(l)
+  }
+}
+
 export function useData(): AppData {
-  return useSyncExternalStore(
-    (l) => {
-      listeners.add(l)
-      return () => listeners.delete(l)
-    },
-    () => state,
-  )
+  return useSyncExternalStore(subscribe, () => state)
+}
+
+/**
+ * Données d'un seul exercice : ses journées (toutes dates) + les check-ins douleur.
+ * L'objet renvoyé ne change que si l'une de ces données change : valider un
+ * exercice ne redessine pas les cartes des autres. Les autres champs ne sont pas
+ * tenus à jour (réservé aux calculs par exercice : historique, suggestion, asymétrie).
+ */
+export function useExerciseData(exId: string): AppData {
+  const cache = useRef<{ key: unknown[]; value: AppData } | null>(null)
+  const get = () => {
+    const key: unknown[] = [state.checkins]
+    const logs: AppData['logs'] = {}
+    for (const d in state.logs) {
+      const l = state.logs[d][exId]
+      if (l) {
+        logs[d] = { [exId]: l }
+        key.push(d, l)
+      }
+    }
+    const c = cache.current
+    if (c && c.key.length === key.length && c.key.every((v, i) => v === key[i])) return c.value
+    cache.current = { key, value: { ...state, logs } }
+    return cache.current.value
+  }
+  return useSyncExternalStore(subscribe, get)
 }
 
 // Synchronisation entre onglets.

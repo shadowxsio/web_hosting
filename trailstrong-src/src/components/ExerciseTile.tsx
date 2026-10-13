@@ -1,4 +1,5 @@
 import { Check } from 'lucide-react'
+import { memo } from 'react'
 import type { Exercise, SessionId } from '../data/program'
 import { useExerciseLog } from '../lib/useExerciseLog'
 import { Pill, SESSION_META, categoryOf, iconOf, restLabel } from './meta'
@@ -11,7 +12,7 @@ const TAB_TILT = ['-rotate-1', 'rotate-[0.5deg]', '-rotate-[1.5deg]', 'rotate-1'
  * Fiche du catalogue : étiquette-onglet colorée, pastille icône, nom + catégorie,
  * perf précédente en gros chiffre italique, pilules de protocole, validation.
  */
-export function ExerciseTile({
+export const ExerciseTile = memo(function ExerciseTile({
   ex,
   sessionId,
   index,
@@ -23,7 +24,8 @@ export function ExerciseTile({
   sessionId: SessionId
   index: number
   date: string
-  onOpen: () => void
+  /** Callback stable (la carte est mémoïsée). */
+  onOpen: (ex: Exercise, sessionId: SessionId) => void
   /** Carte présentée par la visite guidée. */
   tour?: boolean
 }) {
@@ -43,7 +45,7 @@ export function ExerciseTile({
       </span>
 
       <div className={`b-card relative ${TILT[index % 4]} transition-transform duration-150`}>
-        <button type="button" onClick={onOpen} className="block w-full px-4 pb-3 pt-4 text-left" aria-label={`Ouvrir ${ex.name}`}>
+        <button type="button" onClick={() => onOpen(ex, sessionId)} className="block w-full px-4 pb-3 pt-4 text-left" aria-label={`Ouvrir ${ex.name}`}>
           <div className="flex items-center gap-3.5">
             <span className={`grid h-12 w-12 shrink-0 place-items-center rounded-full border-[2.5px] border-ink bg-sky shadow-[0_2px_0_var(--color-shadow)]`}>
               <Icon className="h-5 w-5 text-ink" strokeWidth={2.4} />
@@ -113,4 +115,4 @@ export function ExerciseTile({
       </div>
     </article>
   )
-}
+})

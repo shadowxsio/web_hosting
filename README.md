@@ -55,7 +55,7 @@ Code source dans `trailstrong-src/` (Vite + React + TypeScript + Tailwind + Luci
   ⚠️ Le site est statique : le contrôle d'accès protège l'interface, pas le code (public sur GitHub Pages). Les données restent sur l'appareil.
 - **Sécurité** : Content-Security-Policy stricte injectée au build, anti-clickjacking (`theme.js`), `noindex` pour les moteurs de recherche, Dependabot (npm + actions), audit `npm audit` hebdomadaire (`security.yml`), analyse CodeQL (`codeql.yml`). En mode comptes : App Check (reCAPTCHA Enterprise, variable `RECAPTCHA_SITE_KEY`) et règles Firestore strictes (`firestore.rules` : propriétaire uniquement, formes de documents et tailles contrôlées, tout le reste refusé).
 - **Données** : 100 % `localStorage` sur l'appareil. Export/Import JSON, et backup optionnel chiffré (AES-256, clé de récupération propre à l'appareil, à noter) vers un Gist secret — token GitHub avec le seul scope `gist`.
-- **Hors-ligne** : service worker généré au build (précache de tous les fichiers) + manifest → « Ajouter à l'écran d'accueil ».
+- **Hors-ligne & rapidité** : service worker généré au build — précache de tous les fichiers avec une révision par fichier (une mise à jour ne retélécharge que ce qui a changé), ouverture depuis le cache même avec un réseau faible, bandeau « Nouvelle version prête » ; polices embarquées (`src/assets/fonts`, aucun appel à Google) ; écrans secondaires chargés à la demande ; manifest → « Ajouter à l'écran d'accueil ».
 - **Dev local** :
   ```bash
   cd trailstrong-src && npm install && npm run dev   # http://localhost:5173 (la connexion Google ne marche que sur shadowxsio.github.io : utilise le PIN en local ; /#schemas : planche des 62 schémas)
