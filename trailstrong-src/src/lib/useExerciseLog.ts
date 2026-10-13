@@ -6,6 +6,7 @@ import type { Exercise } from '../data/program'
 import { asymmetry, previousBest, updateExercise, useExerciseData, type ExerciseLog, type SetLog, type Side, type SideLog } from './storage'
 import { loadSuggestion } from './insights'
 import { timer } from './timer'
+import { haptic } from './haptics'
 
 export const num = (s: string) => {
   const n = parseFloat(s.replace(',', '.'))
@@ -55,7 +56,7 @@ export function useExerciseLog(ex: Exercise, date: string) {
       return { ...l, sets: next, done: allDone ? true : l.done && willBeDone }
     })
     if (willBeDone) {
-      navigator.vibrate?.(30)
+      haptic(30)
       const isLast = sets.filter((x) => x.done).length + 1 >= sets.length
       if (ex.rest > 0 && !isLast) timer.start(ex.rest)
     }
@@ -64,7 +65,7 @@ export function useExerciseLog(ex: Exercise, date: string) {
   const addSet = () => write((l) => ({ ...l, sets: [...sets, { w: '', r: '', done: false }], done: false }))
 
   const toggleDone = () => {
-    navigator.vibrate?.(done ? 10 : [20, 30, 40])
+    haptic(done ? 10 : [20, 30, 40])
     write((l) => ({ ...l, sets: l.sets.length ? l.sets : sets, done: !done }))
   }
 
@@ -115,7 +116,7 @@ export function useExerciseLog(ex: Exercise, date: string) {
       return { ...l, sets: next, done: allDone ? true : l.done && both }
     })
     if (!willBeDone) return
-    navigator.vibrate?.(30)
+    haptic(30)
     if (!otherDone) {
       timer.start(SWITCH_SECONDS, `Change de jambe → ${SIDE_LABEL[other(side)]}`)
     } else {

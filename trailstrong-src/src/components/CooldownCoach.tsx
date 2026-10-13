@@ -13,6 +13,7 @@ import { updateSessionLog } from '../lib/storage'
 import { keepAwake, timerRunning } from '../lib/timer'
 import { ExerciseDiagram } from './ExerciseDiagram'
 import { PhotoPair, stretchPhotos } from './PhotoPair'
+import { useSheet } from '../lib/useSheet'
 
 interface Step {
   kind: 'prep' | 'hold'
@@ -33,7 +34,9 @@ function buildSteps(r: Stretch[]): Step[] {
 
 const mmss = (s: number) => `${Math.floor(s / 60)} min${s % 60 ? ` ${String(s % 60).padStart(2, '0')}` : ''}`
 
-export function CooldownCoach({ session, date, onClose }: { session: Session; date: string; onClose: () => void }) {
+export function CooldownCoach({ session, date, onClose: closeNow }: { session: Session; date: string; onClose: () => void }) {
+  const sheet = useSheet(closeNow)
+  const onClose = sheet.close
   const routine = useMemo(() => routineOf(session), [session])
   const steps = useMemo(() => buildSteps(routine), [routine])
   const [running, setRunning] = useState(false)
@@ -48,9 +51,9 @@ export function CooldownCoach({ session, date, onClose }: { session: Session; da
     running ? (
       <Runner steps={steps} onDone={() => updateSessionLog(date, session.id, { cooldownAt: Date.now() })} onClose={onClose} />
     ) : (
-      <div className="fade-in fixed inset-0 z-[60] flex items-end justify-center bg-ink/40" onClick={onClose}>
+      <div className={`${sheet.backdrop} fixed inset-0 z-[60] flex items-end justify-center`} onClick={onClose}>
         <div
-          className="sheet pb-safe flex max-h-[94dvh] w-full max-w-xl flex-col border-[2.5px] border-b-0 border-ink bg-paper-2 rounded-t-[26px] md:rounded-none md:rounded-l-[26px]"
+          ref={sheet.ref} className={`${sheet.panel} pb-safe flex max-h-[94dvh] w-full max-w-xl flex-col border-[2.5px] border-b-0 border-ink bg-paper-2 rounded-t-[26px] md:rounded-none md:rounded-l-[26px]`}
           onClick={(e) => e.stopPropagation()}
           role="dialog"
           aria-label="Retour au calme"

@@ -2,6 +2,7 @@ import { KeyRound, Lock, WifiOff } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { googleConfigured, renderGoogleButton, verifyCredential } from '../lib/googleAuth'
 import { PinLock } from './PinLock'
+import { haptic } from '../lib/haptics'
 
 /** Écran d'accès : connexion Google (compte autorisé) ; PIN en secours. */
 export function LoginScreen({ onUnlock, onGoogleToken }: { onUnlock: () => void; onGoogleToken?: (token: string) => Promise<void> }) {
@@ -25,7 +26,7 @@ export function LoginScreen({ onUnlock, onGoogleToken }: { onUnlock: () => void;
       try {
         if (onGoogleToken) await onGoogleToken(token)
         else await verifyCredential(token)
-        navigator.vibrate?.(20)
+        haptic(20)
         onUnlock()
       } catch (e) {
         if (!alive) return

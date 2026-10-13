@@ -2,6 +2,7 @@ import { ArrowLeft, Delete, Lock, ShieldCheck } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { attemptPin, lockedFor, startSession, usingDefaultPin } from '../lib/auth'
+import { haptic } from '../lib/haptics'
 
 const KEYS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '', '0', 'del'] as const
 
@@ -43,13 +44,13 @@ export function PinLock({
       if (r.ok) {
         startSession(value)
         setHint('')
-        navigator.vibrate?.(20)
+        haptic(20)
         onUnlock()
       } else if (showError || r.lockedFor > 0) {
         setWait(r.lockedFor)
         setHint(r.lockedFor > 0 ? '' : `PIN incorrect · encore ${r.remaining} essai${r.remaining > 1 ? 's' : ''} avant blocage`)
         setError(true)
-        navigator.vibrate?.([60, 40, 60])
+        haptic([60, 40, 60])
         window.setTimeout(() => {
           setError(false)
           setPin('')
@@ -62,7 +63,7 @@ export function PinLock({
   const press = useCallback(
     (k: string) => {
       if (busy || error || wait > 0) return
-      navigator.vibrate?.(6)
+      haptic(6)
       if (k === 'del') return setPin((p) => p.slice(0, -1))
       setPin((p) => {
         if (p.length >= 8) return p

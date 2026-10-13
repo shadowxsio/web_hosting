@@ -12,6 +12,8 @@ import { DemoPlayer } from './DemoPlayer'
 import { FIGURES, type AnimationId } from './diagram-base'
 import { DIAGRAM_OF, ExerciseDiagram } from './ExerciseDiagram'
 import { restLabel } from './meta'
+import { haptic } from '../lib/haptics'
+import { useSheet } from '../lib/useSheet'
 
 type Tab = 'library' | 'catalog' | 'manual'
 const PRESETS = ['Ischios', 'Fessiers', 'Cheville', 'Genou', 'Tronc']
@@ -25,7 +27,9 @@ const TAB_INFO: Record<Tab, string> = {
 }
 
 /** Tiroir d'ajout : bibliothèque (fiches complètes), catalogue (~800 fiches simplifiées) ou saisie manuelle. */
-export function AddExerciseSheet({ session, onClose, onAdded }: { session: Session; onClose: () => void; onAdded: (id: string) => void }) {
+export function AddExerciseSheet({ session, onClose: closeNow, onAdded }: { session: Session; onClose: () => void; onAdded: (id: string) => void }) {
+  const sheet = useSheet(closeNow)
+  const onClose = sheet.close
   const [tab, setTab] = useState<Tab>('library')
   const [draft, setDraft] = useState<CustomDraft | null>(null)
   const [pick, setPick] = useState<{ ex: Exercise; fromCatalog: boolean } | null>(null)
@@ -45,7 +49,7 @@ export function AddExerciseSheet({ session, onClose, onAdded }: { session: Sessi
 
   const done = (id: string) => {
     touch()
-    navigator.vibrate?.([15, 30, 15])
+    haptic([15, 30, 15])
     onAdded(id)
   }
   const save = (d: CustomDraft) => done(addCustom(session.id, d))
@@ -56,9 +60,9 @@ export function AddExerciseSheet({ session, onClose, onAdded }: { session: Sessi
 
   const detail = draft ?? pick
   return createPortal(
-    <div className="fade-in fixed inset-0 z-50 flex items-end justify-center bg-ink/40" onClick={onClose}>
+    <div className={`${sheet.backdrop} fixed inset-0 z-50 flex items-end justify-center`} onClick={onClose}>
       <div
-        className="sheet pb-safe flex max-h-[94dvh] w-full max-w-xl flex-col border-[2.5px] border-b-0 border-ink bg-paper-2 rounded-t-[26px] md:rounded-none md:rounded-l-[26px]"
+        ref={sheet.ref} className={`${sheet.panel} pb-safe flex max-h-[94dvh] w-full max-w-xl flex-col border-[2.5px] border-b-0 border-ink bg-paper-2 rounded-t-[26px] md:rounded-none md:rounded-l-[26px]`}
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-label="Ajouter un exercice"
