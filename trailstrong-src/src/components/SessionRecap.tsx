@@ -5,12 +5,15 @@ import { routineOf, routineSeconds } from '../data/cooldown'
 import type { Session } from '../data/program'
 import { computeRecap, recoveryTips } from '../lib/recap'
 import { updateCheckin, updateSessionLog, useData } from '../lib/storage'
+import { useSheet } from '../lib/useSheet'
 
 const scaleBg = (v: number) => (v <= 2 ? 'bg-mint' : v <= 5 ? 'bg-sun' : v <= 7 ? 'bg-peach' : 'bg-rose')
 const RPE_LABEL = ['', 'Très facile', 'Facile', 'Facile', 'Modéré', 'Modéré', 'Assez dur', 'Dur', 'Très dur', 'Extrême', 'Max']
 
 /** Bilan de fin de séance : chiffres, ressenti, repères de récupération. */
-export function SessionRecap({ session, date, onClose, onCooldown }: { session: Session; date: string; onClose: () => void; onCooldown: () => void }) {
+export function SessionRecap({ session, date, onClose: closeNow, onCooldown }: { session: Session; date: string; onClose: () => void; onCooldown: () => void }) {
+  const sheet = useSheet(closeNow)
+  const onClose = sheet.close
   const data = useData()
   const r = computeRecap(data, session, date)
   const log = data.sessions[date]?.[session.id] ?? {}
@@ -27,9 +30,9 @@ export function SessionRecap({ session, date, onClose, onCooldown }: { session: 
   }, [onClose])
 
   return createPortal(
-    <div className="fade-in fixed inset-0 z-50 flex items-end justify-center bg-ink/40 md:items-stretch md:justify-end" onClick={onClose}>
+    <div className={`${sheet.backdrop} fixed inset-0 z-50 flex items-end justify-center md:items-stretch md:justify-end`} onClick={onClose}>
       <div
-        className="sheet pb-safe flex max-h-[94dvh] w-full max-w-xl flex-col border-[2.5px] border-b-0 border-ink bg-paper-2 md:max-h-none md:w-[480px] md:border-b-[2.5px] md:border-r-0 rounded-t-[26px] md:rounded-none md:rounded-l-[26px]"
+        ref={sheet.ref} className={`${sheet.panel} pb-safe flex max-h-[94dvh] w-full max-w-xl flex-col border-[2.5px] border-b-0 border-ink bg-paper-2 md:max-h-none md:w-[480px] md:border-b-[2.5px] md:border-r-0 rounded-t-[26px] md:rounded-none md:rounded-l-[26px]`}
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-label="Bilan de séance"

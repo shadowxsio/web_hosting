@@ -3,6 +3,8 @@ import { useState } from 'react'
 import { createPortal } from 'react-dom'
 import { dayPain, painAlert, type Joint } from '../lib/insights'
 import { updateCheckin, useData, type Checkin } from '../lib/storage'
+import { haptic } from '../lib/haptics'
+import { useSheet } from '../lib/useSheet'
 
 const JOINTS: { id: Joint; label: string; emoji: string }[] = [
   { id: 'knee', label: 'Genou', emoji: '🩹' },
@@ -51,14 +53,16 @@ export function PainCheckin({ date }: { date: string }) {
   )
 }
 
-function PainSheet({ date, value, onClose }: { date: string; value: Checkin; onClose: () => void }) {
+function PainSheet({ date, value, onClose: closeNow }: { date: string; value: Checkin; onClose: () => void }) {
+  const sheet = useSheet(closeNow)
+  const onClose = sheet.close
   const [moment, setMoment] = useState<'Before' | 'After'>(value.kneeBefore === undefined && value.ankleBefore === undefined ? 'Before' : 'After')
   const key = (j: Joint) => `${j}${moment}` as keyof Checkin
 
   return createPortal(
-    <div className="fade-in fixed inset-0 z-50 flex items-end justify-center bg-ink/40 md:items-center" onClick={onClose}>
+    <div className={`${sheet.backdrop} fixed inset-0 z-50 flex items-end justify-center md:items-center`} onClick={onClose}>
       <div
-        className="sheet pb-safe w-full max-w-xl border-[2.5px] border-b-0 border-ink bg-paper-2 px-4 pt-4 md:border-b-[2.5px] rounded-t-[26px] md:rounded-none md:rounded-l-[26px]"
+        ref={sheet.ref} className={`${sheet.panel} pb-safe w-full max-w-xl border-[2.5px] border-b-0 border-ink bg-paper-2 px-4 pt-4 md:border-b-[2.5px] rounded-t-[26px] md:rounded-none md:rounded-l-[26px]`}
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-label="Check-in douleur"
@@ -107,7 +111,7 @@ function PainSheet({ date, value, onClose }: { date: string; value: Checkin; onC
                     aria-label={`${j.label} ${v} sur 10`}
                     aria-pressed={cur === v}
                     onClick={() => {
-                      navigator.vibrate?.(8)
+                      haptic(8)
                       updateCheckin(date, { [key(j.id)]: v })
                     }}
                     className={`grid h-11 place-items-center border-2 border-ink text-[14px] font-black italic transition duration-100 active:translate-y-px rounded-xl ${

@@ -4,6 +4,7 @@ import { createPortal } from 'react-dom'
 import { exitAdmin, lock, resetLocalPin, setLocalPin, useAdmin, usingDefaultPin } from '../lib/auth'
 import { getGoogleSession } from '../lib/googleAuth'
 import { PinLock } from './PinLock'
+import { useSheet } from '../lib/useSheet'
 import { useTheme } from '../lib/theme'
 import { setSoundPrefs, sfx, unlockAudio, useSoundPrefs } from '../lib/sound'
 import { backupNow, getRecoveryKey, restoreFromGist, setRecoveryKey } from '../lib/backup'
@@ -13,7 +14,7 @@ import { exportJson, importJson, today, updateGist, updateProfile, useData } fro
 import type { View } from '../App'
 
 export function SettingsSheet({
-  onClose,
+  onClose: closeNow,
   onLock,
   onNavigate,
   onTests,
@@ -29,6 +30,8 @@ export function SettingsSheet({
   /** Relance la visite guidée de l'app. */
   onTour?: () => void
 }) {
+  const sheet = useSheet(closeNow)
+  const onClose = sheet.close
   const data = useData()
   const g = data.gist
   const [theme, setTheme] = useTheme()
@@ -102,9 +105,9 @@ export function SettingsSheet({
   )
 
   return createPortal(
-    <div className="fade-in fixed inset-0 z-50 flex items-end justify-center bg-ink/40 md:items-stretch md:justify-end" onClick={onClose}>
+    <div className={`${sheet.backdrop} fixed inset-0 z-50 flex items-end justify-center md:items-stretch md:justify-end`} onClick={onClose}>
       <div
-        className="sheet pb-safe max-h-[92dvh] w-full max-w-xl overflow-y-auto border-[2.5px] border-b-0 border-ink bg-paper-2 px-4 pt-4 md:max-h-none md:w-[460px] md:border-b-[2.5px] md:border-r-0 rounded-t-[26px] md:rounded-none md:rounded-l-[26px]"
+        ref={sheet.ref} className={`${sheet.panel} pb-safe max-h-[92dvh] w-full max-w-xl overflow-y-auto border-[2.5px] border-b-0 border-ink bg-paper-2 px-4 pt-4 md:max-h-none md:w-[460px] md:border-b-[2.5px] md:border-r-0 rounded-t-[26px] md:rounded-none md:rounded-l-[26px]`}
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-label="Réglages"

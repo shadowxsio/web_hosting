@@ -12,11 +12,15 @@ import { SIDE_LABEL, num, useExerciseLog } from '../lib/useExerciseLog'
 import { DemoPlayer } from './DemoPlayer'
 import { DIAGRAM_OF, ExerciseDiagram } from './ExerciseDiagram'
 import { DIR_META, Pill, SESSION_META, ZONE_META, categoryOf, iconOf, restLabel } from './meta'
+import { haptic } from '../lib/haptics'
+import { useSheet } from '../lib/useSheet'
 
 const SetCoach = lazy(() => import('./SetCoach').then((m) => ({ default: m.SetCoach })))
 
 /** Tiroir de détail : bas de l'écran sur mobile, à droite sur desktop. */
-export function ExerciseDrawer({ ex, sessionId, date, onClose }: { ex: Exercise; sessionId: SessionId; date: string; onClose: () => void }) {
+export function ExerciseDrawer({ ex, sessionId, date, onClose: closeNow }: { ex: Exercise; sessionId: SessionId; date: string; onClose: () => void }) {
+  const sheet = useSheet<HTMLElement>(closeNow)
+  const onClose = sheet.close
   const L = useExerciseLog(ex, date)
   const [sel, setSel] = useState<number | null>(null)
   const [confirmDelete, setConfirmDelete] = useState(false)
@@ -74,11 +78,11 @@ export function ExerciseDrawer({ ex, sessionId, date, onClose }: { ex: Exercise;
 
   return createPortal(
     <div className="fixed inset-0 z-50 flex items-end justify-center md:items-stretch md:justify-end" data-noswipe>
-      <button type="button" aria-label="Fermer" onClick={onClose} className="fade-in absolute inset-0 bg-ink/40" />
+      <button type="button" aria-label="Fermer" onClick={onClose} className={`${sheet.backdrop} absolute inset-0`} />
       <aside
         role="dialog"
         aria-label={ex.name}
-        className="sheet pb-safe relative flex max-h-[92dvh] w-full max-w-xl flex-col border-[2.5px] border-b-0 border-ink bg-paper-2 md:max-h-none md:w-[460px] md:border-b-[2.5px] md:border-r-0 rounded-t-[26px] md:rounded-none md:rounded-l-[26px]"
+        ref={sheet.ref} className={`${sheet.panel} pb-safe relative flex max-h-[92dvh] w-full max-w-xl flex-col border-[2.5px] border-b-0 border-ink bg-paper-2 md:max-h-none md:w-[460px] md:border-b-[2.5px] md:border-r-0 rounded-t-[26px] md:rounded-none md:rounded-l-[26px]`}
       >
         {/* Poignée + en-tête */}
         <div className="mx-auto mt-2 h-1.5 w-12 rounded-full bg-ink/30 md:hidden" />
@@ -462,7 +466,7 @@ export function Stepper({
 }) {
   const base = value !== '' ? num(value) : num(placeholder)
   const bump = (d: number) => {
-    navigator.vibrate?.(5)
+    haptic(5)
     onChange(String(Math.max(0, Math.round((base + d) * 10) / 10)))
   }
   const btn = `grid h-full ${compact ? 'w-8' : 'w-11'} shrink-0 place-items-center text-lg text-ink/70 active:text-flame`
@@ -534,7 +538,7 @@ function TreadmillTracker({ log, write, done }: { log: ExerciseLog; write: (fn: 
         <button
           type="button"
           onClick={() => {
-            navigator.vibrate?.(done ? 10 : [20, 30, 40])
+            haptic(done ? 10 : [20, 30, 40])
             write((l) => ({ ...l, done: !done }))
           }}
           className={`flex h-12 flex-[1.4] items-center justify-center gap-1.5 text-sm font-bold transition duration-150 active:scale-95 ${

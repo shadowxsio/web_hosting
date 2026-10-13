@@ -25,13 +25,14 @@ export function TimerBar() {
         <button type="button" onClick={timer.dismiss} aria-label="Fermer l’alerte de fin de repos" className="flash fixed inset-0 z-30 bg-mint/40" />
       )}
       <div
-        className="pointer-events-none fixed inset-x-0 z-40 px-3 bottom-[calc(72px+env(safe-area-inset-bottom))] md:bottom-4"
+        className="pointer-events-none fixed inset-x-0 z-40 px-3 bottom-[calc(84px+env(safe-area-inset-bottom))] md:bottom-4"
+        style={{ viewTransitionName: 'timer' } as React.CSSProperties}
         data-noswipe
       >
         <div
           data-tour="timer"
-          className={`pointer-events-auto relative mx-auto flex h-[52px] max-w-xl items-center gap-1.5 overflow-hidden rounded-full border-2 border-ink pl-4 pr-1.5 shadow-[0_4px_0_var(--color-shadow)] transition-colors duration-200 ${
-            finished ? 'bg-mint' : 'bg-paper'
+          className={`pointer-events-auto relative mx-auto flex h-[52px] max-w-xl items-center gap-1.5 overflow-hidden rounded-full pl-4 pr-1.5 transition-colors duration-200 ${
+            finished ? 'border-2 border-ink bg-mint shadow-[0_4px_0_var(--color-shadow)]' : 'glass'
           }`}
         >
           <button

@@ -5,6 +5,7 @@ import { today, updateTest, useData } from '../lib/storage'
 import { jointScore, nextTestIn, previousResult, testAsym, testDates } from '../lib/tests'
 import { timer } from '../lib/timer'
 import { Stepper } from './ExerciseDrawer'
+import { useSheet } from '../lib/useSheet'
 
 const fr = (d: string) => new Date(`${d}T12:00:00`).toLocaleDateString('fr-CA', { day: 'numeric', month: 'short' })
 const scoreBg = (v?: number) => (v === undefined ? 'bg-paper' : v >= 85 ? 'bg-mint' : v >= 65 ? 'bg-sun' : 'bg-rose')
@@ -74,15 +75,17 @@ export function TestsPanel({ open, setOpen }: { open: boolean; setOpen: (o: bool
   )
 }
 
-function TestSheet({ onClose }: { onClose: () => void }) {
+function TestSheet({ onClose: closeNow }: { onClose: () => void }) {
+  const sheet = useSheet(closeNow)
+  const onClose = sheet.close
   const data = useData()
   const date = today()
   const day = data.tests[date] ?? {}
 
   return createPortal(
-    <div className="fade-in fixed inset-0 z-50 flex items-end justify-center bg-ink/40 md:items-stretch md:justify-end" onClick={onClose}>
+    <div className={`${sheet.backdrop} fixed inset-0 z-50 flex items-end justify-center md:items-stretch md:justify-end`} onClick={onClose}>
       <div
-        className="sheet pb-safe max-h-[92dvh] w-full max-w-xl overflow-y-auto border-[2.5px] border-b-0 border-ink bg-paper-2 px-4 pt-4 md:max-h-none md:w-[480px] md:border-b-[2.5px] md:border-r-0 rounded-t-[26px] md:rounded-none md:rounded-l-[26px]"
+        ref={sheet.ref} className={`${sheet.panel} pb-safe max-h-[92dvh] w-full max-w-xl overflow-y-auto border-[2.5px] border-b-0 border-ink bg-paper-2 px-4 pt-4 md:max-h-none md:w-[480px] md:border-b-[2.5px] md:border-r-0 rounded-t-[26px] md:rounded-none md:rounded-l-[26px]`}
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-label="Test mensuel"

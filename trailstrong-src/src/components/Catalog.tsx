@@ -1,5 +1,5 @@
 import { CalendarDays, Plus, Search, Stethoscope, X } from 'lucide-react'
-import { Suspense, lazy, useCallback, useEffect, useState, type ReactNode } from 'react'
+import { Suspense, lazy, useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import type { Exercise, FocusTag, Session, SessionId } from '../data/program'
 import { routineOf, routineSeconds } from '../data/cooldown'
 import { today, updateSessionLog, useData } from '../lib/storage'
@@ -10,6 +10,9 @@ import { ExerciseDiagram } from './ExerciseDiagram'
 import { SESSION_META, TAG_META } from './meta'
 import { PainCheckin } from './PainCheckin'
 import { nextTestIn } from '../lib/tests'
+import { useCountUp } from '../lib/useCountUp'
+import { haptic } from '../lib/haptics'
+import { Confetti } from './Celebrate'
 
 // Écrans ouverts à la demande : chargés au premier usage (précachés pour le hors-ligne).
 const CooldownCoach = lazy(() => import('./CooldownCoach').then((m) => ({ default: m.CooldownCoach })))
@@ -96,6 +99,20 @@ export function Catalog({
   const visible = groups.flatMap((g) => g.items.map((x) => x.ex))
   const doneCount = visible.filter((e) => day[e.id]?.done).length
   const pct = visible.length ? Math.round((doneCount / visible.length) * 100) : 0
+  const pctShown = useCountUp(pct)
+  // Célébration quand la séance atteint 100 % (pas au chargement d'une séance déjà finie).
+  const [party, setParty] = useState(false)
+  const lastPct = useRef({ pct, key: `${scope}|${date}` })
+  useEffect(() => {
+    const key = `${scope}|${date}`
+    const prev = lastPct.current
+    lastPct.current = { pct, key }
+    if (prev.key !== key || pct < 100 || prev.pct >= 100 || !visible.length) return
+    setParty(true)
+    haptic([20, 40, 20, 40, 60])
+    const id = window.setTimeout(() => setParty(false), 2400)
+    return () => window.clearTimeout(id)
+  }, [pct, scope, date, visible.length])
   const current = scope !== 'all' ? program.find((s) => s.id === scope)! : null
   const routine = current ? routineOf(current) : []
   const showMobility = !!current && routine.length > 0 && !q && !focus
@@ -114,7 +131,7 @@ export function Catalog({
       <section className="hero -mx-3 px-4 pb-6 pt-5 md:-mx-6 md:px-8">
         <div className="flex flex-wrap items-center gap-2">
           <span className="b-box inline-flex h-8 items-center px-3 text-[13px] font-bold shadow-[0_3px_0_var(--color-shadow)]">
-            {longDate(date)} · {doneCount}/{visible.length} validés · <span className="ml-1 font-black italic text-flame">{pct} %</span>
+            {longDate(date)} · {doneCount}/{visible.length} validés · <span className="ml-1 font-black italic tabular-nums text-flame">{pctShown} %</span>
           </span>
           <label className="b-box relative inline-flex h-8 items-center gap-1 px-2 text-[12px] font-bold shadow-[0_3px_0_var(--color-shadow)]" title="Changer la date">
             <CalendarDays className="h-4 w-4" />
@@ -171,8 +188,8 @@ export function Catalog({
         </div>
 
         {/* Progression du jour */}
-        <div className="mt-5 h-4 border-[2.5px] border-ink bg-paper rounded-xl" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100}>
-          <div className={`h-full transition-all duration-500 ${pct === 100 ? 'bg-mint' : 'bg-flame'}`} style={{ width: `${pct}%` }} />
+        <div className="mt-5 h-4 overflow-hidden border-[2.5px] border-ink bg-paper rounded-xl" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100}>
+          <div className={`progress-fill h-full w-full ${pct === 100 ? 'bg-mint' : 'bg-flame'}`} style={{ transform: `scaleX(${pct / 100})` }} />
         </div>
 
         {current && current.id !== 'activation' && (
@@ -319,6 +336,7 @@ export function Catalog({
           onClose={() => setOpenEx(null)}
         />
       )}
+      {party && <Confetti />}
       <Suspense fallback={null}>
         {recap && (
           <SessionRecap

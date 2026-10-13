@@ -5,6 +5,7 @@
  */
 import { useEffect, useState, useSyncExternalStore } from 'react'
 import { say, sfx, unlockAudio } from './sound'
+import { haptic } from './haptics'
 
 interface TimerState {
   duration: number // s
@@ -90,7 +91,7 @@ function finish() {
   else sfx.restEnd()
   say(label?.startsWith('Change') ? 'Go' : 'C’est reparti')
   try {
-    navigator.vibrate?.([250, 120, 250, 120, 500])
+    haptic([250, 120, 250, 120, 500])
   } catch {
     /* iOS : pas de vibrate */
   }
