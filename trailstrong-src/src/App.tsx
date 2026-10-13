@@ -17,7 +17,8 @@ export type View = Scope | 'stats'
 /** Onglets : dossiers colorés en haut (desktop) / dock en bas (mobile). */
 export const TABS: { id: View; label: string; short: string; emoji?: string; bg: string }[] = [
   { id: 'all', label: 'Tout', short: 'Tout', bg: 'bg-paper' },
-  ...(Object.entries(SESSION_META) as [View, (typeof SESSION_META)[keyof typeof SESSION_META]][]).map(([id, m]) => ({
+  // L'Activation est intégrée en tête de chaque séance : pas d'onglet dédié.
+  ...(Object.entries(SESSION_META) as [View, (typeof SESSION_META)[keyof typeof SESSION_META]][]).filter(([id]) => id !== 'activation').map(([id, m]) => ({
     id,
     label: m.label,
     short: m.short,
@@ -44,7 +45,7 @@ function Shell({ onLock }: { onLock: () => void }) {
   const program = useProgram()
   const [view, setViewState] = useState<View>(() => {
     const saved = localStorage.getItem(VIEW_KEY) as View | null
-    return saved && TABS.some((t) => t.id === saved) ? saved : 'activation'
+    return saved && TABS.some((t) => t.id === saved) ? saved : 'seanceA'
   })
   const [focus, setFocus] = useState<FocusTag | null>(null)
   const [query, setQuery] = useState('')
@@ -162,7 +163,7 @@ function Shell({ onLock }: { onLock: () => void }) {
 
       {/* ── Dock mobile ── */}
       <nav className="pb-safe fixed inset-x-0 bottom-0 z-40 border-t-[2.5px] border-ink bg-paper md:hidden" aria-label="Onglets" data-noswipe>
-        <ul className="grid grid-cols-6">
+        <ul className="grid grid-cols-5">
           {TABS.map((t) => {
             const active = t.id === view
             return (
