@@ -225,7 +225,7 @@ const RULES: [RegExp, AnimationId][] = [
   [/rope jump|jumping rope|jump rope|skipping/, 'jumpRope'],
   [/box jump/, 'boxJump'],
   [/lateral bound|skater|lateral hop/, 'skater'],
-  [/kettlebell swing|swings?$/, 'swing'],
+  [/\bswings?\b/, 'swing'],
   [/hyperextension|back extension/, 'backExt'],
   [/ball leg curl|ball.*hamstring curl/, 'ballCurl'],
   [/walking lunge/, 'walkingLunge'],
