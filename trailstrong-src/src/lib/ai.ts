@@ -79,6 +79,11 @@ export const DIAGRAMS: Record<AnimationId, string> = {
   kneelingStretch: 'étirement fente basse à genou (fléchisseurs de hanche, quadriceps)',
   calfStretch: 'étirement des mollets contre un mur',
   powerHike: 'marche en côte sur tapis',
+  hamstringStretch: 'étirement des ischios couché, jambe tendue levée (sangle)',
+  quadStretch: 'étirement des quadriceps debout, talon à la fesse',
+  figure4: 'étirement des fessiers couché en « figure 4 » (cheville sur le genou)',
+  kneeToWall: 'mobilité de cheville genou au mur, en fente',
+  soleusStretch: 'étirement du soléaire contre un mur, genou arrière fléchi',
 }
 
 const PROFILE = `Profil : Mickael, ultra-traileur, renforcement en salle (ÉconoFitness) pour protéger genoux et chevilles et gagner en force en côte.

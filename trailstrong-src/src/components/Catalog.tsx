@@ -1,7 +1,10 @@
 import { CalendarDays, Plus, Search, X } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { Exercise, FocusTag, Session, SessionId } from '../data/program'
-import { today, useData } from '../lib/storage'
+import { COOLDOWN } from '../data/cooldown'
+import { today, updateSessionLog, useData } from '../lib/storage'
+import { CooldownCoach } from './CooldownCoach'
+import { SessionRecap } from './SessionRecap'
 import { AddExerciseSheet } from './AddExerciseSheet'
 import { ExerciseDrawer } from './ExerciseDrawer'
 import { ExerciseTile } from './ExerciseTile'
@@ -50,6 +53,23 @@ export function Catalog({
   const day = data.logs[date] ?? {}
   const [openEx, setOpenEx] = useState<{ ex: Exercise; sessionId: SessionId } | null>(null)
   const [adding, setAdding] = useState<Session | null>(null)
+  const [recap, setRecap] = useState<Session | null>(null)
+  const [cooldown, setCooldown] = useState<SessionId | null>(null)
+
+  // Séance du jour terminée à 100 % → bilan automatique (une seule fois), après la fanfare du coach.
+  const doneKey = program.map((s) => s.exercises.every((e) => day[e.id]?.done) && s.exercises.length > 0).join()
+  useEffect(() => {
+    if (date !== today()) return
+    const finished = program.find((s) => s.exercises.length > 0 && s.exercises.every((e) => day[e.id]?.done) && !data.sessions[date]?.[s.id]?.recapAt)
+    if (!finished) return
+    const id = window.setTimeout(() => {
+      updateSessionLog(date, finished.id, { recapAt: Date.now() })
+      setRecap(finished)
+    }, 1800)
+    return () => window.clearTimeout(id)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [doneKey, date])
+  const startedIn = (s: Session) => s.exercises.some((e) => day[e.id]?.sets.some((x) => x.done) || day[e.id]?.done)
 
   const inScope = program.filter((s) => scope === 'all' || s.id === scope)
   const count = (f: FocusTag | null) => inScope.reduce((n, s) => n + s.exercises.filter((e) => !f || e.tags.includes(f)).length, 0)
@@ -134,6 +154,25 @@ export function Catalog({
           <div className={`h-full transition-all duration-500 ${pct === 100 ? 'bg-mint' : 'bg-flame'}`} style={{ width: `${pct}%` }} />
         </div>
 
+        {current && (startedIn(current) || COOLDOWN[current.id]) && (
+          <div className="mt-4 grid grid-cols-2 gap-2">
+            {startedIn(current) && (
+              <button type="button" onClick={() => setRecap(current)} className="b-btn flex h-11 items-center justify-center gap-1.5 bg-sun px-2 text-[13px] uppercase italic">
+                🏁 Bilan & récup
+              </button>
+            )}
+            {COOLDOWN[current.id] && (
+              <button
+                type="button"
+                onClick={() => setCooldown(current.id)}
+                className={`b-btn flex h-11 items-center justify-center gap-1.5 whitespace-nowrap bg-mint px-2 text-[13px] uppercase italic ${startedIn(current) ? '' : 'col-span-2'}`}
+              >
+                {data.sessions[date]?.[current.id]?.cooldownAt ? '✓ Étirements faits' : '🧘 Retour au calme'}
+              </button>
+            )}
+          </div>
+        )}
+
         <PainCheckin date={date} />
         {nextTestIn(data, today()) <= 0 && (
           <button type="button" onClick={onTests} className="b-btn mt-3 flex min-h-11 w-full items-center gap-2 bg-lilac px-3 py-2 text-left text-[13px]">
@@ -188,6 +227,11 @@ export function Catalog({
                 <span className="ml-auto text-[13px] font-black italic">
                   {g.items.filter(({ ex }) => day[ex.id]?.done).length}/{g.items.length}
                 </span>
+                {startedIn(g.session) && (
+                  <button type="button" onClick={() => setRecap(g.session)} className="b-btn h-8 self-center bg-sun px-2 text-[11px] uppercase italic">
+                    Bilan
+                  </button>
+                )}
               </h2>
             )}
             <div className="grid grid-cols-1 gap-x-6 gap-y-5 md:grid-cols-2 xl:grid-cols-3">
@@ -217,6 +261,18 @@ export function Catalog({
           onClose={() => setOpenEx(null)}
         />
       )}
+      {recap && (
+        <SessionRecap
+          session={recap}
+          date={date}
+          onClose={() => setRecap(null)}
+          onCooldown={() => {
+            setCooldown(recap.id)
+            setRecap(null)
+          }}
+        />
+      )}
+      {cooldown && <CooldownCoach sessionId={cooldown} date={date} onClose={() => setCooldown(null)} />}
       {adding && (
         <AddExerciseSheet
           session={adding}
