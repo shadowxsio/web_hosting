@@ -8,6 +8,7 @@ import { LoginScreen } from './components/LoginScreen'
 import { Onboarding } from './components/Onboarding'
 import type { Answers } from './data/generator'
 import { ACCOUNT, switchAccount } from './lib/account'
+import { sha256Hex } from './lib/auth'
 import { currentUser, firebaseSignOut, signInWithGoogleToken, type User } from './lib/firebase'
 import { getData, updateProfile } from './lib/storage'
 import { hasLegacyData, importLegacy, loadUserDoc, newUserDoc, onSyncStatus, saveUserDoc, startSync, stopSync, syncStatus, type UserDoc } from './lib/sync'
@@ -28,6 +29,11 @@ export default function CloudApp() {
   const [user, setUser] = useState<User | null>(null)
   const [error, setError] = useState('')
   const status = useSyncExternalStore(onSyncStatus, syncStatus)
+  // Propriétaire de l'app (email autorisé au build) : accès au profil de test.
+  const [isOwner, setIsOwner] = useState(false)
+  useEffect(() => {
+    if (user?.email) void sha256Hex(user.email.trim().toLowerCase()).then((h) => setIsOwner(__ALLOWED_EMAIL_HASHES__.includes(h)))
+  }, [user])
 
   const boot = async () => {
     try {
@@ -156,6 +162,7 @@ export default function CloudApp() {
         email: user?.email ?? '',
         status: STATUS_LABEL[status] ?? status,
         onRedoProgram: () => setPhase('onboard'),
+        isOwner,
       }}
     />
   )
