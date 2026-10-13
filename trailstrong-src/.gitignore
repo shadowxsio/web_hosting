@@ -1,1 +1,5 @@
 node_modules
+dist-preview
+playwright-report
+test-results
+e2e-shots
