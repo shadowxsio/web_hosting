@@ -1,14 +1,15 @@
 import { CalendarDays, Plus, Search, X } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import type { Exercise, FocusTag, Session, SessionId } from '../data/program'
-import { COOLDOWN } from '../data/cooldown'
+import { routineOf, routineSeconds } from '../data/cooldown'
 import { today, updateSessionLog, useData } from '../lib/storage'
 import { CooldownCoach } from './CooldownCoach'
 import { SessionRecap } from './SessionRecap'
 import { AddExerciseSheet } from './AddExerciseSheet'
 import { ExerciseDrawer } from './ExerciseDrawer'
 import { ExerciseTile } from './ExerciseTile'
-import { TAG_META } from './meta'
+import { ExerciseDiagram } from './ExerciseDiagram'
+import { SESSION_META, TAG_META } from './meta'
 import { PainCheckin } from './PainCheckin'
 import { nextTestIn } from '../lib/tests'
 
@@ -60,18 +61,23 @@ export function Catalog({
   const doneKey = program.map((s) => s.exercises.every((e) => day[e.id]?.done) && s.exercises.length > 0).join()
   useEffect(() => {
     if (date !== today()) return
-    const finished = program.find((s) => s.exercises.length > 0 && s.exercises.every((e) => day[e.id]?.done) && !data.sessions[date]?.[s.id]?.recapAt)
+    const finished = program.find(
+      (s) => s.id !== 'activation' && s.exercises.length > 0 && s.exercises.every((e) => day[e.id]?.done) && !data.sessions[date]?.[s.id]?.recapAt,
+    )
     if (!finished) return
     const id = window.setTimeout(() => {
       updateSessionLog(date, finished.id, { recapAt: Date.now() })
-      setRecap(finished)
+      setRecap(withWarmup(finished))
     }, 1800)
     return () => window.clearTimeout(id)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [doneKey, date])
   const startedIn = (s: Session) => s.exercises.some((e) => day[e.id]?.sets.some((x) => x.done) || day[e.id]?.done)
 
-  const inScope = program.filter((s) => scope === 'all' || s.id === scope)
+  // Une séance = 1. Activation (échauffement) → 2. ses exercices → 3. mobilité.
+  const activation = program.find((s) => s.id === 'activation')!
+  const withWarmup = (s: Session): Session => (s.id === 'activation' ? s : { ...s, exercises: [...activation.exercises, ...s.exercises] })
+  const inScope = scope === 'all' ? program : scope === 'activation' ? [activation] : [activation, program.find((s) => s.id === scope)!]
   const count = (f: FocusTag | null) => inScope.reduce((n, s) => n + s.exercises.filter((e) => !f || e.tags.includes(f)).length, 0)
 
   const q = norm(query.trim())
@@ -86,6 +92,10 @@ export function Catalog({
   const doneCount = visible.filter((e) => day[e.id]?.done).length
   const pct = visible.length ? Math.round((doneCount / visible.length) * 100) : 0
   const current = scope !== 'all' ? program.find((s) => s.id === scope)! : null
+  const routine = current ? routineOf(current.id) : []
+  const showMobility = !!current && routine.length > 0 && !q && !focus
+  const finishedAt = current ? data.sessions[date]?.[current.id]?.recapAt : undefined
+  const step = (s: Session) => (scope === 'all' ? null : s.id === 'activation' ? 1 : 2)
   const headline = q
     ? `${visible.length} résultat${visible.length > 1 ? 's' : ''}`
     : current
@@ -154,23 +164,17 @@ export function Catalog({
           <div className={`h-full transition-all duration-500 ${pct === 100 ? 'bg-mint' : 'bg-flame'}`} style={{ width: `${pct}%` }} />
         </div>
 
-        {current && (startedIn(current) || COOLDOWN[current.id]) && (
-          <div className="mt-4 grid grid-cols-2 gap-2">
-            {startedIn(current) && (
-              <button type="button" onClick={() => setRecap(current)} className="b-btn flex h-11 items-center justify-center gap-1.5 bg-sun px-2 text-[13px] uppercase italic">
-                🏁 Bilan & récup
-              </button>
-            )}
-            {COOLDOWN[current.id] && (
-              <button
-                type="button"
-                onClick={() => setCooldown(current.id)}
-                className={`b-btn flex h-11 items-center justify-center gap-1.5 whitespace-nowrap bg-mint px-2 text-[13px] uppercase italic ${startedIn(current) ? '' : 'col-span-2'}`}
-              >
-                {data.sessions[date]?.[current.id]?.cooldownAt ? '✓ Étirements faits' : '🧘 Retour au calme'}
-              </button>
-            )}
-          </div>
+        {current && current.id !== 'activation' && (
+          <button
+            type="button"
+            onClick={() => {
+              if (!finishedAt) updateSessionLog(date, current.id, { recapAt: Date.now() })
+              setRecap(withWarmup(current))
+            }}
+            className={`b-btn mt-4 flex h-12 w-full items-center justify-center gap-2 text-[14px] uppercase italic ${finishedAt ? 'bg-mint' : 'bg-sun'}`}
+          >
+            {finishedAt ? '✓ Séance terminée · bilan & récup' : '🏁 Terminer la séance · bilan & récup'}
+          </button>
         )}
 
         <PainCheckin date={date} />
@@ -220,20 +224,21 @@ export function Catalog({
         )}
         {groups.map((g) => (
           <section key={g.session.id}>
-            {scope === 'all' && (
-              <h2 className="mb-1 flex items-baseline gap-2">
-                <span className="headline headline-sun text-[24px]">{g.session.short}</span>
-                <span className="text-[12px] font-bold text-ink/60">{g.session.duration}</span>
-                <span className="ml-auto text-[13px] font-black italic">
-                  {g.items.filter(({ ex }) => day[ex.id]?.done).length}/{g.items.length}
-                </span>
-                {startedIn(g.session) && (
-                  <button type="button" onClick={() => setRecap(g.session)} className="b-btn h-8 self-center bg-sun px-2 text-[11px] uppercase italic">
+            <SectionHeader
+              n={step(g.session)}
+              title={step(g.session) === 1 ? 'Activation' : g.session.short}
+              sub={step(g.session) === 1 ? `Échauffement · ${g.session.duration}` : g.session.duration}
+              bg={SESSION_META[g.session.id].bg}
+              done={g.items.filter(({ ex }) => day[ex.id]?.done).length}
+              total={g.items.length}
+              action={
+                scope === 'all' && g.session.id !== 'activation' && startedIn(g.session) ? (
+                  <button type="button" onClick={() => setRecap(withWarmup(g.session))} className="b-btn h-8 bg-paper px-2 text-[11px] uppercase italic">
                     Bilan
                   </button>
-                )}
-              </h2>
-            )}
+                ) : null
+              }
+            />
             <div className="grid grid-cols-1 gap-x-6 gap-y-5 md:grid-cols-2 xl:grid-cols-3">
               {g.items.map(({ ex, i }) => (
                 <ExerciseTile key={`${date}-${ex.id}`} ex={ex} sessionId={g.session.id} index={i} date={date} onOpen={() => setOpenEx({ ex, sessionId: g.session.id })} />
@@ -250,6 +255,36 @@ export function Catalog({
             </div>
           </section>
         ))}
+
+        {showMobility && current && (
+          <section>
+            <SectionHeader
+              n={3}
+              title="Mobilité"
+              sub={`Étirements · ≈ ${Math.round(routineSeconds(routine) / 60)} min`}
+              bg="bg-sky"
+              done={data.sessions[date]?.[current.id]?.cooldownAt ? routine.length : 0}
+              total={routine.length}
+            />
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+              {routine.map((st) => (
+                <button key={st.id} type="button" onClick={() => setCooldown(current.id)} className="b-card overflow-hidden text-left !shadow-[3px_3px_0_var(--color-shadow)] active:translate-y-px">
+                  <div className="hero aspect-[5/4] border-b-2 border-ink !border-t-0">
+                    <ExerciseDiagram id={st.diagram} />
+                  </div>
+                  <p className="px-2 pt-1.5 text-[10px] font-extrabold uppercase text-ink/60">{st.target}</p>
+                  <p className="px-2 text-[13px] font-black italic leading-tight">{st.name}</p>
+                  <p className="px-2 pb-2 pt-0.5 text-[11px] font-bold">
+                    {st.hold} s{st.perSide ? ' / côté' : ''}
+                  </p>
+                </button>
+              ))}
+            </div>
+            <button type="button" onClick={() => setCooldown(current.id)} className="b-btn mt-4 flex h-12 w-full items-center justify-center gap-2 bg-mint text-[14px] uppercase italic">
+              {data.sessions[date]?.[current.id]?.cooldownAt ? '✓ Étirements faits · refaire' : '▶ Lancer le retour au calme guidé'}
+            </button>
+          </section>
+        )}
       </div>
 
       {openEx && (
@@ -284,5 +319,22 @@ export function Catalog({
         />
       )}
     </>
+  )
+}
+
+/** Bandeau de section : n° d'étape, titre, compteur. */
+function SectionHeader({ n, title, sub, bg, done, total, action }: { n: number | null; title: string; sub: string; bg: string; done: number; total: number; action?: ReactNode }) {
+  return (
+    <div className={`mb-4 flex items-center gap-3 border-[2.5px] border-ink ${bg} px-3 py-2 shadow-[4px_4px_0_var(--color-shadow)]`}>
+      {n && <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full border-[2.5px] border-ink bg-[#fbf3e4] text-[17px] font-black italic">{n}</span>}
+      <span className="min-w-0 flex-1">
+        <span className="block text-[20px] font-black uppercase italic leading-tight">{title}</span>
+        <span className="block text-[12px] font-bold">{sub}</span>
+      </span>
+      <span className="text-[14px] font-black italic">
+        {done}/{total}
+      </span>
+      {action}
+    </div>
   )
 }
