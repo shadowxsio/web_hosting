@@ -118,9 +118,25 @@ export function Shell({ onLock, cloud }: { onLock: () => void; cloud?: Component
     if (v === view || !doc.startViewTransition || matchMedia('(prefers-reduced-motion: reduce)').matches) return apply()
     const ids = TABS.map((t) => t.id)
     document.documentElement.dataset.vt = ids.indexOf(v) < ids.indexOf(view) ? 'back' : 'fwd'
-    doc.startViewTransition(() => flushSync(apply))
+    const vt = doc.startViewTransition(() => flushSync(apply)) as { finished?: Promise<void> }
+    vt.finished?.finally(() => delete document.documentElement.dataset.vt)
   }
   const tabIndex = Math.max(0, TABS.findIndex((t) => t.id === view))
+  // En-tête compact (verre) dès qu'on fait défiler la page.
+  const [scrolled, setScrolled] = useState(false)
+  useEffect(() => {
+    let raf = 0
+    const on = () => {
+      cancelAnimationFrame(raf)
+      raf = requestAnimationFrame(() => setScrolled(window.scrollY > 24))
+    }
+    window.addEventListener('scroll', on, { passive: true })
+    on()
+    return () => {
+      cancelAnimationFrame(raf)
+      window.removeEventListener('scroll', on)
+    }
+  }, [])
   // Pastille du dock : étirement « liquide » pendant le déplacement.
   const [pillMoving, setPillMoving] = useState(false)
   const firstPill = useRef(true)
@@ -178,9 +194,14 @@ export function Shell({ onLock, cloud }: { onLock: () => void; cloud?: Component
   return (
     <div className="min-h-dvh" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
       {/* ── En-tête ── */}
-      <header className="pt-safe">
-        <div className="mx-auto flex max-w-6xl items-center gap-2.5 px-3 pb-4 pt-4 md:px-6">
-          <button type="button" onClick={() => setView('all')} className="logo-patch -rotate-2 text-[19px] min-[400px]:text-[22px]" aria-label="Accueil">
+      <header className={`pt-safe sticky top-0 z-30 transition-[background-color,box-shadow] duration-300 ${scrolled ? 'header-glass' : ''}`}>
+        <div className={`mx-auto flex max-w-6xl items-center gap-2.5 px-3 transition-[padding] duration-300 md:px-6 ${scrolled ? 'pb-2 pt-2' : 'pb-4 pt-4'}`}>
+          <button
+            type="button"
+            onClick={() => setView('all')}
+            className={`logo-patch -rotate-2 origin-left text-[19px] transition-[scale] duration-300 min-[400px]:text-[22px] ${scrolled ? 'scale-[0.84]' : ''}`}
+            aria-label="Accueil"
+          >
             <span>TrailStrong</span>
           </button>
           <button
@@ -232,8 +253,7 @@ export function Shell({ onLock, cloud }: { onLock: () => void; cloud?: Component
 
       {/* ── Dock mobile : capsule en verre + pastille liquide ── */}
       <nav
-        className="pointer-events-none fixed inset-x-0 bottom-0 z-40 px-3 pb-[calc(10px+env(safe-area-inset-bottom))] md:hidden"
-        style={{ viewTransitionName: 'dock' } as CSSProperties}
+        className="vt-dock pointer-events-none fixed inset-x-0 bottom-0 z-40 px-3 pb-[calc(10px+env(safe-area-inset-bottom))] md:hidden"
         aria-label="Onglets"
         data-noswipe
         data-tour="tabs"

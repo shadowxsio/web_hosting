@@ -18,7 +18,20 @@ import { useSheet } from '../lib/useSheet'
 const SetCoach = lazy(() => import('./SetCoach').then((m) => ({ default: m.SetCoach })))
 
 /** Tiroir de détail : bas de l'écran sur mobile, à droite sur desktop. */
-export function ExerciseDrawer({ ex, sessionId, date, onClose: closeNow }: { ex: Exercise; sessionId: SessionId; date: string; onClose: () => void }) {
+export function ExerciseDrawer({
+  ex,
+  sessionId,
+  date,
+  onClose: closeNow,
+  morph,
+}: {
+  ex: Exercise
+  sessionId: SessionId
+  date: string
+  onClose: () => void
+  /** Ouverture « carte → fiche » en cours (élément partagé de la View Transition). */
+  morph?: boolean
+}) {
   const sheet = useSheet<HTMLElement>(closeNow)
   const onClose = sheet.close
   const L = useExerciseLog(ex, date)
@@ -82,7 +95,9 @@ export function ExerciseDrawer({ ex, sessionId, date, onClose: closeNow }: { ex:
       <aside
         role="dialog"
         aria-label={ex.name}
-        ref={sheet.ref} className={`${sheet.panel} pb-safe relative flex max-h-[92dvh] w-full max-w-xl flex-col border-[2.5px] border-b-0 border-ink bg-paper-2 md:max-h-none md:w-[460px] md:border-b-[2.5px] md:border-r-0 rounded-t-[26px] md:rounded-none md:rounded-l-[26px]`}
+        ref={sheet.ref}
+        style={morph ? ({ viewTransitionName: 'ex-card' } as React.CSSProperties) : undefined}
+        className={`${sheet.panel} ${morph ? 'morph' : ''} pb-safe relative flex max-h-[92dvh] w-full max-w-xl flex-col border-[2.5px] border-b-0 border-ink bg-paper-2 md:max-h-none md:w-[460px] md:border-b-[2.5px] md:border-r-0 rounded-t-[26px] md:rounded-none md:rounded-l-[26px]`}
       >
         {/* Poignée + en-tête */}
         <div className="mx-auto mt-2 h-1.5 w-12 rounded-full bg-ink/30 md:hidden" />
