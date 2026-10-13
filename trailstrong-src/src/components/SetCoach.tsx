@@ -3,7 +3,7 @@
  * voix optionnelle), changement de jambe, puis validation auto de la série et
  * lancement du repos. Basé sur des horodatages : reste juste si l'écran rame.
  */
-import { Check, Pause, Play, Speech, Volume2, VolumeX, X } from 'lucide-react'
+import { Check, Headphones, Pause, Play, Speaker, Speech, Volume2, VolumeX, X } from 'lucide-react'
 import { useEffect, useReducer, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { repSeconds, type Phase } from '../data/cadence'
@@ -247,6 +247,14 @@ export function SetCoach({ name, cadence, sides, target, setLabel, rest, onSideD
           aria-label={`Son : ${M.label} (toucher pour changer)`}
         >
           <M.Icon className="h-4 w-4" strokeWidth={2.5} /> {M.label}
+        </button>
+        <button
+          type="button"
+          onClick={() => setSoundPrefs({ speaker: !prefs.speaker })}
+          className="b-btn grid h-10 w-10 shrink-0 place-items-center"
+          aria-label={prefs.speaker ? 'Sortie : haut-parleur forcé (toucher pour mélanger avec YouTube)' : 'Sortie : par-dessus YouTube / musique (toucher pour forcer le haut-parleur)'}
+        >
+          {prefs.speaker ? <Speaker className="h-4 w-4" strokeWidth={2.5} /> : <Headphones className="h-4 w-4" strokeWidth={2.5} />}
         </button>
         <button type="button" onClick={onClose} aria-label="Quitter le coach sans valider" className="b-btn grid h-10 w-10 shrink-0 place-items-center rounded-full">
           <X className="h-5 w-5" strokeWidth={3} />
