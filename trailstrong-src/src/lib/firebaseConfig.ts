@@ -8,3 +8,6 @@ export const config = {
 }
 
 export const firebaseEnabled = !!(config.apiKey && config.projectId && config.appId)
+
+/** Clé de site reCAPTCHA Enterprise pour App Check (anti-bots), optionnelle. */
+export const recaptchaSiteKey = (env.VITE_RECAPTCHA_SITE_KEY as string | undefined)?.trim() ?? ''
