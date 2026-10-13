@@ -134,6 +134,7 @@ export default function CloudApp() {
         defaultName={getData().profile.name || user.displayName?.split(' ')[0] || ''}
         onUseBase={async () => {
           setUserProgram(null)
+          updateProfile({ tourPending: true })
           await saveUserDoc(user.uid, { onboarded: true, program: null })
           setPhase('ready')
         }}
@@ -147,6 +148,7 @@ export default function CloudApp() {
             pains: a.pains,
             equip: a.equip,
             level: a.level,
+            tourPending: true,
           })
           await saveUserDoc(user.uid, { onboarded: true, program, name: a.name })
           localStorage.removeItem('trailstrong:view')

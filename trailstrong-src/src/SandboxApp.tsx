@@ -35,11 +35,12 @@ export default function SandboxApp() {
           defaultName="Testeur"
           onUseBase={() => {
             setUserProgram(null)
+            updateProfile({ tourPending: true })
             ready()
           }}
           onDone={(program, a) => {
             setUserProgram(program)
-            updateProfile({ name: a.name, ...(a.weightKg ? { weightKg: a.weightKg } : {}), sport: a.sport, goals: a.goals, pains: a.pains, equip: a.equip, level: a.level })
+            updateProfile({ name: a.name, ...(a.weightKg ? { weightKg: a.weightKg } : {}), sport: a.sport, goals: a.goals, pains: a.pains, equip: a.equip, level: a.level, tourPending: true })
             ready()
           }}
         />

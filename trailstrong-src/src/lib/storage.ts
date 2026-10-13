@@ -73,6 +73,9 @@ export interface Profile {
   pains?: string[]
   equip?: string
   level?: string
+  /** Visite guidée à montrer au prochain affichage (nouveau compte). */
+  tourPending?: boolean
+  tourDone?: boolean
 }
 
 /** Bilan d'une séance pour une date. */

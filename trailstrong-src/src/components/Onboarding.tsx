@@ -2,7 +2,7 @@
  * Premier lancement d'un compte : questionnaire (objectifs, zones sensibles,
  * matériel, niveau, rythme) → programme généré, prévisualisé, puis enregistré.
  */
-import { ArrowLeft, ArrowRight, Check, Sparkles } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Check, Sparkles, Stethoscope } from 'lucide-react'
 import { useMemo, useState, type ReactNode } from 'react'
 import { routineOf } from '../data/cooldown'
 import {
@@ -57,6 +57,10 @@ export function Onboarding({
         <h1 className="headline mt-4 text-[34px]">Salut {defaultName || 'toi'} !</h1>
         <p className="mt-3 text-[15px] font-semibold leading-snug">
           En 7 questions, je te prépare des séances de renforcement adaptées à ton sport, tes objectifs et ton matériel, avec schémas, photos, tempo guidé et retour au calme.
+        </p>
+        <p className="mt-3 flex items-start gap-2 text-[12px] font-semibold leading-snug text-ink/75">
+          <Stethoscope className="mt-0.5 h-4 w-4 shrink-0 text-flame" strokeWidth={2.5} />
+          Le programme est généré automatiquement : c’est un repère d’entraînement, pas un avis médical.
         </p>
         <button type="button" onClick={() => setStep(0)} className="b-btn mt-6 flex h-14 w-full items-center justify-center gap-2 bg-flame text-[15px] uppercase tracking-wide">
           <Sparkles className="h-5 w-5" strokeWidth={2.5} /> Créer mon programme
@@ -180,6 +184,13 @@ function Preview({ program }: { program: UserProgram }) {
   return (
     <div>
       <Q sub="Tu pourras ajouter ou retirer des exercices, et refaire ce questionnaire depuis le Menu.">Ton programme</Q>
+      <div className="mb-4 flex items-start gap-3 rounded-2xl border-2 border-ink bg-sun px-3 py-3" role="note">
+        <Stethoscope className="mt-0.5 h-5 w-5 shrink-0" strokeWidth={2.5} />
+        <p className="text-[13px] font-semibold leading-snug">
+          <b className="block text-[14px] font-extrabold">Programme généré automatiquement</b>
+          Il s’appuie sur tes réponses et sur des exercices éprouvés, mais ne remplace pas un professionnel. Le mieux : montre-le à un physio ou à un coach, surtout en cas de douleur, de blessure récente ou de reprise après une pause.
+        </p>
+      </div>
       <div className="space-y-4">
         {sessions.map((s) => (
           <section key={s.id} className="b-card overflow-hidden !shadow-[0_3px_0_var(--color-shadow)]">

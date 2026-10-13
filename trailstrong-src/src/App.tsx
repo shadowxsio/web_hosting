@@ -5,6 +5,7 @@ import { SESSION_META } from './components/meta'
 import { LoginScreen } from './components/LoginScreen'
 import { SettingsSheet } from './components/SettingsSheet'
 import { StatsView } from './components/StatsView'
+import { GuidedTour } from './components/GuidedTour'
 import { TimerBar } from './components/TimerBar'
 import type { FocusTag, Session } from './data/program'
 import { hasValidSession } from './lib/auth'
@@ -12,7 +13,7 @@ import { useAutoBackup } from './lib/backup'
 import { useProgram } from './lib/custom'
 import { firebaseEnabled } from './lib/firebaseConfig'
 import { inSandbox } from './lib/sandbox'
-import { today } from './lib/storage'
+import { today, updateProfile, useData } from './lib/storage'
 
 const CloudApp = lazy(() => import('./CloudApp'))
 const SandboxApp = lazy(() => import('./SandboxApp'))
@@ -72,6 +73,18 @@ function LocalApp() {
 export function Shell({ onLock, cloud }: { onLock: () => void; cloud?: ComponentProps<typeof SettingsSheet>['cloud'] }) {
   useAutoBackup()
   const program = useProgram()
+  const { profile } = useData()
+  // Visite guidée : automatique pour un nouveau compte, puis depuis le Menu.
+  const [tour, setTour] = useState(false)
+  useEffect(() => {
+    if (!profile.tourPending) return
+    const id = window.setTimeout(() => setTour(true), 700)
+    return () => window.clearTimeout(id)
+  }, [profile.tourPending])
+  const endTour = () => {
+    setTour(false)
+    if (profile.tourPending || !profile.tourDone) updateProfile({ tourPending: false, tourDone: true })
+  }
   const TABS = useMemo(() => tabsOf(program), [program])
   const [view, setViewState] = useState<View>(() => (localStorage.getItem(VIEW_KEY) as View | null) ?? 'seanceA')
   // Vue mémorisée qui n'existe plus dans ce programme → première séance.
@@ -153,13 +166,13 @@ export function Shell({ onLock, cloud }: { onLock: () => void; cloud?: Component
           >
             <Search className="h-5 w-5" strokeWidth={2.8} />
           </button>
-          <button type="button" onClick={() => setMenu(true)} className="b-btn flex h-12 shrink-0 items-center gap-1.5 bg-sun px-3 text-[15px] uppercase tracking-wide min-[400px]:px-4">
+          <button type="button" onClick={() => setMenu(true)} data-tour="menu" className="b-btn flex h-12 shrink-0 items-center gap-1.5 bg-sun px-3 text-[15px] uppercase tracking-wide min-[400px]:px-4">
             <Menu className="h-5 w-5" strokeWidth={3} /> Menu
           </button>
         </div>
 
         {/* Onglets-dossiers (desktop) */}
-        <nav className="mx-auto hidden max-w-6xl items-end gap-1.5 px-6 md:flex" aria-label="Onglets">
+        <nav className="mx-auto hidden max-w-6xl items-end gap-1.5 px-6 md:flex" aria-label="Onglets" data-tour="tabs">
           {TABS.map((t) => {
             const active = t.id === view
             return (
@@ -191,7 +204,7 @@ export function Shell({ onLock, cloud }: { onLock: () => void; cloud?: Component
       <TimerBar />
 
       {/* ── Dock mobile ── */}
-      <nav className="pb-safe fixed inset-x-0 bottom-0 z-40 border-t-[2.5px] border-ink bg-paper md:hidden" aria-label="Onglets" data-noswipe>
+      <nav className="pb-safe fixed inset-x-0 bottom-0 z-40 border-t-[2.5px] border-ink bg-paper md:hidden" aria-label="Onglets" data-noswipe data-tour="tabs">
         <ul className="grid" style={{ gridTemplateColumns: `repeat(${TABS.length}, minmax(0, 1fr))` }}>
           {TABS.map((t) => {
             const active = t.id === view
@@ -223,6 +236,11 @@ export function Shell({ onLock, cloud }: { onLock: () => void; cloud?: Component
           onClose={() => setMenu(false)}
           onLock={onLock}
           cloud={cloud}
+          onTour={() => {
+            setMenu(false)
+            setView(TABS[1]?.id ?? 'all')
+            window.setTimeout(() => setTour(true), 400)
+          }}
           onNavigate={(v, f) => {
             setView(v)
             if (f) setFocus(f)
@@ -234,6 +252,7 @@ export function Shell({ onLock, cloud }: { onLock: () => void; cloud?: Component
           }}
         />
       )}
+      {tour && <GuidedTour onClose={endTour} />}
     </div>
   )
 }
