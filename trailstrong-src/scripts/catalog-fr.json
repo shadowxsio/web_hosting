@@ -1,0 +1,965 @@
+{
+ "Bodyweight_Squat": {
+  "fr": "Squat au poids du corps",
+  "tf": [
+   "Tiens-toi debout, pieds écartés à la largeur des épaules. Tu peux placer les mains derrière la tête. C’est ta position de départ.",
+   "Amorce le mouvement en fléchissant les genoux et les hanches, en reculant les hanches comme pour t’asseoir.",
+   "Descends aussi bas que tu le peux, puis remonte rapidement jusqu’à la position de départ.",
+   "Pendant tout le squat, garde la tête et la poitrine hautes et pousse les genoux vers l’extérieur."
+  ]
+ },
+ "Goblet_Squat": {
+  "fr": "Squat gobelet",
+  "tf": [
+   "Tiens-toi debout en tenant un kettlebell léger par les cornes, près de la poitrine. C’est ta position de départ.",
+   "Descends en squat entre tes jambes jusqu’à ce que l’arrière des cuisses touche les mollets. Garde la poitrine et la tête hautes, et le dos droit.",
+   "En bas, marque une pause et utilise tes coudes pour pousser les genoux vers l’extérieur.",
+   "Reviens à la position de départ et répète pour 10 à 20 répétitions."
+  ]
+ },
+ "Dumbbell_Squat": {
+  "fr": "Squat aux haltères",
+  "tf": [
+   "Tiens-toi debout, le dos droit, un haltère dans chaque main (paumes tournées vers les jambes).",
+   "Écarte les pieds à la largeur des épaules, orteils légèrement tournés vers l’extérieur. Garde la tête haute en tout temps (regarder vers le bas te déséquilibre) et le dos droit. C’est ta position de départ.",
+   "Descends lentement en fléchissant les genoux, posture droite et tête haute, jusqu’à ce que les cuisses soient parallèles au sol.",
+   "Garde les genoux alignés avec les orteils : s’ils dépassent les orteils, tu mets un stress inutile sur le genou.",
+   "Remonte en expirant, en poussant surtout dans les talons, jusqu’à la position de départ.",
+   "Répète pour le nombre de répétitions prévu."
+  ]
+ },
+ "Dumbbell_Squat_To_A_Bench": {
+  "fr": "Squat aux haltères vers un banc",
+  "tf": [
+   "Tiens-toi debout, le dos droit, un banc plat derrière toi et un haltère dans chaque main (paumes tournées vers les jambes).",
+   "Écarte les pieds à la largeur des épaules, orteils légèrement tournés vers l’extérieur. Garde la tête haute en tout temps (regarder vers le bas te déséquilibre) et le dos droit. C’est ta position de départ.",
+   "Descends lentement en fléchissant les genoux, posture droite et tête haute, jusqu’à effleurer le banc derrière toi. Inspire pendant la descente.",
+   "Ne laisse pas les genoux dépasser les orteils, pour éviter un stress inutile sur le genou.",
+   "Remonte en expirant, en poussant surtout dans les talons, jusqu’à la position de départ.",
+   "Répète pour le nombre de répétitions prévu."
+  ]
+ },
+ "Plie_Dumbbell_Squat": {
+  "fr": "Squat sumo (plié) à l’haltère",
+  "tf": [
+   "Tiens un haltère par une extrémité à deux mains et tiens-toi debout, bien droit.",
+   "Écarte les pieds plus largement que les épaules, genoux légèrement fléchis et orteils tournés vers l’extérieur. Tes bras restent immobiles pendant tout l’exercice. C’est ta position de départ.",
+   "Fléchis lentement les genoux et descends jusqu’à ce que les cuisses soient parallèles au sol, en inspirant.",
+   "Pousse surtout dans les talons pour revenir à la position de départ, en expirant.",
+   "Répète pour le nombre de répétitions prévu."
+  ]
+ },
+ "Split_Squat_with_Dumbbells": {
+  "fr": "Squat bulgare aux haltères",
+  "tf": [
+   "Place-toi en position décalée, le pied arrière surélevé et le pied avant vers l’avant.",
+   "Tiens un haltère dans chaque main, bras le long du corps. C’est ta position de départ.",
+   "Descends en fléchissant le genou et la hanche. Garde une bonne posture tout au long du mouvement et le genou avant aligné avec le pied.",
+   "En bas, pousse dans le talon pour tendre le genou et la hanche et revenir à la position de départ."
+  ]
+ },
+ "Dumbbell_Lunges": {
+  "fr": "Fentes avant aux haltères",
+  "tf": [
+   "Tiens-toi debout, le buste droit, un haltère dans chaque main le long du corps. C’est ta position de départ.",
+   "Fais un pas d’environ 60 cm vers l’avant avec la jambe droite, le pied gauche restant en place, et descends en gardant le buste droit et l’équilibre. Inspire en descendant.",
+   "Ne laisse pas le genou avant dépasser les orteils, pour éviter un stress inutile sur l’articulation : garde le tibia avant perpendiculaire au sol.",
+   "En poussant surtout dans le talon, remonte à la position de départ en expirant.",
+   "Répète pour le nombre de répétitions prévu, puis fais l’exercice avec la jambe gauche."
+  ]
+ },
+ "Dumbbell_Rear_Lunge": {
+  "fr": "Fentes arrière aux haltères",
+  "tf": [
+   "Tiens-toi debout, le buste droit, un haltère dans chaque main le long du corps. C’est ta position de départ.",
+   "Fais un pas d’environ 60 cm vers l’arrière avec la jambe droite et descends en gardant le buste droit et l’équilibre. Inspire en descendant.",
+   "Ne laisse pas le genou avant dépasser les orteils et garde le tibia avant perpendiculaire au sol. Des fléchisseurs de hanche souples t’aident à garder le buste droit.",
+   "Une grande fente sollicite davantage les fessiers ; une fente courte, davantage les quadriceps.",
+   "Remonte à la position de départ en expirant. Pousse avec l’avant du pied pour cibler les quadriceps, ou avec les talons pour cibler les fessiers.",
+   "Recommence avec l’autre jambe."
+  ]
+ },
+ "Bodyweight_Walking_Lunge": {
+  "fr": "Fentes marchées au poids du corps",
+  "tf": [
+   "Tiens-toi debout, pieds écartés à la largeur des épaules, mains sur les hanches.",
+   "Fais un pas vers l’avant et fléchis les genoux pour descendre les hanches, jusqu’à ce que le genou arrière touche presque le sol.",
+   "Garde le buste droit et le genou avant au-dessus du pied avant.",
+   "Pousse dans le talon du pied avant et tends les deux genoux pour remonter.",
+   "Avance le pied arrière et enchaîne la fente sur l’autre jambe."
+  ]
+ },
+ "Dumbbell_Step_Ups": {
+  "fr": "Step-up aux haltères",
+  "tf": [
+   "Tiens-toi debout, le dos droit, un haltère dans chaque main (paumes tournées vers les jambes).",
+   "Pose le pied droit sur la plateforme surélevée. Monte en tendant la hanche et le genou droits, en poussant surtout dans le talon, puis pose aussi le pied gauche sur la plateforme. Expire pendant l’effort de montée.",
+   "Redescends la jambe gauche en fléchissant la hanche et le genou droits, en inspirant. Reviens ensuite à la position de départ en posant le pied droit à côté du gauche.",
+   "Répète avec la jambe droite pour le nombre de répétitions prévu, puis fais l’exercice avec la jambe gauche."
+  ]
+ },
+ "Step-up_with_Knee_Raise": {
+  "fr": "Step-up avec montée de genou",
+  "tf": [
+   "Tiens-toi debout face à un box ou un banc de hauteur adaptée, pieds joints. C’est ta position de départ.",
+   "Monte en posant le pied gauche sur le dessus du banc, puis tends la hanche et le genou de la jambe avant pour te tenir debout sur le box.",
+   "Une fois debout sur la jambe gauche, fléchis le genou et la hanche droits pour monter le genou le plus haut possible.",
+   "Inverse le mouvement pour redescendre du box, puis répète la séquence avec l’autre jambe."
+  ]
+ },
+ "Single-Leg_High_Box_Squat": {
+  "fr": "Squat unijambiste sur box haut",
+  "tf": [
+   "Place un box dans une cage (rack). Fixe un élastique ou une corde au-dessus du box.",
+   "Debout devant le box, monte dessus sur une jambe jusqu’à être complètement debout, en laissant l’autre jambe libre, sans appui.",
+   "Tiens l’élastique pour garder l’équilibre.",
+   "Continue de monter et de descendre sur la même jambe, puis change de côté."
+  ]
+ },
+ "Leg_Press": {
+  "fr": "Leg press",
+  "tf": [
+   "Assieds-toi sur la machine et place les pieds sur la plateforme devant toi, écartés à la largeur des épaules.",
+   "Déverrouille les barres de sécurité et pousse la plateforme jusqu’à ce que tes jambes soient tendues devant toi, sans verrouiller les genoux. Le tronc et les jambes forment un angle de 90°. C’est ta position de départ.",
+   "En inspirant, descends lentement la plateforme jusqu’à ce que tes cuisses et tes jambes forment un angle de 90°.",
+   "En poussant surtout dans les talons, avec les quadriceps, reviens à la position de départ en expirant.",
+   "Répète pour le nombre de répétitions prévu, puis remets bien les sécurités en place à la fin : tu ne veux pas que la plateforme chargée te tombe dessus."
+  ]
+ },
+ "Leg_Extensions": {
+  "fr": "Leg extension (machine)",
+  "tf": [
+   "Choisis ta charge et assieds-toi sur la machine à leg extension, jambes sous le rouleau (pieds pointés vers l’avant), mains sur les poignées latérales. C’est ta position de départ.",
+   "Ajuste le rouleau pour qu’il repose sur le bas des jambes, juste au-dessus des pieds. Cuisse et tibia doivent former un angle de 90° : si l’angle est plus fermé, le genou dépasse les orteils et l’articulation subit un stress inutile, alors ne descends pas sous 90°.",
+   "Avec les quadriceps, tends les jambes au maximum en expirant, le reste du corps immobile sur le siège. Marque une pause d’une seconde en contraction.",
+   "Redescends lentement la charge en inspirant, sans dépasser l’angle de 90°.",
+   "Répète pour le nombre de répétitions prévu."
+  ]
+ },
+ "Single-Leg_Leg_Extension": {
+  "fr": "Leg extension unijambiste (machine)",
+  "tf": [
+   "Assieds-toi sur la machine et règle-la : le rouleau doit être contre le bas du tibia sans toucher la cheville, et l’axe de rotation aligné avec ton genou. Choisis une charge adaptée à ton niveau.",
+   "En gardant une bonne posture, tends complètement une jambe et marque une pause en haut.",
+   "Reviens à la position de départ sans laisser la charge s’arrêter, pour garder la tension dans le muscle.",
+   "Répète pour le nombre de répétitions voulu."
+  ]
+ },
+ "Lying_Leg_Curls": {
+  "fr": "Leg curl allongé (machine)",
+  "tf": [
+   "Règle le levier de la machine à ta taille et allonge-toi sur le ventre, le rouleau à l’arrière des jambes, juste sous les mollets.",
+   "Si possible, choisis une machine inclinée plutôt qu’à plat : la position inclinée sollicite mieux les ischio-jambiers.",
+   "Garde le tronc à plat sur le banc, les jambes complètement tendues, et agrippe les poignées latérales, orteils pointés droit. C’est ta position de départ.",
+   "En expirant, fléchis les jambes le plus loin possible sans décoller les cuisses du coussin. Tiens la contraction une seconde.",
+   "En inspirant, ramène les jambes à la position de départ. Répète pour le nombre de répétitions prévu."
+  ]
+ },
+ "Seated_Leg_Curl": {
+  "fr": "Leg curl assis (machine)",
+  "tf": [
+   "Règle le levier de la machine à ta taille et assieds-toi, le dos contre le dossier.",
+   "Place l’arrière du bas des jambes sur le rouleau (juste sous les mollets) et fixe le coussin contre tes cuisses, juste au-dessus des genoux.",
+   "Agrippe les poignées latérales, orteils pointés droit, jambes complètement tendues devant toi. C’est ta position de départ.",
+   "En expirant, fléchis les genoux pour ramener le levier le plus loin possible vers l’arrière des cuisses. Garde le tronc immobile et tiens la contraction une seconde.",
+   "Reviens lentement à la position de départ en inspirant.",
+   "Répète pour le nombre de répétitions prévu."
+  ]
+ },
+ "Standing_Leg_Curl": {
+  "fr": "Leg curl debout (machine)",
+  "tf": [
+   "Règle le levier à ta taille et penche le buste vers l’avant d’environ 30 à 45° (cette inclinaison sollicite mieux les ischio-jambiers), le rouleau à l’arrière de la jambe droite (juste sous le mollet) et l’avant de la jambe droite contre le coussin de la machine.",
+   "Garde le buste penché, la jambe complètement tendue, et agrippe les poignées latérales, orteils pointés droit. C’est ta position de départ.",
+   "En expirant, fléchis la jambe droite le plus loin possible sans décoller la cuisse du coussin. Tiens la contraction une seconde.",
+   "En inspirant, ramène la jambe à la position de départ. Répète pour le nombre de répétitions prévu.",
+   "Fais ensuite le même exercice avec la jambe gauche."
+  ]
+ },
+ "Ball_Leg_Curl": {
+  "fr": "Leg curl au ballon suisse",
+  "tf": [
+   "Allonge-toi sur le dos au sol, les pieds sur le ballon suisse.",
+   "Place le ballon pour que tes chevilles reposent dessus quand tes jambes sont tendues. C’est ta position de départ.",
+   "Décolle les hanches du sol, ton poids sur les omoplates et les pieds.",
+   "Fléchis les genoux pour ramener le ballon le plus près possible de toi, en contractant les ischio-jambiers.",
+   "Après une courte pause, reviens à la position de départ."
+  ]
+ },
+ "Natural_Glute_Ham_Raise": {
+  "fr": "Nordic curl (glute ham raise)",
+  "tf": [
+   "Utilise le coussin à jambes d’une machine de tirage vertical (lat pulldown) ou d’un pupitre à biceps : place-toi dos à la machine, chevilles sous les coussins et genoux sur le siège.",
+   "Tiens-toi droit avec une bonne posture. C’est ta position de départ.",
+   "Descends de façon contrôlée jusqu’à ce que tes genoux soient presque complètement tendus.",
+   "Toujours en contrôle, remonte à la position de départ.",
+   "Si tu n’arrives pas à compléter une répétition, aide-toi d’un élastique, d’un partenaire ou en poussant sur un box."
+  ]
+ },
+ "Stiff-Legged_Dumbbell_Deadlift": {
+  "fr": "Soulevé de terre jambes tendues",
+  "tf": [
+   "Prends un haltère dans chaque main, bras tendus le long du corps.",
+   "Tiens-toi debout, le buste droit, pieds écartés à la largeur des épaules ou moins, genoux légèrement fléchis. C’est ta position de départ.",
+   "Sans bouger les genoux, penche-toi à partir de la taille en gardant le dos droit et descends les haltères au-dessus de tes pieds, comme pour ramasser quelque chose au sol, jusqu’à sentir un étirement des ischio-jambiers. Expire pendant ce mouvement.",
+   "Redresse le buste en tendant les hanches jusqu’à la position de départ, en inspirant.",
+   "Répète pour le nombre de répétitions prévu."
+  ]
+ },
+ "Kettlebell_One-Legged_Deadlift": {
+  "fr": "Soulevé de terre unijambiste (kettlebell)",
+  "tf": [
+   "Tiens un kettlebell par la poignée d’une main. Tiens-toi sur une jambe, du même côté que le kettlebell.",
+   "Genou légèrement fléchi, fais un soulevé de terre jambe tendue en te penchant à partir des hanches et en allongeant la jambe libre derrière toi pour garder l’équilibre.",
+   "Continue de descendre le kettlebell jusqu’à ce que ton buste soit parallèle au sol, puis reviens en position debout."
+  ]
+ },
+ "One-Arm_Kettlebell_Swings": {
+  "fr": "Kettlebell swing à une main",
+  "tf": [
+   "Tiens-toi debout, pieds un peu plus larges que les épaules, un kettlebell au sol devant toi.",
+   "Saisis la poignée d’une main, penche-toi à partir des hanches en gardant le dos droit et fais passer le kettlebell entre tes jambes.",
+   "Tends vigoureusement les hanches pour projeter le kettlebell vers l’avant jusqu’à hauteur de poitrine, bras tendu.",
+   "Laisse-le redescendre entre tes jambes en fléchissant les hanches, puis enchaîne. Change de main à la fin de ta série."
+  ]
+ },
+ "Pull_Through": {
+  "fr": "Pull-through à la poulie",
+  "tf": [
+   "Tiens-toi debout à environ 1 m d’une poulie basse munie d’une corde ou d’une poignée, dos à la machine. Place-toi à cheval sur le câble, pieds bien écartés.",
+   "Penche-toi à partir des hanches et passe les mains le plus loin possible entre tes jambes, genoux légèrement fléchis.",
+   "Bras tendus, tends les hanches pour te redresser complètement.",
+   "Ne tire pas avec les épaules : tout le mouvement doit venir des hanches."
+  ]
+ },
+ "Hyperextensions_Back_Extensions": {
+  "fr": "Extension lombaire au banc",
+  "tf": [
+   "Allonge-toi sur le ventre sur un banc à lombaires (hyperextension), chevilles bien calées sous les coussins.",
+   "Si possible, ajuste le coussin du haut pour que le haut de tes cuisses repose à plat dessus, en laissant assez d’espace pour te pencher librement à partir de la taille.",
+   "Corps droit, croise les bras devant toi ou derrière la tête. C’est ta position de départ. Pour plus de résistance, tu peux tenir un disque devant toi sous tes bras croisés.",
+   "Penche-toi lentement vers l’avant en gardant le dos plat, en inspirant, jusqu’à sentir un bon étirement des ischio-jambiers ou jusqu’à ce que tu ne puisses plus descendre sans arrondir le dos. N’arrondis jamais le dos.",
+   "Remonte lentement le buste jusqu’à la position de départ. Ne cambre pas le dos au-delà de la ligne droite et ne donne jamais d’élan avec le buste, pour protéger ton dos.",
+   "Répète pour le nombre de répétitions prévu."
+  ]
+ },
+ "Butt_Lift_Bridge": {
+  "fr": "Pont fessier",
+  "tf": [
+   "Allonge-toi sur le dos, bras le long du corps, genoux pliés et pieds écartés environ à la largeur des épaules. C’est ta position de départ.",
+   "En poussant surtout dans les talons, soulève les hanches du sol en gardant le dos droit. Expire pendant la montée et tiens une seconde en haut.",
+   "Redescends lentement à la position de départ en inspirant."
+  ]
+ },
+ "Single_Leg_Glute_Bridge": {
+  "fr": "Pont fessier sur une jambe",
+  "tf": [
+   "Allonge-toi sur le dos, pieds à plat au sol et genoux pliés.",
+   "Lève une jambe du sol en ramenant le genou vers la poitrine. C’est ta position de départ.",
+   "Pousse dans le talon de la jambe au sol pour monter les hanches et décoller les fessiers du sol.",
+   "Monte le plus haut possible, marque une pause, puis reviens à la position de départ."
+  ]
+ },
+ "Physioball_Hip_Bridge": {
+  "fr": "Pont des hanches sur ballon suisse",
+  "tf": [
+   "Installe le haut du dos sur un ballon suisse, les hanches dans le vide. Garde les deux pieds à plat au sol, écartés à la largeur des hanches ou plus. C’est ta position de départ.",
+   "Monte les hanches en les étendant avec les fessiers et les ischios, comme pour faire un pont.",
+   "Marque une pause en haut, puis reviens à la position de départ."
+  ]
+ },
+ "Glute_Kickback": {
+  "fr": "Kickback fessier à quatre pattes",
+  "tf": [
+   "Mets-toi à genoux au sol ou sur un tapis et penche-toi vers l’avant, mains au sol, bras tendus perpendiculaires au tronc et écartés à la largeur des épaules. Regarde devant toi et garde les genoux pliés à 90 degrés. C’est ta position de départ.",
+   "En expirant, lève la jambe droite jusqu’à ce que la cuisse soit alignée avec le dos, en gardant le genou plié à 90 degrés. Contracte les fessiers pendant tout le mouvement et tiens la contraction une seconde en haut.",
+   "En haut du mouvement, ta cuisse doit être parallèle au sol et ton mollet perpendiculaire au sol.",
+   "Reviens à la position de départ en inspirant, puis fais la même chose avec la jambe gauche.",
+   "Continue en alternant les jambes pour le nombre de répétitions prévu."
+  ]
+ },
+ "Monster_Walk": {
+  "fr": "Monster walk avec élastiques",
+  "tf": [
+   "Place un élastique autour des chevilles et un autre autour des genoux. Ils doivent être bien tendus quand tes pieds sont écartés à la largeur des épaules.",
+   "Fais de petits pas vers l’avant en alternant pied gauche et pied droit.",
+   "Après plusieurs pas, fais l’inverse et recule jusqu’à ton point de départ."
+  ]
+ },
+ "Thigh_Abductor": {
+  "fr": "Abducteurs à la machine",
+  "tf": [
+   "Assieds-toi sur la machine à abducteurs et choisis une charge confortable. Une fois les jambes bien placées, tiens les poignées de chaque côté. Garde tout le haut du corps (au-dessus de la taille) immobile. C’est ta position de départ.",
+   "En expirant, pousse lentement contre la machine avec les jambes pour les écarter l’une de l’autre.",
+   "Sens la contraction une seconde, puis ramène les jambes à la position de départ en inspirant. Garde le haut du corps immobile pour éviter les blessures.",
+   "Répète pour le nombre de répétitions prévu."
+  ]
+ },
+ "Thigh_Adductor": {
+  "fr": "Adducteurs à la machine",
+  "tf": [
+   "Assieds-toi sur la machine à adducteurs et choisis une charge confortable. Une fois les jambes bien placées contre les coussins, tiens les poignées de chaque côté. Garde tout le haut du corps (au-dessus de la taille) immobile. C’est ta position de départ.",
+   "En expirant, pousse lentement contre la machine avec les jambes pour les rapprocher l’une de l’autre.",
+   "Sens la contraction une seconde, puis ramène les jambes à la position de départ en inspirant. Garde le haut du corps immobile et évite les mouvements brusques pour prévenir les blessures.",
+   "Répète pour le nombre de répétitions prévu."
+  ]
+ },
+ "Band_Hip_Adductions": {
+  "fr": "Adduction de hanche à l’élastique",
+  "tf": [
+   "Attache un élastique à un poteau solide ou à un autre point fixe, au niveau des chevilles.",
+   "Mets-toi de profil à côté du poteau et passe la cheville la plus proche du poteau dans l’élastique.",
+   "Tiens-toi bien droit, appuie-toi au poteau au besoin, la jambe écartée vers le poteau et l’élastique tendu. C’est ta position de départ.",
+   "Genou tendu, ramène la jambe vers l’intérieur jusqu’à croiser légèrement devant l’autre.",
+   "Reviens lentement à la position de départ et répète pour le nombre de répétitions prévu, puis change de côté."
+  ]
+ },
+ "Cable_Hip_Adduction": {
+  "fr": "Adduction de hanche à la poulie basse",
+  "tf": [
+   "Place-toi devant une poulie basse, face vers l’avant, une jambe près de la poulie et l’autre éloignée.",
+   "Attache la sangle de cheville au câble et à la cheville de la jambe la plus proche de la poulie.",
+   "Éloigne-toi de la pile de poids, pieds largement écartés, et agrippe la barre de la machine.",
+   "Tiens-toi sur le pied sans sangle (le pied éloigné) et laisse la jambe attachée se faire tirer vers la poulie. C’est ta position de départ.",
+   "En expirant, amène la jambe attachée devant la jambe d’appui en contractant l’intérieur des cuisses.",
+   "Reviens lentement à la position de départ en inspirant.",
+   "Répète pour le nombre de répétitions prévu, puis fais la même chose avec l’autre jambe."
+  ]
+ },
+ "Standing_Calf_Raises": {
+  "fr": "Mollets debout (machine)",
+  "tf": [
+   "Règle le levier rembourré de la machine à mollets selon ta taille.",
+   "Place les épaules sous les coussins et pose l’avant des pieds sur le bloc, talons dans le vide. Oriente les pointes de pieds vers l’avant, vers l’extérieur ou vers l’intérieur.",
+   "Pousse le levier en tendant les hanches et les genoux jusqu’à être debout, le tronc droit. Garde une légère flexion des genoux, sans jamais les verrouiller. C’est ta position de départ.",
+   "En expirant, monte les talons le plus haut possible en contractant les mollets. Garde les genoux immobiles, sans les plier, et tiens la contraction une seconde.",
+   "Redescends lentement en inspirant, en abaissant les talons jusqu’à sentir l’étirement des mollets.",
+   "Répète pour le nombre de répétitions prévu."
+  ]
+ },
+ "Seated_Calf_Raise": {
+  "fr": "Mollets assis (machine)",
+  "tf": [
+   "Assieds-toi sur la machine et pose l’avant des pieds sur le bas de la plateforme, talons dans le vide. Choisis l’orientation des pieds : vers l’avant, vers l’intérieur ou vers l’extérieur.",
+   "Place le bas des cuisses sous le coussin du levier, réglé selon la hauteur de tes cuisses. Pose les mains sur le coussin pour l’empêcher de glisser vers l’avant.",
+   "Soulève légèrement le levier en montant les talons, puis retire la barre de sécurité. C’est ta position de départ.",
+   "En inspirant, descends lentement les talons en pliant les chevilles jusqu’à l’étirement complet des mollets.",
+   "En expirant, monte les talons le plus haut possible en contractant les mollets. Tiens la contraction une seconde en haut.",
+   "Répète pour le nombre de répétitions prévu."
+  ]
+ },
+ "Standing_Dumbbell_Calf_Raise": {
+  "fr": "Mollets debout aux haltères",
+  "tf": [
+   "Tiens-toi droit, un haltère dans chaque main le long du corps. Pose l’avant des pieds sur une planche solide et stable d’environ 5 à 8 cm de haut, talons dans le vide touchant le sol. C’est ta position de départ.",
+   "Pointes de pieds droites (pour travailler tout le mollet), vers l’intérieur (accent sur le chef externe) ou vers l’extérieur (accent sur le chef interne), monte les talons en expirant et en contractant les mollets. Tiens la contraction une seconde en haut.",
+   "En inspirant, redescends lentement les talons jusqu’à la position de départ.",
+   "Répète pour le nombre de répétitions prévu."
+  ]
+ },
+ "Dumbbell_Seated_One-Leg_Calf_Raise": {
+  "fr": "Mollet assis unilatéral à l’haltère",
+  "tf": [
+   "Place un bloc au sol à environ 30 cm d’un banc plat.",
+   "Assieds-toi sur le banc et pose un haltère sur le haut de ta cuisse gauche, à environ 8 cm au-dessus du genou.",
+   "Pose l’avant du pied gauche sur le bloc. C’est ta position de départ.",
+   "En expirant, monte sur la pointe du pied le plus haut possible en contractant le mollet. Tiens la contraction une seconde.",
+   "Redescends lentement à la position de départ en abaissant le talon le plus bas possible pour bien étirer le mollet.",
+   "Fais le nombre de répétitions prévu, puis répète avec la jambe droite."
+  ]
+ },
+ "Calf_Press_On_The_Leg_Press_Machine": {
+  "fr": "Mollets à la presse (leg press)",
+  "tf": [
+   "Assieds-toi sur la machine de leg press et pose les pieds sur la plateforme devant toi, écartés à la largeur des épaules.",
+   "Retire les barres de sécurité et pousse la plateforme jusqu’à tendre les jambes, sans verrouiller les genoux. Si ta machine le permet, laisse plutôt les barres de sécurité en place, c’est plus sécuritaire. Ton tronc et tes jambes doivent former un angle de 90 degrés.",
+   "Place ensuite avec soin les orteils et l’avant des pieds sur le bas de la plateforme, talons dans le vide, pointes vers l’avant, l’extérieur ou l’intérieur. C’est ta position de départ.",
+   "En expirant, pousse la plateforme en tendant les chevilles le plus loin possible et en contractant les mollets. Garde les genoux immobiles, sans jamais les plier, et tiens la contraction une seconde.",
+   "En inspirant, reviens lentement à la position de départ en fléchissant les chevilles jusqu’à sentir l’étirement des mollets.",
+   "Répète pour le nombre de répétitions prévu."
+  ]
+ },
+ "Plank": {
+  "fr": "Planche",
+  "tf": [
+   "Mets-toi face au sol, en appui sur les orteils et les avant-bras. Bras pliés, coudes directement sous les épaules.",
+   "Garde le corps bien droit en tout temps et tiens la position le plus longtemps possible.",
+   "Variante : pour augmenter la difficulté, lève un bras ou une jambe."
+  ]
+ },
+ "Side_Bridge": {
+  "fr": "Planche latérale",
+  "tf": [
+   "Allonge-toi sur le côté, jambes tendues et pieds l’un sur l’autre, en appui sur l’avant-bras, coude sous l’épaule.",
+   "Soulève les hanches pour que ton corps forme une ligne droite des épaules aux pieds.",
+   "Tiens la position, puis recommence de l’autre côté."
+  ]
+ },
+ "Dead_Bug": {
+  "fr": "Dead bug",
+  "tf": [
+   "Allonge-toi sur le dos, bras tendus au-dessus de toi vers le plafond.",
+   "Monte les pieds, les genoux et les hanches à 90 degrés.",
+   "Expire fort pour abaisser la cage thoracique et plaquer le dos au sol, en basculant le bassin vers le haut et en serrant les fessiers. Garde cette position pendant tout le mouvement. C’est ta position de départ.",
+   "Tends une jambe en dépliant le genou et la hanche pour l’amener juste au-dessus du sol.",
+   "Garde le bas du dos et le bassin en place pendant le mouvement : ton dos va vouloir se cambrer.",
+   "Reste gainé et ramène la jambe à la position de départ.",
+   "Recommence de l’autre côté, en alternant jusqu’à la fin de la série."
+  ]
+ },
+ "Pallof_Press": {
+  "fr": "Pallof press",
+  "tf": [
+   "Fixe une poignée simple à la poulie et, si possible, règle le câble à hauteur d’épaule. Sinon, une poulie basse fera l’affaire.",
+   "De côté par rapport à la poulie, saisis la poignée à deux mains et éloigne-toi d’environ une longueur de bras, câble sous tension.",
+   "Pieds écartés à la largeur des hanches et genoux légèrement fléchis, tiens la poignée au milieu de la poitrine. C’est ta position de départ.",
+   "Pousse la poignée devant ta poitrine jusqu’à tendre complètement les bras. Garde les abdos serrés et engagés.",
+   "Tiens la position quelques secondes, puis reviens à la position de départ.",
+   "À la fin de la série, recommence tourné de l’autre côté."
+  ]
+ },
+ "Pallof_Press_With_Rotation": {
+  "fr": "Pallof press avec rotation",
+  "tf": [
+   "Fixe une poignée simple à la poulie, réglée à hauteur d’épaule.",
+   "De côté par rapport à la poulie, saisis la poignée d’une main et éloigne-toi d’environ une longueur de bras, câble sous tension, le bras tendu aligné avec le câble.",
+   "Pieds écartés à la largeur des hanches, ramène la poignée contre ta poitrine et saisis-la aussi avec l’autre main.",
+   "Face vers l’avant, pousse la poignée devant ta poitrine en gardant les abdos serrés et engagés.",
+   "Hanches fixes, tourne le tronc à l’opposé de la poulie jusqu’à faire un quart de tour, puis reviens lentement au centre en gardant une posture solide et les bras tendus devant toi.",
+   "Ramène les mains à la poitrine et pousse immédiatement jusqu’à l’extension complète des bras : c’est une répétition.",
+   "Répète jusqu’à l’échec, puis replace-toi et fais la même chose de l’autre côté."
+  ]
+ },
+ "Russian_Twist": {
+  "fr": "Russian twist",
+  "tf": [
+   "Allonge-toi au sol, pieds coincés sous un objet stable ou tenus par un partenaire, genoux pliés.",
+   "Monte le haut du corps pour former un V avec tes cuisses. Tends les bras devant toi, perpendiculaires au tronc, mains jointes. C’est ta position de départ.",
+   "En expirant, tourne le tronc vers la droite jusqu’à ce que tes bras soient parallèles au sol.",
+   "Tiens la contraction une seconde, puis reviens à la position de départ. Fais ensuite la même chose du côté gauche.",
+   "Répète pour le nombre de répétitions prévu."
+  ]
+ },
+ "Reverse_Crunch": {
+  "fr": "Crunch inversé",
+  "tf": [
+   "Allonge-toi au sol, jambes tendues, bras le long du tronc et paumes au sol. Garde les bras immobiles pendant tout l’exercice.",
+   "Monte les jambes pour que tes cuisses soient perpendiculaires au sol, pieds joints et tibias parallèles au sol. C’est ta position de départ.",
+   "En inspirant, ramène les jambes vers le tronc en enroulant le bassin vers l’arrière et en décollant les hanches du sol. À la fin du mouvement, tes genoux touchent ta poitrine.",
+   "Tiens la contraction une seconde, puis ramène les jambes à la position de départ en expirant.",
+   "Répète pour le nombre de répétitions prévu."
+  ]
+ },
+ "Crunches": {
+  "fr": "Crunch",
+  "tf": [
+   "Allonge-toi sur le dos, pieds à plat au sol ou posés sur un banc, genoux pliés à 90 degrés. Si tes pieds sont sur un banc, écarte-les de 8 à 10 cm et tourne les orteils vers l’intérieur pour qu’ils se touchent.",
+   "Pose légèrement les mains de chaque côté de la tête, coudes rentrés. Ne croise pas les doigts derrière la tête.",
+   "En plaquant le bas du dos au sol pour mieux isoler les abdos, commence à décoller les épaules du sol.",
+   "Continue de pousser le bas du dos au sol en contractant les abdos et en expirant. Les épaules ne montent que d’environ 10 cm et le bas du dos reste au sol. En haut, contracte fort les abdos pendant une seconde.",
+   "Redescends lentement à la position de départ en inspirant. Garde un mouvement lent et contrôlé, sans élan.",
+   "Répète pour le nombre de répétitions prévu."
+  ]
+ },
+ "Flat_Bench_Lying_Leg_Raise": {
+  "fr": "Relevé de jambes allongé sur banc",
+  "tf": [
+   "Allonge-toi sur le dos sur un banc plat, jambes tendues dans le vide au bout du banc.",
+   "Place les mains sous les fessiers, paumes vers le bas, ou sur les côtés en tenant le banc. C’est ta position de départ.",
+   "Jambes aussi tendues que possible, genoux légèrement fléchis mais fixes, monte les jambes jusqu’à ce qu’elles forment un angle de 90 degrés avec le sol. Expire pendant la montée et tiens la contraction une seconde en haut.",
+   "En inspirant, redescends lentement les jambes à la position de départ."
+  ]
+ },
+ "Knee_Hip_Raise_On_Parallel_Bars": {
+  "fr": "Relevé de jambes à la chaise romaine",
+  "tf": [
+   "Installe-toi sur la chaise romaine (banc de relevé de jambes vertical), avant-bras posés sur les coussins de chaque côté du tronc et mains sur les poignées. Tes bras sont pliés à 90 degrés.",
+   "Garde le tronc droit, le bas du dos appuyé contre le dossier et les jambes tendues vers le sol. C’est ta position de départ.",
+   "En expirant, monte les jambes tendues jusqu’à ce qu’elles soient à peu près parallèles au sol, puis tiens la contraction une seconde. N’utilise ni élan ni balancement.",
+   "Redescends lentement à la position de départ en inspirant.",
+   "Répète pour le nombre de répétitions prévu."
+  ]
+ },
+ "Exercise_Ball_Pull-In": {
+  "fr": "Ramené de genoux sur ballon suisse",
+  "tf": [
+   "Place un ballon suisse près de toi et mets-toi au sol devant lui en position de push-up, mains au sol à la largeur des épaules.",
+   "Pose le bas des tibias sur le ballon. Tes jambes sont tendues et le haut du corps est soutenu par tes bras tendus, comme pour un push-up. C’est ta position de départ.",
+   "Dos bien droit et haut du corps immobile, ramène les genoux vers la poitrine en expirant, en laissant le ballon rouler vers l’avant sous tes chevilles. Serre les abdos et tiens la position une seconde.",
+   "Tends lentement les jambes en inspirant pour ramener le ballon à la position de départ.",
+   "Répète pour le nombre de répétitions prévu."
+  ]
+ },
+ "Ab_Roller": {
+  "fr": "Roue abdominale",
+  "tf": [
+   "Tiens la roue abdominale à deux mains et mets-toi à genoux au sol.",
+   "Pose la roue au sol devant toi pour être en appui sur les mains et les genoux, comme pour une pompe sur les genoux. C’est ta position de départ.",
+   "Fais rouler lentement la roue droit devant toi en inspirant, jusqu’à ce que ton corps soit allongé.",
+   "Descends le plus loin possible sans que ton corps touche le sol.",
+   "Marque une pause en position étirée, puis ramène-toi à la position de départ en expirant.",
+   "Va lentement et garde les abdos contractés en tout temps."
+  ]
+ },
+ "Standing_Cable_Wood_Chop": {
+  "fr": "Wood chop à la poulie haute",
+  "tf": [
+   "Fixe une poignée simple à la poulie et place le câble en position la plus haute.",
+   "De côté par rapport à la poulie, saisis la poignée d’une main et éloigne-toi d’environ une longueur de bras, câble sous tension. Ton bras tendu doit être dans l’axe du câble.",
+   "Pieds écartés à la largeur des épaules, attrape aussi la poignée avec l’autre main, bras toujours tendus.",
+   "D’un seul mouvement, tire la poignée vers le bas en diagonale devant ton corps jusqu’à ton genou avant, en faisant pivoter ton tronc.",
+   "Garde le dos et les bras droits et le tronc gainé, et pivote le pied arrière en pliant les genoux pour avoir toute l’amplitude.",
+   "Sans changer ta posture et en gardant les bras tendus, reviens lentement et de façon contrôlée à la position de départ.",
+   "Répète jusqu’à l’échec, puis change de côté et fais la même série."
+  ]
+ },
+ "Flutter_Kicks": {
+  "fr": "Battements de jambes au banc",
+  "tf": [
+   "Allonge-toi sur le ventre sur un banc plat, les hanches au bord du banc et les jambes tendues, orteils bien au-dessus du sol. Tiens le bord avant du banc avec les mains.",
+   "Serre les fessiers et les ischios, et tends les jambes jusqu’à ce qu’elles soient à la hauteur des hanches. C’est ta position de départ.",
+   "Lève la jambe gauche plus haut que la droite.",
+   "Puis descends la jambe gauche en montant la droite.",
+   "Continue d’alterner ainsi, comme un battement de jambes à la nage, pour le nombre de répétitions prévu de chaque côté.",
+   "Garde un mouvement contrôlé en tout temps et respire normalement."
+  ]
+ },
+ "Superman": {
+  "fr": "Superman",
+  "tf": [
+   "Allonge-toi à plat ventre au sol ou sur un tapis, les bras tendus devant toi. C’est ta position de départ.",
+   "En expirant, soulève en même temps les bras, les jambes et la poitrine du sol, et tiens la contraction 2 secondes.",
+   "Contracte bien le bas du dos : en position haute, tu dois ressembler à Superman en plein vol.",
+   "Redescends lentement les bras, les jambes et la poitrine à la position de départ en inspirant.",
+   "Répète pour le nombre de répétitions prévu."
+  ]
+ },
+ "Hip_Flexion_with_Band": {
+  "fr": "Flexion de hanche à l’élastique",
+  "tf": [
+   "Attache une extrémité de l’élastique au bas d’un poteau et l’autre à une cheville.",
+   "Place-toi dos au point d’attache de l’élastique.",
+   "Tête et poitrine hautes, monte le genou jusqu’à 90 degrés et marque une pause.",
+   "Ramène la jambe à la position de départ."
+  ]
+ },
+ "Mountain_Climbers": {
+  "fr": "Mountain climbers",
+  "tf": [
+   "Mets-toi en position de pompe, en appui sur les mains et les orteils.",
+   "Plie la hanche et le genou pour ramener une jambe jusqu’à ce que le genou soit à peu près sous la hanche. C’est ta position de départ.",
+   "De façon explosive, inverse la position des jambes : tends la jambe pliée en appui sur les orteils et ramène l’autre pied vers l’avant, hanche et genou fléchis.",
+   "Continue en alternant pendant 20 à 30 secondes."
+  ]
+ },
+ "Freehand_Jump_Squat": {
+  "fr": "Squat sauté",
+  "tf": [
+   "Croise les bras sur la poitrine.",
+   "Tête haute et dos droit, place tes pieds à la largeur des épaules.",
+   "En gardant le dos droit et la poitrine haute, descends en squat en inspirant jusqu’à ce que tes cuisses soient parallèles au sol, ou plus bas.",
+   "Pousse surtout avec l’avant des pieds et saute le plus haut possible, en utilisant tes cuisses comme des ressorts. Expire pendant cette phase.",
+   "Dès que tu touches le sol, redescends aussitôt en squat et saute de nouveau.",
+   "Répète pour le nombre de répétitions prévu."
+  ]
+ },
+ "Front_Box_Jump": {
+  "fr": "Saut sur box",
+  "tf": [
+   "Place une box de hauteur adaptée à 30-60 cm devant toi et tiens-toi debout, pieds à la largeur des épaules. C’est ta position de départ.",
+   "Fais un petit squat pour préparer le saut, en balançant les bras vers l’arrière.",
+   "Rebondis aussitôt en tendant les hanches, les genoux et les chevilles pour sauter le plus haut possible. Balance les bras vers l’avant et vers le haut.",
+   "Atterris sur la box genoux fléchis, en absorbant l’impact avec les jambes.",
+   "Tu peux sauter pour redescendre au sol, mais idéalement, redescends une jambe à la fois."
+  ]
+ },
+ "Lateral_Bound": {
+  "fr": "Bonds latéraux",
+  "tf": [
+   "Mets-toi en demi-squat, de profil par rapport à ta direction de déplacement. C’est ta position de départ.",
+   "Laisse ta jambe menante faire un contre-mouvement vers l’intérieur pendant que tu transfères ton poids sur la jambe extérieure.",
+   "Pousse immédiatement et tends-toi pour bondir le plus loin possible sur le côté.",
+   "À l’atterrissage, repousse aussitôt dans la direction opposée pour revenir à ton point de départ.",
+   "Continue d’aller et revenir pour plusieurs répétitions."
+  ]
+ },
+ "Alternate_Leg_Diagonal_Bound": {
+  "fr": "Bonds en diagonale alternés",
+  "tf": [
+   "Mets-toi dans une position confortable, un pied légèrement devant l’autre.",
+   "Pousse avec la jambe avant en projetant le genou opposé vers l’avant, le plus haut possible, avant d’atterrir.",
+   "À chaque bond, essaie de couvrir le plus de distance possible vers le côté. Une ligne au sol peut t’aider à évaluer la distance d’un côté à l’autre.",
+   "Répète la séquence avec l’autre jambe."
+  ]
+ },
+ "Single-Leg_Hop_Progression": {
+  "fr": "Sauts sur une jambe (cônes)",
+  "tf": [
+   "Dispose une rangée de cônes devant toi.",
+   "Tiens-toi debout, détendu, en équilibre sur une jambe, le genou opposé levé. C’est ta position de départ.",
+   "Saute vers l’avant par-dessus le cône, en décollant et en atterrissant sur la même jambe.",
+   "Enchaîne d’un cône à l’autre avec des sauts en contre-mouvement.",
+   "Au bout de la rangée, fais demi-tour et reviens sur l’autre jambe."
+  ]
+ },
+ "Single-Leg_Lateral_Hop": {
+  "fr": "Sauts latéraux sur une jambe",
+  "tf": [
+   "Place-toi à côté d’un cône ou d’une haie, en appui sur une jambe, le genou légèrement fléchi. C’est ta position de départ.",
+   "Fais un saut en contre-mouvement pour sauter de côté par-dessus le cône.",
+   "Atterris sur la même jambe et rebondis aussitôt pour revenir à ta position de départ.",
+   "Continue de sauter d’un côté à l’autre."
+  ]
+ },
+ "Lateral_Cone_Hops": {
+  "fr": "Sauts latéraux par-dessus des cônes",
+  "tf": [
+   "Dispose plusieurs cônes en rangée, espacés d’environ 1 m.",
+   "Place-toi au bout de la rangée, de profil par rapport à la direction de déplacement. C’est ta position de départ.",
+   "Fléchis brièvement les genoux pour déclencher le réflexe d’étirement, puis inverse aussitôt le mouvement pour pousser et sauter vers le haut et de côté par-dessus le cône.",
+   "Amortis l’atterrissage avec les jambes et rebondis directement dans le saut suivant, jusqu’au bout de la rangée."
+  ]
+ },
+ "Hurdle_Hops": {
+  "fr": "Sauts par-dessus des haies",
+  "tf": [
+   "Installe une rangée de haies ou d’autres petits obstacles, espacés d’environ 1 m.",
+   "Tiens-toi devant la première haie, pieds à la largeur des épaules. C’est ta position de départ.",
+   "Saute à pieds joints par-dessus la première haie en balançant les deux bras.",
+   "Amortis l’atterrissage en pliant les genoux et rebondis aussitôt par-dessus la haie suivante.",
+   "Continue jusqu’à avoir franchi toutes les haies."
+  ]
+ },
+ "Split_Jump": {
+  "fr": "Fentes sautées",
+  "tf": [
+   "Mets-toi en position de fente, un pied devant avec le genou plié, le genou arrière presque au sol.",
+   "Assure-toi que le genou avant est aligné au-dessus du milieu du pied.",
+   "En poussant sur les deux jambes, saute le plus haut possible en balançant les bras pour t’aider à monter.",
+   "Pendant le saut, rapproche les pieds, puis replace-les dans leur position initiale à l’atterrissage.",
+   "Amortis l’impact en revenant dans la position de départ."
+  ]
+ },
+ "Knee_Tuck_Jump": {
+  "fr": "Sauts genoux-poitrine",
+  "tf": [
+   "Tiens-toi debout, genoux légèrement fléchis, les mains devant toi à hauteur de poitrine, paumes vers le bas et bouts des doigts qui se touchent. C’est ta position de départ.",
+   "Descends rapidement en quart de squat et explose aussitôt vers le haut.",
+   "Monte les genoux vers la poitrine en essayant de toucher tes paumes.",
+   "Saute le plus haut possible, puis assure une bonne réception en tendant de nouveau les jambes et en laissant les genoux se plier pour absorber l’impact."
+  ]
+ },
+ "Fast_Skipping": {
+  "fr": "Sautillés rapides",
+  "tf": [
+   "Commence dans une position détendue, une jambe légèrement en avant. C’est ta position de départ.",
+   "Sautille en enchaînant un pas et un petit saut sur le même pied (droit-droit), puis sur l’autre (gauche-gauche), en alternant.",
+   "Pour aller vite, reste près du sol et réduis le temps en l’air, en te déplaçant le plus rapidement possible."
+  ]
+ },
+ "Carioca_Quick_Step": {
+  "fr": "Carioca pas rapides",
+  "tf": [
+   "Commence pieds écartés d’une dizaine de centimètres, le bras gauche levé, dans une position athlétique détendue.",
+   "Avec le pied droit, fais un pas rapide derrière, puis monte le genou.",
+   "Ramène vivement les bras vers le haut quand tu montes le genou droit, en veillant à ce que le genou monte et descende bien à la verticale.",
+   "Évite de tourner les pieds et garde le regard vers l’avant pendant que tu te déplaces sur le côté."
+  ]
+ },
+ "Rope_Jumping": {
+  "fr": "Corde à sauter",
+  "tf": [
+   "Tiens une extrémité de la corde dans chaque main, la corde posée au sol derrière toi.",
+   "Lève les bras et fais passer la corde par-dessus ta tête pour la ramener devant toi.",
+   "Quand elle arrive au sol, saute par-dessus.",
+   "Trouve un rythme de rotation que tu peux maintenir.",
+   "Variante : change de vitesse ou de technique pour varier l’exercice."
+  ]
+ },
+ "Standing_Long_Jump": {
+  "fr": "Saut en longueur sans élan",
+  "tf": [
+   "Idéalement, fais cet exercice dans le sable ou sur une autre surface de réception souple, avec de quoi mesurer la distance.",
+   "Tiens-toi en position de squat partiel, pieds à la largeur des épaules.",
+   "Avec un grand balancement des bras et un contre-mouvement des jambes, saute vers l’avant le plus loin possible.",
+   "Essaie d’atterrir les pieds devant toi, en allongeant les jambes le plus loin possible.",
+   "Mesure la distance entre ton point de départ et ton point d’atterrissage, et note tes résultats."
+  ]
+ },
+ "Calf_Stretch_Hands_Against_Wall": {
+  "fr": "Étirement des mollets au mur",
+  "tf": [
+   "Tiens-toi face à un mur, à environ 1 m, un pied devant l’autre.",
+   "Penche-toi vers l’avant et pose les mains sur le mur, en gardant le talon, la hanche et la tête alignés.",
+   "Essaie de garder le talon arrière au sol.",
+   "Tiens 10 à 20 secondes, puis change de côté."
+  ]
+ },
+ "Standing_Soleus_And_Achilles_Stretch": {
+  "fr": "Étirement soléaire et tendon d’Achille",
+  "tf": [
+   "Tiens-toi debout, pieds écartés à la largeur des hanches, un pied légèrement devant l’autre.",
+   "Plie les deux genoux en gardant le talon arrière au sol.",
+   "Change de côté."
+  ]
+ },
+ "Standing_Gastrocnemius_Calf_Stretch": {
+  "fr": "Étirement des gastrocnémiens debout",
+  "tf": [
+   "Pose le talon droit sur une marche, genou tendu, et penche-toi vers l’avant pour attraper tes orteils droits avec la main droite.",
+   "Garde le genou gauche légèrement fléchi et le dos droit.",
+   "Mets ton poids sur la jambe gauche et pose la main gauche sur ta cuisse gauche.",
+   "Tire tes orteils droits vers ton genou jusqu’à sentir un étirement dans le mollet."
+  ]
+ },
+ "Kneeling_Hip_Flexor": {
+  "fr": "Étirement du psoas à genoux",
+  "tf": [
+   "Mets-toi à genoux sur un tapis.",
+   "Avance le genou droit pour poser la plante du pied droit au sol, et allonge la jambe gauche derrière toi, le dessus du pied au sol.",
+   "Transfère ton poids vers l’avant jusqu’à sentir un étirement dans la hanche.",
+   "Tiens 15 secondes, puis répète de l’autre côté."
+  ]
+ },
+ "Standing_Hip_Flexors": {
+  "fr": "Étirement du psoas debout",
+  "tf": [
+   "Tiens-toi bien droit, la colonne verticale, le pied gauche légèrement devant le droit.",
+   "Plie les deux genoux et décolle le talon arrière du sol en poussant la hanche droite vers l’avant.",
+   "Change de côté."
+  ]
+ },
+ "Leg-Up_Hamstring_Stretch": {
+  "fr": "Étirement des ischios jambe levée",
+  "tf": [
+   "Allonge-toi sur le dos, plie un genou et pose ce pied à plat au sol pour stabiliser ta colonne.",
+   "Lève l’autre jambe en l’air. Si tu manques de souplesse, tu ne pourras pas la tendre complètement, et c’est correct.",
+   "Tends le genou pour que la plante du pied levé fasse face au plafond (ou le plus près possible).",
+   "Tends lentement la jambe au maximum, puis tire-la vers ton nez. Change de côté."
+  ]
+ },
+ "Hamstring_Stretch": {
+  "fr": "Étirement des ischios avec sangle",
+  "tf": [
+   "Allonge-toi sur le dos, une jambe tendue vers le haut, la hanche à 90 degrés. Garde l’autre jambe à plat au sol.",
+   "Passe une ceinture, un élastique ou une corde autour de l’avant de ton pied. C’est ta position de départ.",
+   "Tire sur la ceinture pour créer une tension dans le mollet et l’ischio. Tiens l’étirement 10 à 30 secondes, puis répète avec l’autre jambe."
+  ]
+ },
+ "Seated_Floor_Hamstring_Stretch": {
+  "fr": "Étirement des ischios assis au sol",
+  "tf": [
+   "Assieds-toi sur un tapis, la jambe droite tendue devant toi.",
+   "Plie la jambe gauche et place le pied contre l’intérieur de ta cuisse droite.",
+   "Penche-toi vers l’avant à partir des hanches et tends les mains vers ta cheville jusqu’à sentir un étirement dans l’ischio.",
+   "Tiens 15 secondes, puis répète de l’autre côté."
+  ]
+ },
+ "Ankle_On_The_Knee": {
+  "fr": "Étirement cheville sur genou",
+  "tf": [
+   "Allonge-toi sur le dos, genoux pliés et pieds au sol.",
+   "Pose la cheville d’un pied sur le genou opposé.",
+   "Attrape la cuisse ou le genou de la jambe du dessous et ramène les deux jambes vers ta poitrine.",
+   "Relâche le cou et les épaules. Tiens 10 à 20 secondes, puis change de côté."
+  ]
+ },
+ "IT_Band_and_Glute_Stretch": {
+  "fr": "Étirement bandelette IT et fessiers",
+  "tf": [
+   "Allonge-toi au sol et passe une ceinture, une corde ou un élastique autour d’un pied.",
+   "Amène cette jambe en travers de ton corps, vers le côté opposé, en la gardant tendue. C’est ta position de départ.",
+   "Garde le pied décollé du sol et tire sur la ceinture pour ramener les orteils vers le haut.",
+   "Tiens 10 à 20 secondes, puis répète de l’autre côté."
+  ]
+ },
+ "Quad_Stretch": {
+  "fr": "Étirement des quadriceps avec sangle",
+  "tf": [
+   "Allonge-toi sur le côté. Passe une ceinture, une corde ou un élastique autour de ton pied du dessus et tiens-la avec tes mains.",
+   "Plie le genou et étends la hanche vers l’arrière, comme pour toucher tes fessiers avec ton pied. C’est ta position de départ.",
+   "En tenant la ceinture par-dessus l’épaule ou au-dessus de la tête, tire doucement pour accentuer l’étirement des quadriceps.",
+   "Tiens 10 à 20 secondes, puis change de côté."
+  ]
+ },
+ "On_Your_Side_Quad_Stretch": {
+  "fr": "Étirement des quadriceps sur le côté",
+  "tf": [
+   "Allonge-toi sur le côté droit, le genou droit plié à 90 degrés et posé au sol devant toi pour stabiliser le tronc.",
+   "Plie le genou gauche derrière toi et attrape ton pied gauche avec ta main gauche.",
+   "Pour étirer le fléchisseur de la hanche, pousse ta hanche gauche vers l’avant tout en poussant ton pied gauche vers l’arrière dans ta main. Change ensuite de côté."
+  ]
+ },
+ "Side_Lying_Groin_Stretch": {
+  "fr": "Étirement des adducteurs sur le côté",
+  "tf": [
+   "Allonge-toi sur le côté droit et plie le genou droit devant toi pour stabiliser le tronc.",
+   "Pose ta tête sur ta main droite ou sur ton épaule. Lève la jambe gauche et tiens-la par l’arrière du genou (plus facile) ou par le pied (plus difficile).",
+   "Ramène ton genou gauche vers ton épaule gauche tout en poussant le pied ou le genou vers le sol.",
+   "Pour intensifier l’étirement, tends la jambe gauche. Change de côté."
+  ]
+ },
+ "Adductor_Groin": {
+  "fr": "Étirement des adducteurs avec partenaire",
+  "tf": [
+   "Allonge-toi sur le dos, les pieds levés vers le plafond.",
+   "Demande à ton partenaire de te tenir les pieds ou les chevilles. Écarte les jambes le plus possible. C’est ta position de départ.",
+   "Essaie de serrer les jambes pendant au moins 10 secondes pendant que ton partenaire t’en empêche.",
+   "Relâche ensuite les muscles des jambes pendant que ton partenaire écarte tes pieds, aussi loin que c’est confortable pour toi.",
+   "Dis à ton partenaire quand l’étirement est suffisant pour éviter de trop t’étirer ou de te blesser."
+  ]
+ },
+ "Runners_Stretch": {
+  "fr": "Étirement du coureur",
+  "tf": [
+   "Le plus simple est de partir debout : place une jambe derrière toi et descends lentement le tronc vers le sol.",
+   "Garde le talon avant au sol (s’il se soulève, recule davantage l’autre jambe).",
+   "Pose les mains de chaque côté de ta jambe avant.",
+   "Pour accentuer l’étirement, monte les fesses vers le plafond, puis redescends-les progressivement vers le sol. Tu étires le fléchisseur de hanche de la jambe arrière, ainsi que l’ischio et le fessier de la jambe avant."
+  ]
+ },
+ "Worlds_Greatest_Stretch": {
+  "fr": "World’s greatest stretch",
+  "tf": [
+   "Cet étirement se fait en trois parties. Fais une fente avant, le pied avant à plat au sol et le pied arrière sur les orteils.",
+   "Genoux pliés, descends jusqu’à ce que le genou arrière touche presque le sol. Garde le tronc droit et tiens 10 à 20 secondes.",
+   "Pose ensuite au sol le bras du même côté que ta jambe avant, le coude à côté du pied. Place l’autre main au sol, parallèle à ta jambe avant, pour te soutenir.",
+   "Après 10 à 20 secondes, place les mains de chaque côté du pied avant. Lève les orteils du pied avant et tends la jambe; tu devras peut-être replacer ta jambe arrière.",
+   "Tiens 10 à 20 secondes, puis répète toute la séquence de l’autre côté."
+  ]
+ },
+ "Childs_Pose": {
+  "fr": "Posture de l’enfant",
+  "tf": [
+   "Mets-toi à quatre pattes, puis avance les mains devant toi.",
+   "Descends les fesses pour t’asseoir sur tes talons. Laisse les bras glisser au sol en reculant pour étirer toute ta colonne.",
+   "Une fois sur les talons, ramène les mains près de tes pieds et relâche. « Respire » dans ton dos et pose le front au sol.",
+   "Évite cette position si tu as des problèmes aux genoux."
+  ]
+ },
+ "Cat_Stretch": {
+  "fr": "Étirement du chat",
+  "tf": [
+   "Mets-toi à quatre pattes au sol.",
+   "Rentre le ventre et arrondis la colonne, le bas du dos, les épaules et le cou, en laissant tomber la tête.",
+   "Tiens 15 secondes."
+  ]
+ },
+ "Ankle_Circles": {
+  "fr": "Rotations des chevilles",
+  "tf": [
+   "Tiens-toi à un objet solide, comme un rack à squat.",
+   "Lève la jambe droite à environ 5 cm du sol et fais des cercles avec le gros orteil, comme si tu dessinais un grand cercle.",
+   "Un cercle compte pour une répétition. Respire normalement pendant le mouvement.",
+   "Quand tu as fini avec le pied droit, répète avec la jambe gauche."
+  ]
+ },
+ "Front_Leg_Raises": {
+  "fr": "Balancements de jambe avant-arrière",
+  "tf": [
+   "Tiens-toi debout à côté d’une chaise ou d’un autre appui, en te tenant d’une main.",
+   "Balance ta jambe vers l’avant en la gardant tendue.",
+   "Poursuis le mouvement vers le bas et ramène la jambe aussi loin derrière que ta souplesse le permet.",
+   "Répète 5 à 10 fois, puis change de jambe."
+  ]
+ },
+ "Iliotibial_Tract-SMR": {
+  "fr": "Bandelette IT au rouleau de massage",
+  "tf": [
+   "Allonge-toi sur le côté, la jambe du dessous posée sur un rouleau de massage (foam roller) entre la hanche et le genou. L’autre jambe peut se croiser devant toi.",
+   "Mets autant de poids que tu peux tolérer sur la jambe du dessous; elle n’a pas besoin de toucher le sol. Garde les muscles de cette jambe relâchés.",
+   "Fais rouler ta jambe sur le rouleau, de la hanche au genou, en faisant une pause de 10 à 30 secondes sur les points de tension.",
+   "Répète avec l’autre jambe."
+  ]
+ },
+ "Calves-SMR": {
+  "fr": "Mollets au rouleau de massage",
+  "tf": [
+   "Assieds-toi au sol et place un rouleau de massage (foam roller) sous le bas de ta jambe.",
+   "Croise l’autre jambe par-dessus ou pose-la au sol pour soutenir une partie de ton poids. C’est ta position de départ.",
+   "Pose les mains sur les côtés ou juste derrière toi et pousse pour décoller les hanches du sol, en mettant une bonne partie de ton poids sur le mollet.",
+   "Roule de sous le genou jusqu’au-dessus de la cheville, en faisant une pause de 10 à 30 secondes sur les points de tension. Répète avec l’autre jambe."
+  ]
+ },
+ "Inchworm": {
+  "fr": "Inchworm",
+  "tf": [
+   "Debout, pieds rapprochés et jambes tendues, descends et pose les mains au sol juste devant toi. C’est ta position de départ.",
+   "Avance lentement les mains en alternant gauche et droite, en pliant seulement aux hanches et en gardant les jambes tendues.",
+   "Continue jusqu’à ce que ton corps soit parallèle au sol, en position de pompe.",
+   "Garde les mains en place et avance lentement les pieds à petits pas, quelques centimètres à la fois.",
+   "Continue jusqu’à ce que tes pieds arrivent près de tes mains, en gardant les jambes tendues."
+  ]
+ },
+ "Pushups": {
+  "fr": "Pompes",
+  "tf": [
+   "Mets-toi face au sol, les mains un peu plus écartées que la largeur des épaules, le tronc soulevé et les bras tendus.",
+   "Inspire en descendant jusqu’à ce que ta poitrine touche presque le sol.",
+   "Expire et pousse pour remonter le haut du corps en position de départ, en contractant les pectoraux.",
+   "Après une courte pause en haut, redescends et répète pour le nombre de répétitions voulu."
+  ]
+ },
+ "Incline_Push-Up": {
+  "fr": "Pompes inclinées (mains sur banc)",
+  "tf": [
+   "Place-toi face à un banc ou à une plateforme surélevée solide. Pose les mains sur le bord, un peu plus large que les épaules.",
+   "Recule les pieds, en appui sur l’avant des pieds, pour que les bras et le corps soient droits, les bras perpendiculaires au corps.",
+   "En gardant le corps droit, plie les bras pour descendre la poitrine jusqu’au bord du banc ou de la plateforme.",
+   "Pousse pour remonter jusqu’à ce que les bras soient tendus. Répète."
+  ]
+ },
+ "One-Arm_Dumbbell_Row": {
+  "fr": "Rowing unilatéral à l’haltère",
+  "tf": [
+   "Place un haltère de chaque côté d’un banc plat.",
+   "Pose la jambe droite sur le bout du banc, penche le tronc vers l’avant jusqu’à ce que le haut du corps soit parallèle au sol, et appuie ta main droite sur l’autre bout du banc.",
+   "Avec la main gauche, prends l’haltère au sol en gardant le bas du dos droit, la paume tournée vers ton tronc. C’est ta position de départ.",
+   "En expirant, tire l’haltère droit vers le haut, sur le côté de ta poitrine, le bras près du corps et le tronc immobile. Serre les muscles du dos en haut : c’est le dos qui travaille, pas les bras ni les avant-bras.",
+   "En inspirant, redescends l’haltère en ligne droite jusqu’à la position de départ.",
+   "Fais le nombre de répétitions prévu, puis change de côté."
+  ]
+ },
+ "Seated_Cable_Rows": {
+  "fr": "Rowing assis à la poulie basse",
+  "tf": [
+   "Utilise une poulie basse avec une poignée en V (prise neutre, paumes face à face). Assieds-toi et pose les pieds sur la plateforme, genoux légèrement fléchis et non verrouillés.",
+   "Penche-toi vers l’avant en gardant l’alignement naturel du dos et attrape les poignées.",
+   "Bras tendus, recule jusqu’à ce que ton tronc forme un angle de 90 degrés avec tes jambes, le dos légèrement cambré et la poitrine sortie. Tu dois sentir un bon étirement des dorsaux. C’est ta position de départ.",
+   "Garde le tronc immobile et, en expirant, tire les poignées vers toi, bras près du corps, jusqu’à toucher les abdominaux. Serre fort les muscles du dos et tiens une seconde.",
+   "Reviens lentement à la position de départ en inspirant.",
+   "Répète pour le nombre de répétitions prévu."
+  ]
+ },
+ "Wide-Grip_Lat_Pulldown": {
+  "fr": "Tirage vertical prise large",
+  "tf": [
+   "Assieds-toi à la machine de tirage avec une barre large fixée à la poulie haute. Ajuste les coussins des genoux à ta taille pour que la charge ne te soulève pas.",
+   "Attrape la barre paumes vers l’avant, les mains plus écartées que la largeur des épaules.",
+   "Bras tendus devant toi, incline le tronc vers l’arrière d’environ 30 degrés en cambrant le bas du dos et en sortant la poitrine. C’est ta position de départ.",
+   "En expirant, descends la barre jusqu’au haut de ta poitrine en tirant les épaules et le haut des bras vers le bas et l’arrière. Garde le haut du corps immobile : c’est le dos qui travaille, pas les avant-bras.",
+   "Tiens une seconde en serrant les omoplates, puis remonte lentement la barre en inspirant jusqu’à ce que les bras soient tendus et les dorsaux bien étirés.",
+   "Répète pour le nombre de répétitions prévu."
+  ]
+ },
+ "Dumbbell_Bench_Press": {
+  "fr": "Développé couché aux haltères",
+  "tf": [
+   "Allonge-toi sur un banc plat avec un haltère dans chaque main, posé sur tes cuisses, paumes face à face.",
+   "Aide-toi de tes cuisses pour monter les haltères un à la fois et les tenir devant toi, à la largeur des épaules.",
+   "Tourne les poignets vers l’avant (paumes vers tes pieds). Les haltères sont juste sur les côtés de ta poitrine, bras et avant-bras à 90 degrés. Garde le contrôle des haltères en tout temps. C’est ta position de départ.",
+   "En expirant, pousse les haltères vers le haut avec les pectoraux. Verrouille les bras en haut, serre les pectoraux une seconde, puis redescends lentement. Idéalement, la descente dure environ deux fois plus longtemps que la montée.",
+   "Répète pour le nombre de répétitions prévu à ton programme."
+  ]
+ },
+ "Inverted_Row": {
+  "fr": "Rowing inversé",
+  "tf": [
+   "Place une barre dans un rack à environ hauteur de taille. Tu peux aussi utiliser une machine Smith.",
+   "Attrape la barre avec une prise plus large que les épaules et suspends-toi dessous, le corps droit, les talons au sol et les bras tendus. C’est ta position de départ.",
+   "Plie les coudes pour tirer ta poitrine vers la barre, en serrant les omoplates.",
+   "Fais une pause en haut, puis reviens à la position de départ.",
+   "Répète pour le nombre de répétitions voulu."
+  ]
+ }
+}

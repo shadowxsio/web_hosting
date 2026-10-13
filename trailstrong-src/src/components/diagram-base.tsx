@@ -28,7 +28,7 @@ export type AnimationId =
   | 'nordic'
   | 'copenhagen'
   | 'soleusRaise'
-  // Modèles génériques (exercices du catalogue / ajoutés par l'IA)
+  // Modèles génériques (exercices du catalogue / ajoutés à la main)
   | 'squat'
   | 'lunge'
   | 'lateralLunge'
@@ -54,6 +54,27 @@ export type AnimationId =
   // Variantes dédiées
   | 'bodySquat'
   | 'singleCalfWeighted'
+  // Bibliothèque (exercices ajoutés)
+  | 'bridge'
+  | 'ballCurl'
+  | 'swing'
+  | 'backExt'
+  | 'walkingLunge'
+  | 'jumpRope'
+  | 'skater'
+  | 'boxJump'
+  | 'adductMachine'
+  | 'pallof'
+  | 'kneeRaise'
+  | 'farmerWalk'
+  | 'mountainClimber'
+  | 'superman'
+  | 'pulldown'
+  | 'invertedRow'
+  | 'benchPress'
+  | 'legSwing'
+  | 'kickback'
+  | 'hipFlexBand'
 
 export type JointName = 'hip' | 'sh' | 'head' | 'k1' | 'a1' | 't1' | 'k2' | 'a2' | 't2' | 'e1' | 'h1' | 'e2' | 'h2'
 
@@ -163,6 +184,22 @@ const Dumbbell = ({ at, color = C.accent }: { at: Vec; color?: string }) => (
     <rect x={at[0] - 9} y={at[1] - 2} width={18} height={4} rx={2} style={{ fill: color, stroke: C.ink }} strokeWidth={1.2} />
     <rect x={at[0] - 11} y={at[1] - 6} width={5} height={12} rx={1.5} style={{ fill: color, stroke: C.ink }} strokeWidth={1.2} />
     <rect x={at[0] + 6} y={at[1] - 6} width={5} height={12} rx={1.5} style={{ fill: color, stroke: C.ink }} strokeWidth={1.2} />
+  </g>
+)
+
+const Kettlebell = ({ at }: { at: Vec }) => (
+  <g>
+    <path d={`M${at[0] - 5} ${at[1] + 5} Q${at[0]} ${at[1] - 7} ${at[0] + 5} ${at[1] + 5}`} fill="none" style={{ stroke: C.ink }} strokeWidth={2.4} />
+    <circle cx={at[0]} cy={at[1] + 11} r={7.5} style={{ fill: C.accent, stroke: C.ink }} strokeWidth={1.4} />
+  </g>
+)
+
+/** Banc plat : plateau + 2 pieds. */
+const Bench = ({ x, y, w }: { x: number; y: number; w: number }) => (
+  <g>
+    <rect x={x} y={y} width={w} height={9} rx={3} style={{ fill: C.propLight }} />
+    <rect x={x + 6} y={y + 9} width={6} height={GROUND - y - 9} style={{ fill: C.prop }} />
+    <rect x={x + w - 12} y={y + 9} width={6} height={GROUND - y - 9} style={{ fill: C.prop }} />
   </g>
 )
 
@@ -687,5 +724,232 @@ export const FIGURES: Record<AnimationId, FigureDef> = {
     ),
     focus: ['sh2'],
     arrows: [{ joint: 'k2', color: 'sky' }],
+  },
+
+  // ── Bibliothèque : schémas dédiés ─────────────────────────────────────
+  bridge: {
+    start: { anchor: { joint: 'sh', at: [40, GROUND - 10] }, trunk: 180, ua1: 4, fa1: 0, tgt1: [142, GROUND - 3], bend1: -1, ft1: 0, tgt2: [136, GROUND - 3], bend2: -1, ft2: 0 },
+    end: { anchor: { joint: 'sh', at: [40, GROUND - 10] }, trunk: 154, ua1: 8, fa1: 2, tgt1: [142, GROUND - 3], bend1: -1, ft1: 0, tgt2: [136, GROUND - 3], bend2: -1, ft2: 0 },
+    props: () => <Ground />,
+    focus: ['glute', 'th1'],
+    arrows: [{ joint: 'hip', color: 'flame' }],
+  },
+  ballCurl: {
+    start: { anchor: { joint: 'sh', at: [34, GROUND - 10] }, trunk: 172, ua1: 4, fa1: 0, th1: -8, sh1: -8, ft1: -80, th2: -6, sh2: -6, ft2: -80 },
+    end: { anchor: { joint: 'sh', at: [34, GROUND - 10] }, trunk: 150, ua1: 10, fa1: 4, tgt1: [134, 151], bend1: -1, ft1: -70, tgt2: [130, 151], bend2: -1, ft2: -70 },
+    props: (j) => (
+      <g>
+        <Ground />
+        <circle cx={j.a1[0] + 3} cy={GROUND - 15} r={15} style={{ fill: C.propLight, stroke: C.ink }} strokeWidth={1.5} />
+      </g>
+    ),
+    focus: ['th1', 'glute'],
+    arrows: [{ joint: 'a1', color: 'sky' }, { joint: 'hip', color: 'flame' }],
+  },
+  swing: {
+    start: { ...stand, anchor: { joint: 'a1', at: [100, GROUND - 3] }, trunk: -30, th1: 64, sh1: 102, th2: 66, sh2: 100, ua1: 112, fa1: 126 },
+    end: { ...stand, anchor: { joint: 'a1', at: [100, GROUND - 3] }, trunk: -92, ua1: 2, fa1: -4 },
+    props: () => <Ground />,
+    over: (j) => <Kettlebell at={j.h1} />,
+    focus: ['glute', 'th1'],
+    arrows: [{ joint: 'h1', color: 'flame' }, { joint: 'hip', color: 'sky' }],
+  },
+  backExt: {
+    start: { anchor: { joint: 'a1', at: [38, 156] }, trunk: 100, th1: 135, sh1: 135, ft1: 45, th2: 133, sh2: 135, ft2: 45, ua1: 96, fa1: 96 },
+    end: { anchor: { joint: 'a1', at: [38, 156] }, trunk: -45, th1: 135, sh1: 135, ft1: 45, th2: 133, sh2: 135, ft2: 45, ua1: 120, fa1: -30 },
+    props: () => (
+      <g>
+        <Ground />
+        <line x1={30} y1={GROUND} x2={84} y2={128} style={{ stroke: C.prop }} strokeWidth={5} strokeLinecap="round" />
+        <line x1={74} y1={136} x2={104} y2={106} style={{ stroke: C.propLight }} strokeWidth={11} strokeLinecap="round" />
+        <rect x={30} y={166} width={26} height={5} rx={2} style={{ fill: C.propLight }} />
+        <circle cx={31} cy={150} r={5} style={{ fill: C.accent }} opacity={0.85} />
+      </g>
+    ),
+    focus: ['glute', 'th1'],
+    arrows: [{ joint: 'head', color: 'flame' }],
+  },
+  walkingLunge: {
+    start: { ...stand, anchor: { joint: 'a2', at: [66, GROUND - 3] }, ua1: 118, fa1: 40, ua2: 118, fa2: 40 },
+    end: { ...stand, anchor: { joint: 'a1', at: [150, GROUND - 3] }, trunk: -88, th1: 6, sh1: 96, th2: 102, sh2: 176, ft2: 100, ua1: 118, fa1: 40, ua2: 118, fa2: 40 },
+    props: () => <Ground />,
+    focus: ['th1', 'glute'],
+    arrows: [{ joint: 'hip', color: 'flame' }, { joint: 'a1', color: 'sky', bend: 0.25 }],
+  },
+  jumpRope: {
+    front: true,
+    start: { anchor: { joint: 'hip', at: [100, 96] }, trunk: -90, hipW: 20, shW: 28, ua1: 72, fa1: 18, ua2: 108, fa2: 162, th1: 90, sh1: 90, ft1: 0, th2: 90, sh2: 90, ft2: 180 },
+    end: { anchor: { joint: 'hip', at: [100, 84] }, trunk: -90, hipW: 20, shW: 28, ua1: 72, fa1: 18, ua2: 108, fa2: 162, th1: 92, sh1: 88, ft1: 50, th2: 88, sh2: 92, ft2: 130 },
+    props: (j) => (
+      <g>
+        <Ground />
+        <path d={`M${j.h1[0]} ${j.h1[1]} Q100 ${GROUND + 100} ${j.h2[0]} ${j.h2[1]}`} fill="none" style={{ stroke: C.accent }} strokeWidth={2.5} />
+      </g>
+    ),
+    focus: ['sh1', 'sh2'],
+    arrows: [{ joint: 'a1', color: 'sky' }],
+  },
+  skater: {
+    front: true,
+    start: { anchor: { joint: 'a2', at: [58, GROUND - 3] }, trunk: -96, hipW: 22, shW: 30, ua1: 30, fa1: 10, ua2: 120, fa2: 130, th1: 70, sh1: 140, ft1: 20, th2: 108, sh2: 92, ft2: 160 },
+    end: { anchor: { joint: 'a1', at: [146, GROUND - 3] }, trunk: -84, hipW: 22, shW: 30, ua1: 60, fa1: 50, ua2: 150, fa2: 170, th1: 72, sh1: 88, ft1: 20, th2: 110, sh2: 40, ft2: 160 },
+    props: () => <Ground />,
+    focus: ['glute', 'th1'],
+    arrows: [{ joint: 'hip', color: 'flame', bend: 0.25 }],
+  },
+  boxJump: {
+    start: { ...stand, anchor: { joint: 'a1', at: [66, GROUND - 3] }, trunk: -55, th1: 18, sh1: 112, th2: 22, sh2: 110, ua1: 120, fa1: 110 },
+    end: { ...stand, anchor: { joint: 'a1', at: [152, 137] }, trunk: -68, th1: 30, sh1: 106, th2: 34, sh2: 104, ua1: -4, fa1: -14 },
+    props: () => (
+      <g>
+        <Ground />
+        <rect x={124} y={140} width={66} height={GROUND - 140} rx={3} style={{ fill: C.prop }} />
+      </g>
+    ),
+    focus: ['th1', 'glute'],
+    arrows: [{ joint: 'hip', color: 'flame', bend: 0.4 }],
+  },
+  adductMachine: {
+    front: true,
+    start: { anchor: { joint: 'hip', at: [100, 116] }, trunk: -90, hipW: 24, shW: 30, ua1: 80, fa1: 110, ua2: 100, fa2: 70, th1: 24, sh1: 90, ft1: 10, th2: 156, sh2: 90, ft2: 170 },
+    end: { anchor: { joint: 'hip', at: [100, 116] }, trunk: -90, hipW: 24, shW: 30, ua1: 80, fa1: 110, ua2: 100, fa2: 70, th1: 66, sh1: 90, ft1: 10, th2: 114, sh2: 90, ft2: 170 },
+    props: (j) => (
+      <g>
+        <Ground />
+        <rect x={64} y={44} width={72} height={66} rx={8} style={{ fill: C.prop }} />
+        <rect x={56} y={112} width={88} height={10} rx={4} style={{ fill: C.propLight }} />
+        <circle cx={j.k1[0] - 6} cy={j.k1[1] + 4} r={6} style={{ fill: C.accent }} opacity={0.85} />
+        <circle cx={j.k2[0] + 6} cy={j.k2[1] + 4} r={6} style={{ fill: C.accent }} opacity={0.85} />
+      </g>
+    ),
+    focus: ['th1', 'th2'],
+    arrows: [{ joint: 'k1', color: 'sky' }, { joint: 'k2', color: 'sky' }],
+  },
+  pallof: {
+    start: { ...stand, anchor: { joint: 'a1', at: [96, GROUND - 3] }, trunk: -92, th1: 80, sh1: 98, th2: 82, sh2: 96, ua1: 110, fa1: -40, ua2: 112, fa2: -38 },
+    end: { ...stand, anchor: { joint: 'a1', at: [96, GROUND - 3] }, trunk: -92, th1: 80, sh1: 98, th2: 82, sh2: 96, ua1: 4, fa1: 0, ua2: 6, fa2: 2 },
+    props: (j) => (
+      <g>
+        <Ground />
+        <rect x={18} y={24} width={12} height={GROUND - 24} rx={3} style={{ fill: C.prop }} />
+        <line x1={30} y1={j.h1[1] + 4} x2={j.h1[0]} y2={j.h1[1]} style={{ stroke: C.accent }} strokeWidth={2} strokeDasharray="5 4" />
+      </g>
+    ),
+    focus: [],
+    arrows: [{ joint: 'h1', color: 'flame' }],
+  },
+  kneeRaise: {
+    start: { anchor: { joint: 'sh', at: [84, 48] }, trunk: -90, ua1: 92, fa1: 2, th1: 92, sh1: 90, ft1: 10, th2: 90, sh2: 92, ft2: 10 },
+    end: { anchor: { joint: 'sh', at: [84, 48] }, trunk: -92, ua1: 92, fa1: 2, th1: -12, sh1: 88, ft1: 0, th2: -8, sh2: 90, ft2: 0 },
+    props: () => (
+      <g>
+        <Ground />
+        <rect x={64} y={30} width={10} height={GROUND - 30} rx={3} style={{ fill: C.prop }} />
+        <rect x={70} y={78} width={52} height={8} rx={3} style={{ fill: C.propLight }} />
+      </g>
+    ),
+    focus: ['th1'],
+    arrows: [{ joint: 'k1', color: 'flame' }],
+  },
+  farmerWalk: {
+    start: { anchor: { joint: 'hip', at: [100, 98] }, trunk: -90, ua1: 92, fa1: 90, ua2: 88, fa2: 90, th1: 66, sh1: 96, ft1: -8, th2: 112, sh2: 118, ft2: 30 },
+    end: { anchor: { joint: 'hip', at: [100, 98] }, trunk: -90, ua1: 88, fa1: 90, ua2: 92, fa2: 90, th1: 112, sh1: 118, ft1: 30, th2: 66, sh2: 96, ft2: -8 },
+    props: () => <Ground />,
+    over: (j) => (
+      <g>
+        <Dumbbell at={[j.h2[0] - 4, j.h2[1] + 4]} color={C.propLight} />
+        <Dumbbell at={[j.h1[0] + 4, j.h1[1] + 4]} />
+      </g>
+    ),
+    focus: ['glute'],
+    arrows: [{ joint: 'a1', color: 'sky' }],
+  },
+  mountainClimber: {
+    start: { anchor: { joint: 'h1', at: [150, GROUND - 2] }, trunk: -16, ua1: 92, fa1: 90, th1: 168, sh1: 168, ft1: 100, th2: 166, sh2: 168, ft2: 100 },
+    end: { anchor: { joint: 'h1', at: [150, GROUND - 2] }, trunk: -16, ua1: 92, fa1: 90, th1: 20, sh1: 165, ft1: 110, th2: 166, sh2: 168, ft2: 100 },
+    props: () => <Ground />,
+    focus: ['th1'],
+    arrows: [{ joint: 'k1', color: 'flame' }],
+  },
+  superman: {
+    start: { anchor: { joint: 'hip', at: [95, GROUND - 9] }, trunk: 0, ua1: 2, fa1: 2, ua2: 4, fa2: 2, th1: 180, sh1: 180, ft1: 90, th2: 178, sh2: 180, ft2: 90 },
+    end: { anchor: { joint: 'hip', at: [95, GROUND - 9] }, trunk: -14, ua1: -40, fa1: -10, ua2: -38, fa2: -8, th1: 172, sh1: 168, ft1: 80, th2: 170, sh2: 166, ft2: 80 },
+    props: () => <Ground />,
+    focus: ['glute'],
+    arrows: [{ joint: 'h1', color: 'flame' }, { joint: 'a1', color: 'sky' }],
+  },
+  pulldown: {
+    start: { anchor: { joint: 'hip', at: [90, 140] }, trunk: -100, ua1: -78, fa1: -80, ua2: -80, fa2: -82, th1: 0, sh1: 90, ft1: 0, th2: 2, sh2: 90, ft2: 0 },
+    end: { anchor: { joint: 'hip', at: [90, 140] }, trunk: -104, ua1: 112, fa1: -64, ua2: 114, fa2: -62, th1: 0, sh1: 90, ft1: 0, th2: 2, sh2: 90, ft2: 0 },
+    props: (j) => (
+      <g>
+        <Ground />
+        <rect x={62} y={144} width={56} height={9} rx={3} style={{ fill: C.propLight }} />
+        <rect x={86} y={153} width={7} height={GROUND - 153} style={{ fill: C.prop }} />
+        <rect x={112} y={118} width={22} height={8} rx={3} style={{ fill: C.propLight }} />
+        <line x1={j.h1[0]} y1={6} x2={j.h1[0]} y2={j.h1[1]} style={{ stroke: C.prop }} strokeWidth={2} />
+        <line x1={j.h1[0] - 16} y1={j.h1[1]} x2={j.h1[0] + 16} y2={j.h1[1]} style={{ stroke: C.accent }} strokeWidth={4} strokeLinecap="round" />
+      </g>
+    ),
+    focus: [],
+    arrows: [{ joint: 'h1', color: 'flame' }],
+  },
+  invertedRow: {
+    start: { anchor: { joint: 'a1', at: [30, GROUND - 3] }, trunk: -14, ua1: -111, fa1: -111, ua2: -112, fa2: -112, th1: 166, sh1: 166, ft1: -100, th2: 167, sh2: 167, ft2: -100 },
+    end: { anchor: { joint: 'a1', at: [30, GROUND - 3] }, trunk: -30, ua1: -174, fa1: -26, ua2: -172, fa2: -28, th1: 150, sh1: 150, ft1: -110, th2: 151, sh2: 151, ft2: -110 },
+    props: () => (
+      <g>
+        <Ground />
+        <rect x={168} y={70} width={8} height={GROUND - 70} rx={2} style={{ fill: C.prop }} />
+        <line x1={128} y1={100} x2={176} y2={100} style={{ stroke: C.propLight }} strokeWidth={6} strokeLinecap="round" />
+      </g>
+    ),
+    focus: [],
+    arrows: [{ joint: 'sh', color: 'flame' }],
+  },
+  benchPress: {
+    start: { anchor: { joint: 'sh', at: [58, 128] }, trunk: 180, ua1: 96, fa1: -84, ua2: 98, fa2: -82, tgt1: [150, GROUND - 3], bend1: 1, ft1: 0, tgt2: [144, GROUND - 3], bend2: 1, ft2: 0 },
+    end: { anchor: { joint: 'sh', at: [58, 128] }, trunk: 180, ua1: -88, fa1: -90, ua2: -86, fa2: -90, tgt1: [150, GROUND - 3], bend1: 1, ft1: 0, tgt2: [144, GROUND - 3], bend2: 1, ft2: 0 },
+    props: () => (
+      <g>
+        <Ground />
+        <Bench x={30} y={134} w={92} />
+      </g>
+    ),
+    over: (j) => <Dumbbell at={j.h1} />,
+    focus: [],
+    arrows: [{ joint: 'h1', color: 'flame' }],
+  },
+  legSwing: {
+    start: { ...stand, anchor: { joint: 'a2', at: [96, GROUND - 3] }, th1: 126, sh1: 118, ft1: 160, ua1: 100, fa1: 80, ua2: 150, fa2: 170 },
+    end: { ...stand, anchor: { joint: 'a2', at: [96, GROUND - 3] }, th1: 18, sh1: 22, ft1: -60, ua1: 100, fa1: 80, ua2: 150, fa2: 170 },
+    props: () => (
+      <g>
+        <Ground />
+        <rect x={36} y={60} width={9} height={GROUND - 60} rx={2} style={{ fill: C.prop }} />
+      </g>
+    ),
+    focus: ['th1', 'glute'],
+    arrows: [{ joint: 'a1', color: 'sky', bend: 0.5 }],
+  },
+  kickback: {
+    start: { anchor: { joint: 'k2', at: [96, GROUND - 6] }, trunk: -2, ua1: 90, fa1: 90, ua2: 90, fa2: 90, th1: 92, sh1: 180, ft1: 180, th2: 90, sh2: 180, ft2: 180 },
+    end: { anchor: { joint: 'k2', at: [96, GROUND - 6] }, trunk: -2, ua1: 90, fa1: 90, ua2: 90, fa2: 90, th1: -172, sh1: -92, ft1: 180, th2: 90, sh2: 180, ft2: 180 },
+    props: () => <Ground />,
+    focus: ['glute', 'th1'],
+    arrows: [{ joint: 'a1', color: 'flame' }],
+  },
+  hipFlexBand: {
+    start: { ...stand, anchor: { joint: 'a2', at: [104, GROUND - 3] }, ua1: 118, fa1: 40, ua2: 118, fa2: 40 },
+    end: { ...stand, anchor: { joint: 'a2', at: [104, GROUND - 3] }, th1: -2, sh1: 92, ft1: 0, ua1: 118, fa1: 40, ua2: 118, fa2: 40 },
+    props: (j) => (
+      <g>
+        <Ground />
+        <rect x={22} y={110} width={9} height={GROUND - 110} rx={2} style={{ fill: C.prop }} />
+        <line x1={30} y1={GROUND - 8} x2={j.a1[0]} y2={j.a1[1]} style={{ stroke: C.ok }} strokeWidth={3} strokeLinecap="round" opacity={0.9} />
+      </g>
+    ),
+    focus: ['th1'],
+    arrows: [{ joint: 'k1', color: 'flame' }],
   },
 }

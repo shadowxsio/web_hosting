@@ -4,6 +4,7 @@
  * plus adaptés et compose 2 ou 3 séances + échauffement + retour au calme.
  */
 import { LIBRARY, type PlanItem, type SessionPlan, type UserProgram } from '../lib/userProgram'
+import { EXTRAS } from './extras'
 import type { SessionId } from './program'
 
 export type Goal = 'knee' | 'ankle' | 'glutes' | 'hamstrings' | 'calves' | 'core' | 'upper' | 'power'
@@ -97,11 +98,42 @@ const META: Record<string, Meta> = {
   'push-up': { roles: ['push'], equip: 'bodyweight', goals: ['upper'], stretches: [] },
   'db-row': { roles: ['pull'], equip: 'dumbbells', goals: ['upper', 'core'], avoid: ['back'], stretches: [] },
   'db-press': { roles: ['push'], equip: 'dumbbells', goals: ['upper'], stretches: [] },
+  // Bibliothèque : ajouts
+  'leg-swings': { roles: [], equip: 'bodyweight', goals: ['glutes', 'knee'], warmup: true, protects: ['hip'], stretches: [] },
+  'hip-flexion-band': { roles: [], equip: 'dumbbells', goals: ['glutes', 'power'], warmup: true, protects: ['hip'], stretches: [] },
+  'glute-bridge': { roles: ['glute'], equip: 'bodyweight', goals: ['glutes', 'hamstrings'], protects: ['back', 'knee', 'hip'], stretches: ['hipFlexor', 'figure4'] },
+  'ball-leg-curl': { roles: ['hamstring'], equip: 'gym', goals: ['hamstrings', 'knee'], protects: ['knee'], stretches: ['hamstring'] },
+  'kb-swing': { roles: ['hinge'], equip: 'dumbbells', goals: ['glutes', 'hamstrings', 'power'], avoid: ['back'], minLevel: 'intermediate', stretches: ['hamstring', 'hipFlexor'] },
+  'back-extension': { roles: ['hinge', 'core'], equip: 'gym', goals: ['core', 'hamstrings', 'glutes'], stretches: ['hamstring', 'figure4'] },
+  'glute-kickback': { roles: ['glute', 'hip'], equip: 'bodyweight', goals: ['glutes'], protects: ['back'], stretches: ['figure4', 'hipFlexor'] },
+  'walking-lunge': { roles: ['single', 'knee'], equip: 'bodyweight', goals: ['knee', 'glutes'], stretches: ['hipFlexor', 'quad'] },
+  'lateral-lunge': { roles: ['adductor', 'single'], equip: 'bodyweight', goals: ['knee', 'glutes'], stretches: ['adductor', 'figure4'] },
+  'hip-adduction': { roles: ['adductor'], equip: 'gym', goals: ['knee', 'glutes'], protects: ['knee', 'hip'], stretches: ['adductor'] },
+  'jump-rope': { roles: ['plyo'], equip: 'bodyweight', goals: ['ankle', 'calves', 'power'], avoid: ['ankle'], stretches: ['calf', 'soleus'] },
+  'lateral-bound': { roles: ['plyo'], equip: 'bodyweight', goals: ['power', 'ankle', 'glutes'], avoid: ['knee', 'ankle'], minLevel: 'intermediate', stretches: ['adductor', 'calf'] },
+  'box-jump': { roles: ['plyo'], equip: 'gym', goals: ['power'], avoid: ['knee', 'ankle', 'back'], minLevel: 'intermediate', stretches: ['quad', 'calf'] },
+  'pallof-press': { roles: ['core'], equip: 'dumbbells', goals: ['core'], protects: ['back'], stretches: [] },
+  'knee-raise': { roles: ['core'], equip: 'gym', goals: ['core'], stretches: ['hipFlexor'] },
+  'farmer-walk': { roles: ['core'], equip: 'dumbbells', goals: ['core', 'upper'], stretches: ['calf'] },
+  'mountain-climber': { roles: ['core'], equip: 'bodyweight', goals: ['core', 'power'], stretches: ['hipFlexor'] },
+  superman: { roles: ['core'], equip: 'bodyweight', goals: ['core', 'glutes'], protects: ['back'], stretches: [] },
+  'lat-pulldown': { roles: ['pull'], equip: 'gym', goals: ['upper'], stretches: [] },
+  'inverted-row': { roles: ['pull'], equip: 'gym', goals: ['upper', 'core'], stretches: [] },
+  'db-bench': { roles: ['push'], equip: 'dumbbells', goals: ['upper'], stretches: [] },
+}
+
+/** Infos d'un exercice de la bibliothèque (filtres de l'écran d'ajout). */
+export function libraryMeta(id: string): { goals: Goal[]; warmup: boolean; protects: Pain[]; avoid: Pain[]; minLevel?: Level } | null {
+  const m = META[id]
+  return m ? { goals: m.goals, warmup: !!m.warmup, protects: m.protects ?? [], avoid: m.avoid ?? [], minLevel: m.minLevel } : null
 }
 
 const EQUIP_RANK: Record<Equip, number> = { bodyweight: 0, dumbbells: 1, gym: 2 }
 const LEVEL_RANK: Record<Level, number> = { beginner: 0, intermediate: 1, advanced: 2 }
 const RUNNER: Sport[] = ['trail', 'road', 'ski']
+/** Exercices particulièrement utiles aux coureurs (en plus des exercices unilatéraux et mollets). */
+const RUNNER_PICKS = new Set(['step-down', 'jump-rope', 'hip-flexion-band', 'leg-swings', 'lateral-lunge'])
+const EXTRA_IDS = new Set(EXTRAS.map((e) => e.id))
 
 function allowed(id: string, a: Answers) {
   const m = META[id]
@@ -117,12 +149,12 @@ function score(id: string, a: Answers) {
   let s = 0
   for (const g of a.goals) if (m.goals.includes(g)) s += 3
   for (const p of a.pains) if (m.protects?.includes(p)) s += 2
-  if (RUNNER.includes(a.sport) && (m.roles.includes('single') || m.roles.includes('calf') || id === 'step-down')) s += 1.5
+  if (RUNNER.includes(a.sport) && (m.roles.includes('single') || m.roles.includes('calf') || RUNNER_PICKS.has(id))) s += 1.5
   if (a.sport === 'bike' && (m.roles.includes('knee') || m.roles.includes('hamstring'))) s += 1.5
   if (a.sport === 'team' && (m.roles.includes('plyo') || m.roles.includes('adductor'))) s += 1.5
   if (a.sport === 'ski' && (id === 'wall-sit' || m.roles.includes('knee'))) s += 1
   // Le programme de base (exercices éprouvés) passe légèrement devant à score égal.
-  if (!['goblet-squat', 'bw-squat', 'reverse-lunge', 'step-up', 'leg-extension', 'wall-sit', 'jump-squat', 'plank', 'side-plank', 'dead-bug', 'bird-dog', 'push-up', 'db-row', 'db-press'].includes(id)) s += 0.3
+  if (!EXTRA_IDS.has(id)) s += 0.3
   return s
 }
 
@@ -137,6 +169,19 @@ const FAMILY: Record<string, string> = {
   'soleus-raise': 'calf',
   'reverse-lunge': 'lunge',
   bulgarian: 'lunge',
+  'walking-lunge': 'lunge',
+  'kb-swing': 'rdl',
+  'back-extension': 'rdl',
+  'glute-bridge': 'bridge',
+  'hip-thrust': 'bridge',
+  'box-jump': 'jump',
+  'jump-squat': 'jump',
+  'db-row': 'row',
+  'inverted-row': 'row',
+  'push-up': 'press',
+  'db-bench': 'press',
+  'bird-dog': 'back',
+  superman: 'back',
 }
 
 const pick = (cands: string[], used: Set<string>, a: Answers, role?: Role, session: string[] = []) =>

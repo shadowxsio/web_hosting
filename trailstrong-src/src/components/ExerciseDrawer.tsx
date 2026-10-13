@@ -3,8 +3,9 @@ import { useEffect, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { cadenceOf, repSeconds } from '../data/cadence'
 import type { Exercise, SessionId } from '../data/program'
-import { removeCustom } from '../lib/custom'
+import { removeCustom, useProgram } from '../lib/custom'
 import { touch, treadmillStats, type ExerciseLog, type Side } from '../lib/storage'
+import { removeFromSession } from '../lib/userProgram'
 import { unlockAudio } from '../lib/sound'
 import { timer } from '../lib/timer'
 import { SIDE_LABEL, num, useExerciseLog } from '../lib/useExerciseLog'
@@ -18,6 +19,9 @@ export function ExerciseDrawer({ ex, sessionId, date, onClose }: { ex: Exercise;
   const L = useExerciseLog(ex, date)
   const [sel, setSel] = useState<number | null>(null)
   const [confirmDelete, setConfirmDelete] = useState(false)
+  // Un exercice du programme peut être retiré, tant qu'il en reste au moins un dans la séance.
+  const sessionSize = useProgram().find((x) => x.id === sessionId)?.exercises.length ?? 0
+  const canRemove = !ex.custom && sessionSize > 1
   const tid = ex.trackId ?? ex.id
   const Icon = iconOf(ex)
   const s = SESSION_META[sessionId]
@@ -309,16 +313,23 @@ export function ExerciseDrawer({ ex, sessionId, date, onClose }: { ex: Exercise;
             </p>
           )}
 
-          {ex.custom && (
+          {ex.source === 'catalog' && (
+            <p className="rounded-xl border-2 border-dashed border-ink/50 px-3 py-2 text-[12px] font-semibold leading-snug text-ink/75">
+              Fiche simplifiée (catalogue) : schéma approchant, tempo standard, pas de conseils genou / cheville{ex.stepsLang === 'en' ? ', consignes en anglais' : ''}. Pour une fiche complète, choisis un exercice de l’onglet Bibliothèque.
+            </p>
+          )}
+
+          {(ex.custom || canRemove) && (
             <div className="flex items-center justify-between border-2 border-ink px-3 py-2 text-[12px] text-ink/60 rounded-xl">
               {confirmDelete ? (
                 <>
-                  <span>Supprimer cet exercice personnalisé ?</span>
+                  <span>{ex.custom ? 'Supprimer cet exercice personnalisé ?' : 'Retirer de la séance ? Ton historique est gardé.'}</span>
                   <span className="flex gap-1.5">
                     <button
                       type="button"
                       onClick={() => {
-                        removeCustom(sessionId, ex.id)
+                        if (ex.custom) removeCustom(sessionId, ex.id)
+                        else removeFromSession(sessionId, ex.id)
                         touch()
                         onClose()
                       }}
@@ -333,9 +344,9 @@ export function ExerciseDrawer({ ex, sessionId, date, onClose }: { ex: Exercise;
                 </>
               ) : (
                 <>
-                  <span>Exercice ajouté à la main</span>
+                  <span>{ex.custom ? (ex.source === 'catalog' ? 'Ajouté depuis le catalogue' : 'Exercice ajouté à la main') : 'Exercice de ton programme'}</span>
                   <button type="button" onClick={() => setConfirmDelete(true)} className="flex h-9 items-center gap-1.5 px-2 text-ink/70 hover:text-danger">
-                    <Trash2 className="h-4 w-4" /> Supprimer
+                    <Trash2 className="h-4 w-4" /> {ex.custom ? 'Supprimer' : 'Retirer'}
                   </button>
                 </>
               )}

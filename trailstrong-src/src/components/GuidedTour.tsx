@@ -21,6 +21,11 @@ const STEPS: Step[] = [
   { target: 'exercise', title: 'Un exercice', text: 'Touche la carte pour voir le schéma, les photos et les consignes. Le bouton « Coach » te guide au son : 3-2-1, tempo de chaque rep, stop, repos.' },
   { target: 'validate', title: 'Valider une série', text: 'Après chaque série, valide : le chrono de repos démarre tout seul. Sur les exercices une jambe, l’app te dit quand changer de côté.' },
   { target: 'timer', title: 'Chrono de repos', text: 'Il bipe à la fin du repos. 60 s, 90 s ou +30 s pour l’ajuster, ▶ pour le lancer à la main.' },
+  {
+    target: 'add',
+    title: 'Ajouter un exercice',
+    text: 'Tu veux varier ? « Bibliothèque » : des fiches complètes comme ton programme. « Catalogue » : 800 exercices en fiche simplifiée (photos, schéma approchant). Touche une carte puis « Retirer » pour en enlever un.',
+  },
   { target: 'mobility', title: '3 · Mobilité', text: 'Pour finir, le retour au calme guidé : des étirements choisis pour la séance, enchaînés par le coach.' },
   { target: 'menu', title: 'Le Menu', text: 'Ton profil, le son du coach, le thème clair ou sombre, refaire ton programme… et revoir cette visite.' },
   {

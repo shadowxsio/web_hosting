@@ -25,4 +25,4 @@ export function switchAccount(uid: string | null) {
 }
 
 /** Clés du mode local historique (avant les comptes) : source de la migration. */
-export const LEGACY = { data: 'trailstrong:v1', custom: (sid: string) => `custom_exercises_${sid}` }
+export const LEGACY = { data: 'trailstrong:v1', custom: (sid: string) => `custom_exercises_${sid}`, program: 'trailstrong:program' }

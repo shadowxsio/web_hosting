@@ -1,25 +1,35 @@
-import { ArrowLeft, BookOpen, ImageOff, Loader2, PenLine, Plus, Search, Sparkles, X } from 'lucide-react'
+import { ArrowLeft, BookOpen, Check, ImageOff, Info, Library, Loader2, PenLine, Plus, Search, X } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
-import type { Session } from '../data/program'
-import { aiAdapt, aiCreate, aiReady, withPhotos } from '../lib/ai'
-import { draftFromCatalog, equipFr, guessDiagram, imgUrl, loadCatalog, musclesFr, searchCatalog, type CatalogEntry } from '../lib/catalog'
+import { LIBRARY_OF_CATALOG } from '../data/demos'
+import { GOAL_LABEL, libraryMeta, type Goal } from '../data/generator'
+import type { Exercise, Session } from '../data/program'
+import { draftFromCatalog, equipFr, guessDiagram, imgUrl, loadCatalog, musclesFr, nameOf, norm, searchCatalog, withPhotos, type CatalogEntry } from '../lib/catalog'
 import { addCustom, parseProtocol, parseRest, type CustomDraft } from '../lib/custom'
 import { touch } from '../lib/storage'
+import { LIBRARY, addToSession } from '../lib/userProgram'
+import { DemoPlayer } from './DemoPlayer'
 import { FIGURES, type AnimationId } from './diagram-base'
-import { ExerciseDiagram } from './ExerciseDiagram'
+import { DIAGRAM_OF, ExerciseDiagram } from './ExerciseDiagram'
+import { restLabel } from './meta'
 
-type Tab = 'ai' | 'catalog' | 'manual'
+type Tab = 'library' | 'catalog' | 'manual'
 const PRESETS = ['Ischios', 'Fessiers', 'Cheville', 'Genou', 'Tronc']
 const CHIPS = ['Mollets', 'Fessiers', 'Ischios', 'Quadriceps', 'Adducteurs', 'Gainage', 'Sauts', 'Étirements']
-const AI_EXAMPLES = ['Un exo pour les adducteurs sans machine', 'Renforcer les chevilles pour les descentes', 'Une variante de squat une jambe', 'Gainage anti-rotation pour le trail']
 
-/** Tiroir d'ajout : IA (description libre), catalogue (~800 exos) ou saisie manuelle. */
+const TAB_INFO: Record<Tab, string> = {
+  library: 'Fiches complètes, comme ton programme : schéma dédié, photos, consignes en français, tempo du coach et conseils genou / cheville.',
+  catalog:
+    'Plus de 800 exercices en fiche simplifiée : photos, schéma approchant et tempo standard, sans conseils genou / cheville. Consignes en français pour les 100 plus courants, en anglais pour les autres.',
+  manual: 'Ta propre fiche : nom, séries, repos et consigne.',
+}
+
+/** Tiroir d'ajout : bibliothèque (fiches complètes), catalogue (~800 fiches simplifiées) ou saisie manuelle. */
 export function AddExerciseSheet({ session, onClose, onAdded }: { session: Session; onClose: () => void; onAdded: (id: string) => void }) {
-  const [tab, setTab] = useState<Tab>(aiReady() ? 'ai' : 'catalog')
+  const [tab, setTab] = useState<Tab>('library')
   const [draft, setDraft] = useState<CustomDraft | null>(null)
-  const [busy, setBusy] = useState<string | null>(null)
-  const [error, setError] = useState('')
+  const [pick, setPick] = useState<{ ex: Exercise; fromCatalog: boolean } | null>(null)
+  const inSession = useMemo(() => new Set(session.exercises.map((e) => e.id)), [session])
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose()
@@ -27,31 +37,24 @@ export function AddExerciseSheet({ session, onClose, onAdded }: { session: Sessi
     return () => window.removeEventListener('keydown', onKey)
   }, [onClose])
 
-  const run = async (label: string, fn: () => Promise<void>) => {
-    setBusy(label)
-    setError('')
-    try {
-      await fn()
-    } catch (e) {
-      setError(e instanceof Error ? e.message : String(e))
-    } finally {
-      setBusy(null)
-    }
-  }
-
   /** Brouillon prêt : on l'affiche tout de suite, les photos arrivent ensuite. */
   const show = (d: CustomDraft) => {
     setDraft(d)
     if (d.catalogId && !d.photos) void withPhotos(d).then((p) => p.photos && setDraft((cur) => (cur && cur.catalogId === d.catalogId ? { ...cur, photos: p.photos } : cur)))
   }
 
-  const save = (d: CustomDraft) => {
-    const id = addCustom(session.id, d)
+  const done = (id: string) => {
     touch()
     navigator.vibrate?.([15, 30, 15])
     onAdded(id)
   }
+  const save = (d: CustomDraft) => done(addCustom(session.id, d))
+  const addLibrary = (ex: Exercise) => {
+    addToSession(session.id, ex.id)
+    done(ex.id)
+  }
 
+  const detail = draft ?? pick
   return createPortal(
     <div className="fade-in fixed inset-0 z-50 flex items-end justify-center bg-ink/40" onClick={onClose}>
       <div
@@ -65,66 +68,58 @@ export function AddExerciseSheet({ session, onClose, onAdded }: { session: Sessi
           <div className="flex items-center justify-between">
             <div>
               <p className="tag h-6 -rotate-1 bg-sun px-2 text-[10px]">Nouvel exercice · {session.short}</p>
-              <h2 className="headline mt-2 text-[26px]">{draft ? 'Vérifie & ajoute' : 'Ajouter un exercice'}</h2>
+              <h2 className="headline mt-2 text-[26px]">{detail ? 'Vérifie & ajoute' : 'Ajouter un exercice'}</h2>
             </div>
             <button type="button" onClick={onClose} className="b-btn grid h-11 w-11 place-items-center rounded-full" aria-label="Fermer">
               <X className="h-5 w-5" strokeWidth={3} />
             </button>
           </div>
-          {!draft && (
-            <div className="mt-4 grid grid-cols-3 gap-1.5" role="tablist">
-              {(
-                [
-                  ['ai', 'IA', Sparkles],
-                  ['catalog', 'Catalogue', BookOpen],
-                  ['manual', 'Manuel', PenLine],
-                ] as const
-              ).map(([id, label, Icon]) => (
-                <button
-                  key={id}
-                  type="button"
-                  role="tab"
-                  aria-selected={tab === id}
-                  onClick={() => {
-                    setTab(id)
-                    setError('')
-                  }}
-                  className={`b-btn flex h-11 items-center justify-center gap-1.5 text-[13px] uppercase tracking-wide ${tab === id ? 'b-btn-ink' : ''}`}
-                >
-                  <Icon className="h-4 w-4" strokeWidth={2.5} /> {label}
-                </button>
-              ))}
-            </div>
+          {!detail && (
+            <>
+              <div className="mt-4 grid grid-cols-3 gap-1.5" role="tablist">
+                {(
+                  [
+                    ['library', 'Biblio', Library],
+                    ['catalog', 'Catalogue', BookOpen],
+                    ['manual', 'Manuel', PenLine],
+                  ] as const
+                ).map(([id, label, Icon]) => (
+                  <button
+                    key={id}
+                    type="button"
+                    role="tab"
+                    aria-selected={tab === id}
+                    onClick={() => setTab(id)}
+                    className={`b-btn flex h-11 items-center justify-center gap-1.5 text-[13px] uppercase tracking-wide ${tab === id ? 'b-btn-ink' : ''}`}
+                  >
+                    <Icon className="h-4 w-4" strokeWidth={2.5} /> {label}
+                  </button>
+                ))}
+              </div>
+              <p className="mt-3 flex gap-2 rounded-xl border-2 border-dashed border-ink/50 px-3 py-2 text-[12px] font-semibold leading-snug text-ink/80">
+                <Info className="mt-0.5 h-4 w-4 shrink-0" strokeWidth={2.5} />
+                {TAB_INFO[tab]}
+              </p>
+            </>
           )}
         </header>
 
-        <div className="flex-1 overflow-y-auto px-4 pb-6 pt-4">
-          {error && (
-            <p className="mb-3 border-2 border-ink bg-rose px-3 py-2 text-[13px] font-bold rounded-xl" role="alert">
-              {error}
-            </p>
-          )}
+        {/* key : chaque écran repart en haut de la liste. */}
+        <div key={draft ? 'draft' : pick ? pick.ex.id : tab} className="flex-1 overflow-y-auto px-4 pb-6 pt-4">
           {draft ? (
-            <Preview
-              draft={draft}
-              setDraft={setDraft}
-              busy={busy}
-              onBack={() => setDraft(null)}
-              onAdapt={
-                draft.source === 'catalog' && aiReady()
-                  ? () =>
-                      run('L’IA traduit et adapte…', async () => {
-                        const entry = (await loadCatalog()).find((e) => e.id === draft.catalogId)
-                        if (entry) setDraft({ ...(await aiAdapt(entry)), photos: draft.photos })
-                      })
-                  : undefined
-              }
-              onSave={() => save(draft)}
-            />
-          ) : tab === 'ai' ? (
-            <AiTab busy={busy} onAsk={(q) => run('L’IA prépare ta fiche…', async () => show(await aiCreate(q)))} />
+            <Preview draft={draft} setDraft={setDraft} onBack={() => setDraft(null)} onSave={() => save(draft)} />
+          ) : pick ? (
+            <LibraryPreview ex={pick.ex} fromCatalog={pick.fromCatalog} added={inSession.has(pick.ex.id)} onBack={() => setPick(null)} onAdd={() => addLibrary(pick.ex)} />
+          ) : tab === 'library' ? (
+            <LibraryTab session={session} inSession={inSession} onPick={(ex) => setPick({ ex, fromCatalog: false })} />
           ) : tab === 'catalog' ? (
-            <CatalogTab onPick={(e) => show(draftFromCatalog(e))} />
+            <CatalogTab
+              onPick={(e) => {
+                const lib = LIBRARY[LIBRARY_OF_CATALOG[e.id]]
+                if (lib) setPick({ ex: lib, fromCatalog: true })
+                else show(draftFromCatalog(e))
+              }}
+            />
           ) : (
             <ManualTab onSave={save} />
           )}
@@ -135,61 +130,145 @@ export function AddExerciseSheet({ session, onClose, onAdded }: { session: Sessi
   )
 }
 
-// ── IA ───────────────────────────────────────────────────────────────────
-function AiTab({ busy, onAsk }: { busy: string | null; onAsk: (q: string) => void }) {
+// ── Bibliothèque (fiches complètes) ──────────────────────────────────────
+type Filter = Goal | 'warmup'
+const FILTERS: Filter[] = ['warmup', 'knee', 'ankle', 'glutes', 'hamstrings', 'calves', 'core', 'upper', 'power']
+const FILTER_LABEL = (f: Filter) => (f === 'warmup' ? '🔥 Échauffement' : GOAL_LABEL[f])
+const diagramOf = (ex: Exercise): AnimationId => ex.diagram ?? DIAGRAM_OF[ex.id] ?? 'squat'
+
+function LibraryTab({ session, inSession, onPick }: { session: Session; inSession: Set<string>; onPick: (ex: Exercise) => void }) {
   const [q, setQ] = useState('')
-  if (!aiReady())
-    return (
-      <div className="b-card p-4">
-        <p className="flex items-center gap-2 text-[15px] font-black uppercase tracking-wide">
-          <Sparkles className="h-4 w-4 text-flame" /> Assistant IA
-        </p>
-        <p className="mt-2 text-[13px] font-semibold leading-snug text-ink/80">
-          Décris l’exercice que tu veux, l’IA choisit le mouvement, les séries, le tempo du coach, les consignes en français, les photos et le schéma.
-        </p>
-        <p className="mt-3 border-2 border-dashed border-ink/50 px-3 py-2 text-[12px] font-bold leading-snug rounded-xl">
-          À activer une fois : Menu → déverrouille les réglages (PIN) → « Assistant IA (Gemini) » → colle ta clé (aistudio.google.com → Get API key).
-        </p>
-      </div>
-    )
+  const [filter, setFilter] = useState<Filter | null>(session.id === 'activation' ? 'warmup' : null)
+  const list = useMemo(() => {
+    const words = norm(q).split(' ').filter(Boolean)
+    return Object.values(LIBRARY)
+      .filter((ex) => {
+        const m = libraryMeta(ex.id)
+        if (filter === 'warmup' ? !m?.warmup : filter && !m?.goals.includes(filter)) return false
+        const text = norm(`${ex.name} ${ex.target} ${ex.equipment}`)
+        return words.every((w) => text.includes(w))
+      })
+      .sort((a, b) => Number(inSession.has(a.id)) - Number(inSession.has(b.id)) || a.name.localeCompare(b.name, 'fr'))
+  }, [q, filter, inSession])
+
   return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault()
-        if (q.trim().length > 2 && !busy) onAsk(q.trim())
-      }}
-    >
-      <p className="label mb-1">Décris l’exercice voulu</p>
-      <textarea
-        id="ai-request"
-        value={q}
-        onChange={(e) => setQ(e.target.value)}
-        rows={3}
-        maxLength={500}
-        placeholder="ex. un exo pour renforcer les adducteurs sans machine, unilatéral"
-        className="b-input w-full resize-none px-3 py-2.5 text-[14px] leading-snug placeholder:text-ink/40"
-      />
+    <div>
+      <label className="b-input flex h-12 items-center gap-2 px-3">
+        <Search className="h-4 w-4 shrink-0 text-ink/60" strokeWidth={2.5} />
+        <input
+          id="library-search"
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          placeholder="pont, fente, gainage, haltères…"
+          className="h-full min-w-0 flex-1 bg-transparent text-[14px] placeholder:text-ink/40 focus:outline-none"
+        />
+      </label>
       <div className="no-scrollbar -mx-1 mt-2 flex gap-2 overflow-x-auto px-1 pb-1">
-        {AI_EXAMPLES.map((ex) => (
-          <button key={ex} type="button" onClick={() => setQ(ex)} className="b-btn h-9 shrink-0 px-3 text-[12px]">
-            {ex}
+        {FILTERS.map((f) => (
+          <button key={f} type="button" onClick={() => setFilter((cur) => (cur === f ? null : f))} className={`b-btn h-9 shrink-0 px-3 text-[12px] ${filter === f ? 'b-btn-ink' : ''}`}>
+            {FILTER_LABEL(f)}
           </button>
         ))}
       </div>
-      <button
-        type="submit"
-        disabled={!!busy || q.trim().length < 3}
-        className="b-btn mt-4 flex h-12 w-full items-center justify-center gap-2 bg-flame text-[14px] uppercase tracking-wide disabled:opacity-50"
-      >
-        {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" strokeWidth={2.5} />}
-        {busy ?? 'Créer la fiche'}
-      </button>
-      <p className="mt-2 text-[11px] font-semibold text-ink/60">Tu pourras tout vérifier et modifier avant l’ajout.</p>
-    </form>
+      <p className="mt-3 text-[12px] font-semibold text-ink/65">
+        {list.length} exercice{list.length > 1 ? 's' : ''} {filter ? `· ${FILTER_LABEL(filter).replace(/^\S+\s/, '')}` : 'à fiche complète'}
+      </p>
+      <ul className="mt-2 space-y-2">
+        {list.map((ex) => {
+          const added = inSession.has(ex.id)
+          return (
+            <li key={ex.id}>
+              <button
+                type="button"
+                onClick={() => onPick(ex)}
+                className={`b-card flex w-full items-center gap-3 p-2 text-left !shadow-[0_3px_0_var(--color-shadow)] active:translate-y-px ${added ? 'opacity-60' : ''}`}
+                aria-label={`Voir ${ex.name}`}
+              >
+                <span className="diagram-bg h-14 w-14 shrink-0 rounded-xl border-2 border-ink">
+                  <ExerciseDiagram id={diagramOf(ex)} />
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate text-[14px] font-black">{ex.name}</span>
+                  <span className="block truncate text-[12px] font-semibold text-ink/65">
+                    {ex.target} · {ex.equipment}
+                  </span>
+                </span>
+                {added ? <span className="tag h-6 shrink-0 bg-mint px-1.5 text-[10px]">✓ Séance</span> : <Plus className="h-4 w-4 shrink-0" strokeWidth={3} />}
+              </button>
+            </li>
+          )
+        })}
+      </ul>
+      {!list.length && <p className="mt-4 text-[13px] font-bold text-ink/60">Aucun exercice. Essaie un autre mot ou l’onglet Catalogue.</p>}
+    </div>
   )
 }
 
-// ── Catalogue ────────────────────────────────────────────────────────────
+function LibraryPreview({ ex, fromCatalog, added, onBack, onAdd }: { ex: Exercise; fromCatalog: boolean; added: boolean; onBack: () => void; onAdd: () => void }) {
+  return (
+    <div className="space-y-3">
+      {fromCatalog && (
+        <p className="flex gap-2 rounded-xl border-2 border-ink bg-mint px-3 py-2 text-[12px] font-bold leading-snug">
+          <Check className="mt-0.5 h-4 w-4 shrink-0" strokeWidth={3} /> Cet exercice existe en fiche complète : c’est elle qui sera ajoutée.
+        </p>
+      )}
+      <div>
+        <h3 className="headline text-[22px]">{ex.name}</h3>
+        <p className="mt-0.5 text-[12px] font-semibold text-ink/70">
+          {ex.target} · {ex.equipment}
+        </p>
+      </div>
+      <section className="diagram-bg overflow-hidden rounded-xl border-[2.5px] border-ink shadow-[0_4px_0_var(--color-shadow)]">
+        <div className="mx-auto aspect-[5/4] w-full max-w-[300px]">
+          <ExerciseDiagram id={diagramOf(ex)} />
+        </div>
+      </section>
+      <DemoPlayer ex={ex} />
+      <p className="rounded-xl border-2 border-ink bg-paper px-3 py-2 text-[13px] font-bold leading-snug">
+        {ex.sets} × {ex.reps}
+        {ex.rest > 0 && ` · repos ${restLabel(ex.rest)}`}
+      </p>
+      {ex.cue && (
+        <p className="text-[13px] leading-snug">
+          <b>Consigne :</b> {ex.cue}
+        </p>
+      )}
+      {ex.kneeAnkle && (
+        <p className="text-[13px] leading-snug">
+          <b>Genou / cheville :</b> {ex.kneeAnkle}
+        </p>
+      )}
+      {ex.steps.length > 0 && (
+        <details className="rounded-xl border-2 border-ink bg-paper px-3 py-2 text-[13px]">
+          <summary className="cursor-pointer font-black uppercase tracking-wide">Exécution ({ex.steps.length} étapes)</summary>
+          <ol className="mt-2 list-decimal space-y-1 pl-5 leading-snug">
+            {ex.steps.map((s, i) => (
+              <li key={i}>{s}</li>
+            ))}
+          </ol>
+        </details>
+      )}
+      <div className="grid grid-cols-[1fr_1.6fr] gap-3 pt-1">
+        <button type="button" onClick={onBack} className="b-btn flex h-12 items-center justify-center gap-1.5 text-[14px] uppercase tracking-wide">
+          <ArrowLeft className="h-4 w-4" strokeWidth={2.5} /> Retour
+        </button>
+        <button type="button" onClick={onAdd} disabled={added} className="b-btn flex h-12 items-center justify-center gap-1.5 bg-flame text-[14px] uppercase tracking-wide disabled:opacity-50">
+          {added ? (
+            <>
+              <Check className="h-4 w-4" strokeWidth={3} /> Déjà dans la séance
+            </>
+          ) : (
+            <>
+              <Plus className="h-4 w-4" strokeWidth={2.5} /> Ajouter
+            </>
+          )}
+        </button>
+      </div>
+    </div>
+  )
+}
+
+// ── Catalogue (fiches simplifiées) ───────────────────────────────────────
 function CatalogTab({ onPick }: { onPick: (e: CatalogEntry) => void }) {
   const [list, setList] = useState<CatalogEntry[] | null>(null)
   const [err, setErr] = useState('')
@@ -200,6 +279,7 @@ function CatalogTab({ onPick }: { onPick: (e: CatalogEntry) => void }) {
     input.current?.focus()
   }, [])
   const results = useMemo(() => (list ? searchCatalog(list, q) : []), [list, q])
+  const translated = useMemo(() => list?.filter((e) => e.fr).length ?? 0, [list])
 
   return (
     <div>
@@ -223,23 +303,32 @@ function CatalogTab({ onPick }: { onPick: (e: CatalogEntry) => void }) {
       </div>
       {err && <p className="mt-3 text-[13px] font-bold text-danger">{err}</p>}
       {!list && !err && <p className="mt-4 text-[13px] font-bold text-ink/60">Chargement du catalogue…</p>}
-      {list && !q && <p className="mt-3 text-[12px] font-semibold text-ink/65">{list.length} exercices (base libre de droits, noms en anglais). Cherche en français ou en anglais.</p>}
-      {list && q && !results.length && <p className="mt-4 text-[13px] font-bold text-ink/60">Aucun résultat. Essaie un autre mot ou l’onglet IA.</p>}
+      {list && !q && (
+        <p className="mt-3 text-[12px] font-semibold text-ink/65">
+          {list.length} exercices (base libre de droits), dont {translated} traduits en français. Cherche en français ou en anglais.
+        </p>
+      )}
+      {list && q && !results.length && <p className="mt-4 text-[13px] font-bold text-ink/60">Aucun résultat. Essaie un autre mot, en français ou en anglais.</p>}
       <ul className="mt-3 space-y-2">
-        {results.map((e) => (
-          <li key={e.id}>
-            <button type="button" onClick={() => onPick(e)} className="b-card flex w-full items-center gap-3 p-2 text-left !shadow-[0_3px_0_var(--color-shadow)] active:translate-y-px">
-              <Thumb src={imgUrl(e.img[0])} />
-              <span className="min-w-0 flex-1">
-                <span className="block truncate text-[14px] font-black">{e.n}</span>
-                <span className="block truncate text-[12px] font-semibold text-ink/65">
-                  {musclesFr(e).join(', ')} · {equipFr(e)}
+        {results.map((e) => {
+          const full = !!LIBRARY_OF_CATALOG[e.id]
+          return (
+            <li key={e.id}>
+              <button type="button" onClick={() => onPick(e)} className="b-card flex w-full items-center gap-3 p-2 text-left !shadow-[0_3px_0_var(--color-shadow)] active:translate-y-px">
+                <Thumb src={imgUrl(e.img[0])} />
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate text-[14px] font-black">{full ? LIBRARY[LIBRARY_OF_CATALOG[e.id]].name : nameOf(e)}</span>
+                  <span className="block truncate text-[12px] font-semibold text-ink/65">
+                    {musclesFr(e).join(', ')} · {equipFr(e)}
+                  </span>
                 </span>
-              </span>
-              <Plus className="h-4 w-4 shrink-0" strokeWidth={3} />
-            </button>
-          </li>
-        ))}
+                <span className={`tag h-6 shrink-0 px-1.5 text-[10px] ${full ? 'bg-mint' : e.fr ? 'bg-sun' : 'bg-paper'}`} title={full ? 'Fiche complète' : e.fr ? 'Consignes en français' : 'Consignes en anglais'}>
+                  {full ? 'Complète' : e.fr ? 'FR' : 'EN'}
+                </span>
+              </button>
+            </li>
+          )
+        })}
       </ul>
     </div>
   )
@@ -340,22 +429,8 @@ function ManualTab({ onSave }: { onSave: (d: CustomDraft) => void }) {
   )
 }
 
-// ── Aperçu / édition du brouillon ────────────────────────────────────────
-function Preview({
-  draft: d,
-  setDraft,
-  busy,
-  onBack,
-  onAdapt,
-  onSave,
-}: {
-  draft: CustomDraft
-  setDraft: (d: CustomDraft) => void
-  busy: string | null
-  onBack: () => void
-  onAdapt?: () => void
-  onSave: () => void
-}) {
+// ── Aperçu / édition du brouillon (catalogue) ────────────────────────────
+function Preview({ draft: d, setDraft, onBack, onSave }: { draft: CustomDraft; setDraft: (d: CustomDraft) => void; onBack: () => void; onSave: () => void }) {
   const timed = d.mode === 'timed'
   const set = (p: Partial<CustomDraft>, proto = false) => {
     const next = { ...d, ...p }
@@ -370,6 +445,13 @@ function Preview({
 
   return (
     <div>
+      <p className="mb-3 flex gap-2 rounded-xl border-2 border-ink bg-sun px-3 py-2 text-[12px] font-bold leading-snug">
+        <Info className="mt-0.5 h-4 w-4 shrink-0" strokeWidth={2.5} />
+        <span>
+          Fiche simplifiée : schéma approchant (touche-le pour en changer), tempo standard, pas de conseils genou / cheville
+          {d.stepsLang === 'en' ? ', consignes en anglais' : ''}. Vérifie les séries et le repos.
+        </span>
+      </p>
       <section className="diagram-bg overflow-hidden border-[2.5px] border-ink shadow-[0_4px_0_var(--color-shadow)] rounded-xl">
         <div className="mx-auto aspect-[5/4] w-full max-w-[300px]">
           <ExerciseDiagram id={d.diagram ?? 'squat'} />
@@ -420,7 +502,6 @@ function Preview({
       </p>
 
       {d.tip && <p className="mb-2 text-[13px] leading-snug"><b>Consigne :</b> {d.tip}</p>}
-      {d.kneeAnkle && <p className="mb-2 text-[13px] leading-snug"><b>Genou / cheville :</b> {d.kneeAnkle}</p>}
       {d.steps && d.steps.length > 0 && (
         <details className="mb-3 border-2 border-ink bg-paper px-3 py-2 text-[13px] rounded-xl">
           <summary className="cursor-pointer font-black uppercase tracking-wide">Exécution ({d.steps.length} étapes{d.stepsLang === 'en' ? ', en anglais' : ''})</summary>
@@ -432,17 +513,11 @@ function Preview({
         </details>
       )}
 
-      {onAdapt && (
-        <button type="button" onClick={onAdapt} disabled={!!busy} className="b-btn mb-2 flex h-12 w-full items-center justify-center gap-2 bg-lilac text-[13px] uppercase tracking-wide disabled:opacity-50">
-          {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" strokeWidth={2.5} />}
-          {busy ?? 'Traduire & adapter avec l’IA'}
-        </button>
-      )}
       <div className="grid grid-cols-[1fr_1.6fr] gap-3">
         <button type="button" onClick={onBack} className="b-btn flex h-12 items-center justify-center gap-1.5 text-[14px] uppercase tracking-wide">
           <ArrowLeft className="h-4 w-4" strokeWidth={2.5} /> Retour
         </button>
-        <button type="button" onClick={onSave} disabled={!d.name.trim() || !!busy} className="b-btn flex h-12 items-center justify-center gap-1.5 bg-flame text-[14px] uppercase tracking-wide disabled:opacity-50">
+        <button type="button" onClick={onSave} disabled={!d.name.trim()} className="b-btn flex h-12 items-center justify-center gap-1.5 bg-flame text-[14px] uppercase tracking-wide disabled:opacity-50">
           <Plus className="h-4 w-4" strokeWidth={2.5} /> Ajouter
         </button>
       </div>

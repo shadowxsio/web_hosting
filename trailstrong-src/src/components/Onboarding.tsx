@@ -183,7 +183,7 @@ function Preview({ program }: { program: UserProgram }) {
   const sessions = buildProgram(program).filter((s) => s.exercises.length)
   return (
     <div>
-      <Q sub="Tu pourras ajouter ou retirer des exercices, et refaire ce questionnaire depuis le Menu.">Ton programme</Q>
+      <Q sub="Tu pourras retirer des exercices et en ajouter d’autres (bouton « Ajouter un exercice » en bas de chaque séance : fiches complètes de la bibliothèque, ou 800 exercices du catalogue en fiche simplifiée). Le questionnaire se refait depuis le Menu.">Ton programme</Q>
       <div className="mb-4 flex items-start gap-3 rounded-2xl border-2 border-ink bg-sun px-3 py-3" role="note">
         <Stethoscope className="mt-0.5 h-5 w-5 shrink-0" strokeWidth={2.5} />
         <p className="text-[13px] font-semibold leading-snug">

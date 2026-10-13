@@ -104,6 +104,7 @@ export function hasLegacyData(): boolean {
   try {
     const d = JSON.parse(localStorage.getItem(LEGACY.data) ?? 'null') as Partial<AppData> | null
     if (d?.logs && Object.keys(d.logs).length) return true
+    if (localStorage.getItem(LEGACY.program)) return true
     return SESSION_IDS.some((s) => (JSON.parse(localStorage.getItem(LEGACY.custom(s)) ?? '[]') as unknown[]).length > 0)
   } catch {
     return false
@@ -128,6 +129,13 @@ export function importLegacy() {
     SESSION_IDS.map((s) => [s, [...(getAllCustom()[s] ?? []), ...(JSON.parse(localStorage.getItem(LEGACY.custom(s)) ?? '[]') as CustomExerciseDef[])]]),
   ) as Record<SessionId, CustomExerciseDef[]>
   replaceAllCustom(custom)
+  // Programme modifié en mode local (exercices ajoutés / retirés) : repris si le compte n'en a pas.
+  try {
+    const p = JSON.parse(localStorage.getItem(LEGACY.program) ?? 'null') as UserProgram | null
+    if (p && p.version === 1 && p.sessions && !getUserProgram()) setUserProgram(p)
+  } catch {
+    /* programme local illisible : on garde celui du compte */
+  }
 }
 
 // ── Synchro ─────────────────────────────────────────────────────────────

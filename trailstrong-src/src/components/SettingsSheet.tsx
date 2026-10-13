@@ -5,7 +5,6 @@ import { exitAdmin, lock, resetLocalPin, setLocalPin, useAdmin, usingDefaultPin 
 import { getGoogleSession } from '../lib/googleAuth'
 import { PinLock } from './PinLock'
 import { useTheme } from '../lib/theme'
-import { DEFAULT_MODEL, setAiConfig, useAiConfig } from '../lib/ai'
 import { setSoundPrefs, sfx, unlockAudio, useSoundPrefs } from '../lib/sound'
 import { backupNow, getRecoveryKey, restoreFromGist, setRecoveryKey } from '../lib/backup'
 import type { FocusTag } from '../data/program'
@@ -34,8 +33,6 @@ export function SettingsSheet({
   const g = data.gist
   const [theme, setTheme] = useTheme()
   const sound = useSoundPrefs()
-  const ai = useAiConfig()
-  const [aiKey, setAiKey] = useState('')
   const admin = useAdmin()
   const [askPin, setAskPin] = useState(false)
   const [recovery, setRecovery] = useState('')
@@ -80,51 +77,6 @@ export function SettingsSheet({
 
   const sharedBlocks = (
     <>
-        <Block
-          title="Assistant IA (Gemini)"
-          desc={ai.key ? `Clé enregistrée sur cet appareil (…${ai.key.slice(-4)}). Elle n’est jamais exportée ni sauvegardée.` : 'Colle ta clé API Gemini (aistudio.google.com → Get API key) pour créer des exercices en décrivant ce que tu veux.'}
-        >
-          <div className="flex gap-2">
-            <input
-              id="gemini-key"
-              type="password"
-              autoComplete="off"
-              value={aiKey}
-              onChange={(e) => setAiKey(e.target.value.trim())}
-              placeholder={ai.key ? 'Remplacer la clé…' : 'AIza…'}
-              className="b-input h-11 min-w-0 flex-1 px-3 font-mono text-[13px]"
-            />
-            <button
-              type="button"
-              disabled={aiKey.length < 20}
-              onClick={() => {
-                setAiConfig({ key: aiKey })
-                setAiKey('')
-                setMsg({ ok: true, text: 'Clé Gemini enregistrée sur cet appareil.' })
-              }}
-              className="b-btn h-11 px-3 text-[13px] uppercase tracking-wide disabled:opacity-40"
-            >
-              Enregistrer
-            </button>
-          </div>
-          <div className="mt-2 flex items-center gap-2">
-            <label htmlFor="gemini-model" className="label shrink-0">
-              Modèle
-            </label>
-            <input
-              id="gemini-model"
-              value={ai.model}
-              onChange={(e) => setAiConfig({ model: e.target.value.trim() || DEFAULT_MODEL })}
-              className="b-input h-10 min-w-0 flex-1 px-3 font-mono text-[12px]"
-            />
-            {ai.key && (
-              <button type="button" onClick={() => setAiConfig({ key: '' })} className="b-btn h-10 px-3 text-[12px] uppercase tracking-wide">
-                Retirer
-              </button>
-            )}
-          </div>
-        </Block>
-
         <Block title="Sauvegarde locale" desc={`${days} jour(s) d’entraînement stockés sur cet appareil.`}>
           <div className="grid grid-cols-2 gap-2">
             <Btn onClick={download} icon={Download}>

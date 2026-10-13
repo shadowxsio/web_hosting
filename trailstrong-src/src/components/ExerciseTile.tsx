@@ -79,6 +79,7 @@ export function ExerciseTile({
             <Pill>{ex.reps}</Pill>
             {ex.rest > 0 && <Pill>Repos {restLabel(ex.rest)}</Pill>}
             {ex.equipment && <Pill>{ex.equipment}</Pill>}
+            {ex.source === 'catalog' && <Pill tone="sky">Fiche simplifiée</Pill>}
           </div>
         </button>
 
