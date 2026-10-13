@@ -5,6 +5,7 @@ import { exitAdmin, lock, resetLocalPin, setLocalPin, useAdmin, usingDefaultPin 
 import { getGoogleSession } from '../lib/googleAuth'
 import { PinLock } from './PinLock'
 import { useTheme } from '../lib/theme'
+import { setSoundPrefs, sfx, unlockAudio, useSoundPrefs } from '../lib/sound'
 import { backupNow, getRecoveryKey, restoreFromGist, setRecoveryKey } from '../lib/backup'
 import type { FocusTag } from '../data/program'
 import { exportJson, importJson, today, updateGist, useData } from '../lib/storage'
@@ -24,6 +25,7 @@ export function SettingsSheet({
   const data = useData()
   const g = data.gist
   const [theme, setTheme] = useTheme()
+  const sound = useSoundPrefs()
   const admin = useAdmin()
   const [askPin, setAskPin] = useState(false)
   const [recovery, setRecovery] = useState('')
@@ -138,6 +140,53 @@ export function SettingsSheet({
               </button>
             ))}
           </div>
+        </Block>
+
+        <Block title="Son du coach" desc="Bips de tempo, départ, stop et repos. La voix compte les reps.">
+          <div className="grid grid-cols-3 gap-2" role="radiogroup" aria-label="Son">
+            {(
+              [
+                ['voice', '🗣️ Voix'],
+                ['beep', '🔔 Bips'],
+                ['off', '🔇 Muet'],
+              ] as const
+            ).map(([m, label]) => (
+              <button
+                key={m}
+                type="button"
+                role="radio"
+                aria-checked={sound.mode === m}
+                onClick={() => setSoundPrefs({ mode: m })}
+                className={`b-btn h-11 text-[13px] uppercase italic ${sound.mode === m ? 'b-btn-ink' : ''}`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+          <label className="mt-2 flex items-start gap-3 border-2 border-ink bg-paper px-3 py-2.5">
+            <input
+              type="checkbox"
+              checked={sound.speaker}
+              onChange={(e) => setSoundPrefs({ speaker: e.target.checked })}
+              className="mt-0.5 h-5 w-5 shrink-0 accent-[var(--color-flame)]"
+            />
+            <span className="text-[13px] font-bold leading-snug">
+              Haut-parleur même en mode silencieux
+              <span className="block text-[12px] font-semibold text-ink/65">
+                iPhone : sans ça, le bouton silencieux coupe les bips (sauf écouteurs). Peut mettre ta musique en pause : décoche si tu t’entraînes avec tes écouteurs.
+              </span>
+            </span>
+          </label>
+          <button
+            type="button"
+            onClick={() => {
+              unlockAudio()
+              sfx.test()
+            }}
+            className="b-btn mt-2 h-11 w-full text-[13px] uppercase italic"
+          >
+            🔊 Tester le son
+          </button>
         </Block>
 
         {msg && (

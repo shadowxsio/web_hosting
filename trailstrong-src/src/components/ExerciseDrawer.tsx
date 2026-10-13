@@ -1,13 +1,16 @@
-import { Check, Footprints, Mountain, Play, Plus, ShieldCheck, Trash2, Trophy, X } from 'lucide-react'
+import { AudioLines, Check, Footprints, Mountain, Play, Plus, ShieldCheck, Trash2, Trophy, X } from 'lucide-react'
 import { useEffect, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
+import { cadenceOf, repSeconds } from '../data/cadence'
 import type { Exercise, SessionId } from '../data/program'
 import { removeCustom } from '../lib/custom'
 import { touch, treadmillStats, type ExerciseLog, type Side } from '../lib/storage'
+import { unlockAudio } from '../lib/sound'
 import { timer } from '../lib/timer'
 import { SIDE_LABEL, num, useExerciseLog } from '../lib/useExerciseLog'
 import { DemoPlayer } from './DemoPlayer'
 import { DIAGRAM_OF, ExerciseDiagram } from './ExerciseDiagram'
+import { SetCoach } from './SetCoach'
 import { DIR_META, Pill, SESSION_META, ZONE_META, categoryOf, iconOf, restLabel } from './meta'
 
 /** Tiroir de détail : bas de l'écran sur mobile, à droite sur desktop. */
@@ -28,6 +31,22 @@ export function ExerciseDrawer({ ex, sessionId, date, onClose }: { ex: Exercise;
   const fieldVal = (f: 'w' | 'r') => (uni ? curSideLog[f] : curSet[f])
   const fieldDone = uni ? curSideLog.done : curSet.done
   const tipKind = ex.tags.find((t) => t === 'knee' || t === 'ankle') ?? 'knee'
+
+  // ── Coach sonore ──
+  const cadence = cadenceOf(ex)
+  const canCoach = ex.mode !== 'treadmill' && !fieldDone
+  const [coach, setCoach] = useState<{ set: number; sides: (Side | null)[]; goals: number[]; rest: number } | null>(null)
+  const targetOf = (i: number, sd: Side | null) =>
+    num(sd ? L.sideOf(i, sd).r || L.hintSideR(i, sd) : L.sets[i].r || L.hintR(i)) || ex.defaultReps || (ex.mode === 'timed' ? 30 : 10)
+  const openCoach = () => {
+    unlockAudio()
+    const sides = uni ? [curSide, ...L.sideOrder.filter((sd) => sd !== curSide && !L.sideOf(cur, sd).done)] : [null]
+    const isLast = L.sets.filter((x) => x.done).length + 1 >= L.sets.length
+    // 2e jambe : mêmes reps que la 1re, sauf valeur saisie pour elle.
+    const first = targetOf(cur, sides[0])
+    const goals = sides.map((sd, k) => (k === 0 || !sd ? first : num(L.sideOf(cur, sd).r) || first))
+    setCoach({ set: cur, sides, goals, rest: isLast ? 0 : ex.rest })
+  }
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose()
@@ -207,6 +226,19 @@ export function ExerciseDrawer({ ex, sessionId, date, onClose }: { ex: Exercise;
                     onChange={(v) => (uni ? L.setSideField(cur, curSide, 'r', v) : L.setField(cur, 'r', v))}
                   />
                 </div>
+                <p className="mt-2 flex items-start gap-2 border-2 border-dashed border-ink/50 px-3 py-2 text-[12px] font-bold leading-snug">
+                  <AudioLines className="mt-0.5 h-4 w-4 shrink-0 text-flame" strokeWidth={2.5} />
+                  <span>
+                    {cadence ? (
+                      <>
+                        Tempo coach : {cadence.map((p) => `${p.label} ${p.s} s`).join(' → ')}
+                        <span className="text-ink/60"> · ≈ {Math.round(repSeconds(cadence) * targetOf(cur, uni ? curSide : null))} s la série</span>
+                      </>
+                    ) : (
+                      <>Coach : 3-2-1, chrono de maintien et bips des 3 dernières secondes.</>
+                    )}
+                  </span>
+                </p>
               </>
             )}
             <textarea
@@ -312,21 +344,15 @@ export function ExerciseDrawer({ ex, sessionId, date, onClose }: { ex: Exercise;
         {/* Action principale */}
         {ex.mode !== 'treadmill' && (
           <footer className="flex gap-2 border-t-[2.5px] border-ink p-3">
-            {ex.mode === 'timed' && (
-              <button
-                type="button"
-                onClick={() =>
-                  timer.start(
-                    num(fieldVal('r') || (uni ? L.hintSideR(cur, curSide) : L.hintR(cur))) || 45,
-                    uni ? `Jambe ${SIDE_LABEL[curSide]}` : null,
-                  )
-                }
-                aria-label="Lancer le chrono de travail"
-                className="grid h-12 w-12 shrink-0 place-items-center border-2 border-ink bg-paper text-ink active:scale-95"
-              >
-                <Play className="h-4 w-4" fill="currentColor" />
-              </button>
-            )}
+            <button
+              type="button"
+              onClick={openCoach}
+              disabled={!canCoach}
+              aria-label="Lancer le coach sonore de la série"
+              className="b-btn flex h-12 shrink-0 items-center gap-1.5 bg-sun px-3 text-[13px] uppercase italic disabled:opacity-40"
+            >
+              <Play className="h-4 w-4" fill="currentColor" /> Coach
+            </button>
             <button
               type="button"
               onClick={() => {
@@ -351,6 +377,23 @@ export function ExerciseDrawer({ ex, sessionId, date, onClose }: { ex: Exercise;
           </footer>
         )}
       </aside>
+      {coach && (
+        <SetCoach
+          name={ex.name}
+          cadence={cadence}
+          sides={coach.sides}
+          target={(sd) => coach.goals[coach.sides.indexOf(sd)] ?? targetOf(coach.set, sd)}
+          setLabel={`Série ${coach.set + 1} sur ${L.sets.length}`}
+          rest={coach.rest}
+          onSideDone={(sd, done) => {
+            if (sd) L.validateSide(coach.set, sd, String(done))
+            else L.validate(coach.set, String(done))
+            setSel(null)
+            setSelSide(null)
+          }}
+          onClose={() => setCoach(null)}
+        />
+      )}
     </div>,
     document.body,
   )
