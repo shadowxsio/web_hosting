@@ -9,6 +9,7 @@ import { DEFAULT_MODEL, setAiConfig, useAiConfig } from '../lib/ai'
 import { setSoundPrefs, sfx, unlockAudio, useSoundPrefs } from '../lib/sound'
 import { backupNow, getRecoveryKey, restoreFromGist, setRecoveryKey } from '../lib/backup'
 import type { FocusTag } from '../data/program'
+import { enterSandbox, inSandbox } from '../lib/sandbox'
 import { exportJson, importJson, today, updateGist, updateProfile, useData } from '../lib/storage'
 import type { View } from '../App'
 
@@ -24,7 +25,7 @@ export function SettingsSheet({
   onNavigate: (view: View, focus?: FocusTag) => void
   onTests: () => void
   /** Mode comptes (Firebase) : compte, synchro et programme. */
-  cloud?: { email: string; status: string; onRedoProgram: () => void }
+  cloud?: { email: string; status: string; onRedoProgram: () => void; logoutLabel?: string; isOwner?: boolean }
 }) {
   const data = useData()
   const g = data.gist
@@ -65,6 +66,14 @@ export function SettingsSheet({
   }
 
   const days = Object.keys(data.logs).length
+
+  const sandboxBlock = !inSandbox && (
+    <Block title="🧪 Profil de test" desc="Un profil temporaire pour essayer le questionnaire, la génération de programme, le coach… Rien n’est sauvegardé : tout s’efface quand tu le quittes, tes vraies données ne sont pas touchées.">
+      <button type="button" onClick={enterSandbox} className="b-btn flex h-12 w-full items-center justify-center gap-2 bg-lilac text-[13px] uppercase italic">
+        Ouvrir le profil de test
+      </button>
+    </Block>
+  )
 
   const sharedBlocks = (
     <>
@@ -191,7 +200,7 @@ export function SettingsSheet({
             className="flex min-h-[57px] w-full flex-wrap items-center gap-x-3 border-t-[2.5px] border-ink bg-sun px-4 py-2 text-left"
           >
             <span className="text-[10px] font-extrabold uppercase tracking-[0.1em] text-ink/70">{cloud ? cloud.email : account ? account.email : 'Session PIN'}</span>
-            <span className="text-[19px] font-black uppercase italic leading-tight tracking-tight">Se déconnecter</span>
+            <span className="text-[19px] font-black uppercase italic leading-tight tracking-tight">{cloud?.logoutLabel ?? 'Se déconnecter'}</span>
           </button>
         </nav>
 
@@ -318,9 +327,13 @@ export function SettingsSheet({
         )}
 
         {cloud ? (
-          sharedBlocks
+          <>
+            {cloud.isOwner && sandboxBlock}
+            {sharedBlocks}
+          </>
         ) : admin ? (
           <>
+        {sandboxBlock}
         {sharedBlocks}
 
         <Block

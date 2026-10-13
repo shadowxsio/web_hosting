@@ -11,9 +11,11 @@ import { hasValidSession } from './lib/auth'
 import { useAutoBackup } from './lib/backup'
 import { useProgram } from './lib/custom'
 import { firebaseEnabled } from './lib/firebaseConfig'
+import { inSandbox } from './lib/sandbox'
 import { today } from './lib/storage'
 
 const CloudApp = lazy(() => import('./CloudApp'))
+const SandboxApp = lazy(() => import('./SandboxApp'))
 
 export type View = Scope | 'stats'
 
@@ -41,6 +43,12 @@ function tabsOf(program: Session[]): Tab[] {
 const VIEW_KEY = 'trailstrong:view'
 
 export default function App() {
+  if (inSandbox)
+    return (
+      <Suspense fallback={null}>
+        <SandboxApp />
+      </Suspense>
+    )
   if (firebaseEnabled)
     return (
       <Suspense fallback={null}>

@@ -71,3 +71,4 @@ Code source dans `trailstrong-src/` (Vite + React + TypeScript + Tailwind + Luci
   - Règles : `trailstrong-src/firestore.rules` (chaque compte n'accède qu'à ses données) — à coller dans la console Firestore.
   - Firebase Auth → Google activé ; si le client OAuth (`GOOGLE_CLIENT_ID`) vient d'un autre projet, l'ajouter aux « ID client de projets externes ». Domaine autorisé : `shadowxsio.github.io`.
   - Premier lancement : migration des données locales de l'appareil, ou questionnaire (sport, objectifs, zones sensibles, matériel, niveau, rythme) → programme généré (`src/data/generator.ts`) à partir du programme de base et de la bibliothèque (`src/data/extras.ts`).
+- **Profil de test** (Menu → mode admin en local, ou compte propriétaire en mode comptes) : profil temporaire local pour essayer le questionnaire et la génération de programme ; rien n'est synchronisé et tout est effacé à la sortie (`src/lib/sandbox.ts`).
