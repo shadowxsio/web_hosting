@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <meta http-equiv="refresh" content="5; url=https://strong.trailsuite.app/" />
+    <title>TrailStrong a déménagé</title>
+    <style>
+      body { margin: 0; min-height: 100dvh; display: grid; place-items: center; padding: 16px; background: #141122; color: #f4efe6; font-family: system-ui, sans-serif; text-align: center; }
+      a { color: #ff6b2c; font-weight: 700; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>TrailStrong a déménagé</h1>
+      <p>Nouvelle adresse : <a href="https://strong.trailsuite.app/">strong.trailsuite.app</a></p>
+      <p>Tes séances et ta progression sont dans ton compte : reconnecte-toi avec Google, tout est là.</p>
+    </main>
+    <script>
+      // Ancienne copie : on retire son service worker et ses fichiers en cache sur cet appareil
+      // (seulement les siens : l'adresse shadowxsio.github.io est partagée avec d'autres apps).
+      ;(async () => {
+        const OLD = '/web_hosting/trailstrong/'
+        try {
+          for (const r of (await navigator.serviceWorker?.getRegistrations()) ?? []) {
+            if (new URL(r.scope).pathname.startsWith(OLD)) await r.unregister()
+          }
+          for (const name of await caches.keys()) {
+            const cache = await caches.open(name)
+            for (const req of await cache.keys()) if (new URL(req.url).pathname.startsWith(OLD)) await cache.delete(req)
+          }
+        } catch {}
+        location.replace('https://strong.trailsuite.app/')
+      })()
+    </script>
+  </body>
+</html>

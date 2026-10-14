@@ -11,6 +11,8 @@ scratch/
 .gemini/
 .DS_Store
 
-# TrailStrong : sortie de build (générée par le workflow Pages) + dépendances
-trailstrong/
-trailstrong-src/node_modules/
+# Ancienne copie de TrailStrong (déménagée sur https://strong.trailsuite.app) : seule la page de
+# nettoyage est publiée, le reste du dossier (anciens builds locaux) reste ignoré.
+trailstrong/*
+!trailstrong/index.html
+!trailstrong/sw.js
