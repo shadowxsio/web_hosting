@@ -1,17 +1,6 @@
 # Mises à jour de sécurité et de versions automatiques (PR hebdomadaires).
 version: 2
 updates:
-  - package-ecosystem: npm
-    directory: /trailstrong-src
-    schedule:
-      interval: weekly
-      day: monday
-    open-pull-requests-limit: 5
-    groups:
-      # Regroupe les mises à jour mineures/patch en une seule PR.
-      minor-and-patch:
-        update-types: [minor, patch]
-
   - package-ecosystem: github-actions
     directory: /
     schedule:

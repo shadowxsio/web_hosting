@@ -1,11 +1,12 @@
 name: CodeQL (analyse de sécurité)
 
+# Code écrit à la main du site : CV, courses, scripts de données et workflows.
+# (TrailStrong a déménagé dans shadowxsio/trail-suite : trailstrong/ ne garde que la page de nettoyage ;
+#  coach/ ne contient que des fichiers déjà construits.)
 on:
   push:
     branches: [main]
-    paths: ["trailstrong-src/**", ".github/workflows/**"]
   pull_request:
-    paths: ["trailstrong-src/**", ".github/workflows/**"]
   schedule:
     - cron: "41 5 * * 3" # mercredi 5h41 UTC
   workflow_dispatch:
@@ -22,21 +23,23 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: [javascript-typescript, actions]
+        language: [javascript-typescript, python, actions]
     steps:
       - uses: actions/checkout@v4
       - uses: github/codeql-action/init@v3
         with:
           languages: ${{ matrix.language }}
-          # Le code de l'app uniquement (pas les dépendances ni le build).
+          # Dossiers uniquement : l'extracteur Python parcourt chaque entrée comme un répertoire.
           config: |
             paths:
-              - trailstrong-src/src
-              - trailstrong-src/public
-              - trailstrong-src/vite.config.ts
+              - cv
+              - runs
+              - scripts
+              - trailstrong
               - .github/workflows
             paths-ignore:
-              - trailstrong-src/public/catalog.json
+              - coach
+              - maquettes
           queries: security-extended
       - uses: github/codeql-action/analyze@v3
         with:
