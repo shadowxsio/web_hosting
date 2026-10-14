@@ -51,7 +51,7 @@ jobs:
           google-chrome --headless --no-sandbox --disable-gpu --no-pdf-header-footer --print-to-pdf=cv/cv_ats_en.pdf "http://localhost:8000/cv/ats.html?lang=en"
           kill $SERVER_PID
       - name: Setup Pages
-        uses: actions/configure-pages@v4
+        uses: actions/configure-pages@v6
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
